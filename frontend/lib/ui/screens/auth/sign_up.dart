@@ -9,16 +9,12 @@ class SignUpScreen extends StatelessWidget {
       body: SafeArea(
           child: Center(
               child: Column(children: const [
-        Text(
-          "group_app",
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
-        ),
         SizedBox(
           height: 30,
         ),
         Text(
-          "Sign up",
-          style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+          "Create a new account",
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400),
         )
       ]))),
     );

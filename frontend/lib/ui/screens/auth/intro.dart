@@ -31,13 +31,15 @@ class IntroScreen extends StatelessWidget {
           "Next",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
+        doneSemantic: "Button to continue to the next page",
         doneStyle: const ButtonStyle(
+          alignment: Alignment.center,
           backgroundColor: MaterialStatePropertyAll(Colors.white),
         ),
         onDone: () {
           // On button pressed
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const SignUpScreen()));
+              MaterialPageRoute(builder: (context) => const LoginScreen()));
         },
       ),
     );
