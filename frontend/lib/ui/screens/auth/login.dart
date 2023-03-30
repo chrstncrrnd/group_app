@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/ui/screens/auth/sign_up.dart';
 import 'package:group_app/utils/validators.dart';
-import 'package:group_app/widgets/progress_indicator_button.dart';
+import 'package:group_app/widgets/next_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -62,9 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text("Don't have an account?")),
               const SizedBox(height: 10),
-              ProgressIndicatorButton(
+              NextButton(
                 onPressed: () async => await logUserIn(_email, _password),
-                text: "Next",
               ),
             ],
           ),

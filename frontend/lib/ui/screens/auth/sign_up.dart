@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:group_app/utils/validators.dart';
+import 'package:group_app/widgets/next_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,6 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String username = "";
 
   int currentIndex = 0;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -21,97 +24,99 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     const textStyle = TextStyle(fontSize: 30);
-    var pages = [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const Text(
-              "Welcome to group_app, what's your name?",
-              style: TextStyle(fontSize: 30),
+
+    final pages = [
+      Column(
+        children: [
+          const Text(
+            "Welcome to group_app, what's your name?",
+            style: TextStyle(fontSize: 30),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              label: Text("Name"),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                label: Text("Name"),
-              ),
-              onChanged: (value) {
-                name = value.trim();
-              },
-            )
-          ],
-        ),
+            onChanged: (value) {
+              name = value.trim();
+            },
+            validator: validateName,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NextButton(onPressed: () => setState(() => currentIndex++))
+        ],
       ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            name.isEmpty
-                ? const Text(
-                    "Choose a username",
-                    style: textStyle,
-                  )
-                : Wrap(
-                    children: [
-                      const Text(
-                        "Hi ",
-                        style: textStyle,
-                      ),
-                      Text(
-                        "$name, ",
-                        style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const Text(
-                        "choose a username",
-                        style: textStyle,
-                      )
-                    ],
-                  ),
-            const SizedBox(
-              height: 20,
+      Column(
+        children: [
+          name.isEmpty
+              ? const Text(
+                  "Choose a username",
+                  style: textStyle,
+                )
+              : Wrap(
+                  children: [
+                    const Text(
+                      "Hi ",
+                      style: textStyle,
+                    ),
+                    Text(
+                      "$name, ",
+                      style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "choose a username",
+                      style: textStyle,
+                    )
+                  ],
+                ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              label: Text("Username"),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                label: Text("Username"),
-              ),
-              onChanged: (value) {
-                username = value.trim();
-              },
-            )
-          ],
-        ),
+            onChanged: (value) {
+              username = value.trim();
+            },
+            validator: validateUsername,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NextButton(onPressed: () {
+            if (formKey.currentState!.validate()) {
+              setState(() => currentIndex++);
+            }
+          })
+        ],
       ),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Create a new account")),
-      body: SafeArea(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Form(
-          child: IndexedStack(index: currentIndex, children: pages),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
+      appBar: AppBar(
+        title: const Text("Create a new account"),
+        leading: currentIndex == 0
+            ? IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close_rounded))
+            : IconButton(
                 onPressed: () {
                   if (currentIndex > 0) setState(() => currentIndex--);
                 },
-                icon: const Icon(Icons.arrow_back_ios),
-                label: const Text("Back")),
-            ElevatedButton.icon(
-                onPressed: () {
-                  if (currentIndex < pages.length - 1) {
-                    setState(() => currentIndex++);
-                  }
-                },
-                icon: const Icon(Icons.arrow_forward_ios),
-                label: const Text("Next")),
-          ],
-        )
-      ])),
+                icon: const Icon(Icons.arrow_back_ios)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: formKey,
+          child: IndexedStack(index: currentIndex, children: pages),
+        ),
+      ),
     );
   }
 }
