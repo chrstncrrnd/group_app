@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/widgets/next_button.dart';
 
@@ -90,7 +91,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           NextButton(onPressed: () {
             if (formKey.currentState!.validate()) {
-              setState(() => currentIndex++);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => CreateAccountScreen(
+                        name: name.isEmpty ? null : name,
+                        username: username,
+                      )));
             }
           })
         ],
