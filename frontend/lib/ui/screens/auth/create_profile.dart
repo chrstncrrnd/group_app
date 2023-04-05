@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:group_app/ui/screens/auth/create_account.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/widgets/next_button.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+// Initial profile creation steps
+class CreateProfileScreen extends StatefulWidget {
+  const CreateProfileScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<CreateProfileScreen> createState() => _CreateProfileScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _CreateProfileScreenState extends State<CreateProfileScreen> {
   String name = "";
   String username = "";
 
@@ -91,11 +92,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           NextButton(onPressed: () {
             if (formKey.currentState!.validate()) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => CreateAccountScreen(
-                        name: name.isEmpty ? null : name,
-                        username: username,
-                      )));
+              context.pushNamed("create_account", params: {
+                "username": username
+              }, queryParams: {
+                "name": name.isEmpty ? null : name,
+              });
             }
           })
         ],
@@ -107,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         title: const Text("Create a new account"),
         leading: currentIndex == 0
             ? IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => GoRouter.of(context).pop(),
                 icon: const Icon(Icons.close_rounded))
             : IconButton(
                 onPressed: () {

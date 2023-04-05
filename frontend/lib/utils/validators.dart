@@ -18,7 +18,7 @@ String? validatePassword(String? value) {
   } else if (value.length < 8) {
     return "Password must be at least 8 characters";
   } else if (!passwordRegExp.hasMatch(value)) {
-    return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+    return "Password must contain upper and lowercase letters and numbers";
   }
   return null;
 }

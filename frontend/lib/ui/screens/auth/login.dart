@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
-import 'package:group_app/ui/screens/auth/sign_up.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/widgets/next_button.dart';
 
@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: validatePassword,
                 obscureText: true,
                 onSaved: (value) {
-                  if (value != null) _password = value.trim();
+                  if (value != null) _password = value;
                 },
               ),
               const SizedBox(
@@ -57,8 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => const SignUpScreen()));
+                    context.push(
+                      "/create_profile",
+                    );
                   },
                   child: const Text("Don't have an account?")),
               const SizedBox(height: 10),

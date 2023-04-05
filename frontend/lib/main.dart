@@ -2,10 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/firebase_options.dart';
-import 'package:group_app/ui/screens/auth/intro.dart';
-import 'package:group_app/ui/screens/home.dart';
+import 'package:group_app/routes.dart';
 import 'package:group_app/utils/theme.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,25 +24,12 @@ class GroupApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: theme,
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                  body: Center(child: CircularProgressIndicator.adaptive()));
-            }
-            if (snapshot.hasError) {
-              // TODO: error text (with widget)
-            }
-            // user logged in
-            if (snapshot.hasData) {
-              return const HomeScreen();
-            } else {
-              return const IntroScreen();
-            }
-          },
-        ));
+    return ChangeNotifierProvider<GoRouter>(
+        create: (context) =>
+            GoRouter(routes: Routes().routes, initialLocation: "/"),
+        builder: (ctx, child) => MaterialApp.router(
+              routerConfig: Provider.of<GoRouter>(ctx),
+              theme: theme,
+            ));
   }
 }

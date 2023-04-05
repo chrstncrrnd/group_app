@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
-import 'package:group_app/ui/screens/auth/sign_up.dart';
+import 'package:group_app/widgets/next_button.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 class IntroScreen extends StatelessWidget {
@@ -27,20 +28,9 @@ class IntroScreen extends StatelessWidget {
               body: "You can then comment or reply with a photo")
         ],
         showNextButton: false,
-        done: const Text(
-          "Next",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        doneSemantic: "Button to continue to the next page",
-        doneStyle: const ButtonStyle(
-          alignment: Alignment.center,
-          backgroundColor: MaterialStatePropertyAll(Colors.white),
-        ),
-        onDone: () {
-          // On button pressed
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const LoginScreen()));
-        },
+        overrideDone: NextButton(onPressed: () {
+          context.go("/login");
+        }),
       ),
     );
   }

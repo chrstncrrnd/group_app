@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:group_app/utils/validators.dart';
+import 'package:group_app/widgets/next_button.dart';
 
 class CreateAccountScreen extends StatefulWidget {
-  const CreateAccountScreen({super.key, this.name, required this.username});
+  const CreateAccountScreen(
+      {super.key, required this.name, required this.username});
 
   final String? name;
   final String username;
@@ -11,16 +15,62 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String _email = "";
+  String _password = "";
+
+  Widget formField(String? Function(String?) validator, String label,
+      Function(String?) onSaved) {
+    return TextFormField(
+        decoration: InputDecoration(
+          labelText: label,
+        ),
+        validator: validator,
+        onSaved: onSaved);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create a new account"),
-      ),
-      body: const Text(
-        "hi",
-        style: TextStyle(fontSize: 40),
-      ),
-    );
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: context.pop,
+          ),
+        ),
+        body: Form(
+            key: _formKey,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30),
+              child: Column(
+                children: [
+                  const Text(
+                    "Create your account",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  formField(validateEmail, "Email", (value) {
+                    if (value != null) _email = value.trim();
+                  }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  formField(validatePassword, "Password", (value) {
+                    if (value != null) _password = value;
+                  }),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  NextButton(onPressed: () {
+                    _formKey.currentState!.validate();
+                    print(
+                        "creating account with email: $_email, and password: $_password");
+                  })
+                ],
+              ),
+            )));
   }
 }
