@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/services/auth.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/widgets/next_button.dart';
 
@@ -20,13 +25,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   String _password = "";
 
   Widget formField(String? Function(String?) validator, String label,
-      Function(String?) onSaved) {
+      Function(String?) onChanged) {
     return TextFormField(
-        decoration: InputDecoration(
-          labelText: label,
-        ),
-        validator: validator,
-        onSaved: onSaved);
+      decoration: InputDecoration(
+        labelText: label,
+      ),
+      validator: validator,
+      onChanged: onChanged,
+      obscureText: label == "Password",
+    );
   }
 
   @override
@@ -64,10 +71,24 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  NextButton(onPressed: () {
-                    _formKey.currentState!.validate();
-                    print(
-                        "creating account with email: $_email, and password: $_password");
+                  NextButton(onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      String? error = await createUser(
+                          _email, _password, widget.username, widget.name);
+                      if (error != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.black,
+                            content: Text(
+                              "Error: $error",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
+                      }
+                    }
                   })
                 ],
               ),

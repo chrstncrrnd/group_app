@@ -2,6 +2,9 @@
 // creating a new account and stuff like that
 
 // Returns null if successful, otherwise string with what went wrong
+import 'dart:developer';
+
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:group_app/utils/validators.dart';
 
@@ -32,16 +35,26 @@ Future<String?> createUser(
     return emailValid;
   }
 
-  var passwordValid = validatePassword(email);
+  var passwordValid = validatePassword(password);
   if (passwordValid != null) {
     return passwordValid;
   }
 
   try {
     await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    return null;
+        .createUserWithEmailAndPassword(email: email, password: password);
+    await FirebaseFunctions.instance
+        .httpsCallable("createAccount")
+        .call({"name": name, "username": username});
+  } on FirebaseFunctionsException catch (error) {
+    log(error.toString());
+    await FirebaseAuth.instance.currentUser?.delete();
+    return error.message.toString();
   } catch (error) {
-    return error.toString();
+    await FirebaseAuth.instance.currentUser?.delete();
+    log(error.toString(), error: error);
+    return "Something went wrong...";
   }
+
+  return null;
 }
