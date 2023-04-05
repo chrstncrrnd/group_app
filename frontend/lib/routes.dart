@@ -8,15 +8,6 @@ import 'package:group_app/ui/screens/auth/create_profile.dart';
 import 'package:group_app/ui/screens/home/home.dart';
 
 class Routes extends ChangeNotifier {
-  bool? _loggedIn;
-
-  Routes() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      _loggedIn = user != null;
-      notifyListeners();
-    });
-  }
-
   final List<GoRoute> _authRoutes = [
     GoRoute(
         path: "/",
@@ -48,5 +39,6 @@ class Routes extends ChangeNotifier {
     )
   ];
 
-  List<GoRoute> get routes => _loggedIn ?? false ? _mainRoutes : _authRoutes;
+  List<GoRoute> get routes =>
+      FirebaseAuth.instance.currentUser != null ? _mainRoutes : _authRoutes;
 }

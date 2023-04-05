@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/firebase_options.dart';
 import 'package:group_app/routes.dart';
+import 'package:group_app/utils/go_router_change_notifier.dart';
 import 'package:group_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -26,11 +27,11 @@ class GroupApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<GoRouter>(
-        create: (context) =>
-            GoRouter(routes: Routes().routes, initialLocation: "/"),
+    return ChangeNotifierProvider<GoRouterChangeNotifier>(
+        create: (ctx) => GoRouterChangeNotifier(
+            router: GoRouter(routes: Routes().routes, initialLocation: "/")),
         builder: (ctx, child) => MaterialApp.router(
-              routerConfig: Provider.of<GoRouter>(ctx),
+              routerConfig: Provider.of<GoRouterChangeNotifier>(ctx).router,
               theme: theme,
             ));
   }

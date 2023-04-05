@@ -16,9 +16,6 @@ class _NextButtonState extends State<NextButton> {
   bool loading = false;
 
   void onPressed() async {
-    // don't execute again if its already executing
-    if (loading) return;
-
     setState(() {
       loading = true;
     });
