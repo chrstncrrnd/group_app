@@ -14,7 +14,7 @@ Future<String?> logUserIn(String email, String password) async {
     return emailValid;
   }
 
-  var passwordValid = validatePassword(email);
+  var passwordValid = validatePassword(password);
   if (passwordValid != null) {
     return passwordValid;
   }
@@ -23,8 +23,12 @@ Future<String?> logUserIn(String email, String password) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
     return null;
+  } on FirebaseAuthException catch (error) {
+    log(error.toString());
+    return error.message.toString();
   } catch (error) {
-    return error.toString();
+    log(error.toString());
+    return "An error occurred";
   }
 }
 

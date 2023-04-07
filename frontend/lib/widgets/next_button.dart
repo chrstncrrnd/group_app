@@ -22,9 +22,11 @@ class _NextButtonState extends State<NextButton> {
 
     await widget.onPressed.call();
 
-    setState(() {
-      loading = false;
-    });
+    if (context.mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override

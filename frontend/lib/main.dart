@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:group_app/firebase_options.dart';
 import 'package:group_app/routes.dart';
 import 'package:group_app/utils/go_router_change_notifier.dart';
@@ -30,9 +29,7 @@ class GroupApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
-              create: (ctx) => GoRouterChangeNotifier(
-                  router:
-                      GoRouter(routes: Routes().routes, initialLocation: "/")))
+              create: (ctx) => GoRouterChangeNotifier(routes: Routes()))
         ],
         builder: (ctx, child) => MaterialApp.router(
               routerConfig: Provider.of<GoRouterChangeNotifier>(ctx).router,

@@ -38,18 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelText: 'Email',
                 ),
                 validator: validateEmail,
-                onSaved: (value) {
-                  if (value != null) _email = value.trim();
+                onChanged: (value) {
+                  _email = value.trim();
                 },
               ),
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
-                validator: validatePassword,
                 obscureText: true,
-                onSaved: (value) {
-                  if (value != null) _password = value;
+                onChanged: (value) {
+                  _password = value;
                 },
               ),
               const SizedBox(
@@ -63,9 +62,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text("Don't have an account?")),
               const SizedBox(height: 10),
-              NextButton(
-                onPressed: () async => await logUserIn(_email, _password),
-              ),
+              NextButton(onPressed: () async {
+                String? error = await logUserIn(_email, _password);
+                if (error != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.black,
+                      content: Text(
+                        "Error: $error",
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                }
+              }),
             ],
           ),
         ),

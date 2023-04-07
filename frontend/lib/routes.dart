@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
@@ -7,7 +5,7 @@ import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
 import 'package:group_app/ui/screens/home/home.dart';
 
-class Routes extends ChangeNotifier {
+class Routes {
   final List<GoRoute> _authRoutes = [
     GoRoute(
         path: "/",
@@ -39,6 +37,5 @@ class Routes extends ChangeNotifier {
     )
   ];
 
-  List<GoRoute> get routes =>
-      FirebaseAuth.instance.currentUser != null ? _mainRoutes : _authRoutes;
+  List<GoRoute> routes(bool signedIn) => signedIn ? _mainRoutes : _authRoutes;
 }
