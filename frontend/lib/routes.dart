@@ -1,12 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/animations/route_animations.dart';
 import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
+import 'package:group_app/ui/screens/home/feed.dart';
 import 'package:group_app/ui/screens/home/home.dart';
+import 'package:group_app/ui/screens/home/profile.dart';
+import 'package:group_app/ui/screens/home/search.dart';
 
 class Routes {
-  final List<GoRoute> _authRoutes = [
+  final List<RouteBase> _authRoutes = [
     GoRoute(
         path: "/",
         builder: (context, state) => const IntroScreen(),
@@ -30,12 +35,30 @@ class Routes {
         ]),
   ];
 
-  final List<GoRoute> _mainRoutes = [
-    GoRoute(
-      path: "/",
-      builder: (context, state) => const HomeScreen(),
-    )
+  final List<RouteBase> _mainRoutes = [
+    ShellRoute(
+        builder: (context, GoRouterState state, Widget child) => HomeScreen(
+              state: state,
+              child: child,
+            ),
+        routes: [
+          GoRoute(
+            path: "/",
+            pageBuilder: (context, state) =>
+                noTransition(context, state, const FeedScreen()),
+          ),
+          GoRoute(
+            path: "/search",
+            pageBuilder: (context, state) =>
+                noTransition(context, state, const SearchScreen()),
+          ),
+          GoRoute(
+            path: "/profile",
+            pageBuilder: (context, state) =>
+                noTransition(context, state, const ProfileScreen()),
+          )
+        ]),
   ];
 
-  List<GoRoute> routes(bool signedIn) => signedIn ? _mainRoutes : _authRoutes;
+  List<RouteBase> routes(bool signedIn) => signedIn ? _mainRoutes : _authRoutes;
 }

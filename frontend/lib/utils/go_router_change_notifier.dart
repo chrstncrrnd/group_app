@@ -10,8 +10,6 @@ import 'package:group_app/routes.dart';
 class GoRouterChangeNotifier extends ChangeNotifier {
   GoRouterChangeNotifier({this.signedIn = false, required this.routes}) {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      log("Ok this should be called when auth state changes");
-
       signedIn = user != null;
 
       notifyListeners();
