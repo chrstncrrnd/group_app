@@ -33,6 +33,16 @@ class GroupApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider<GoRouterChangeNotifier>(
               create: (ctx) => GoRouterChangeNotifier(routes: Routes())),
+          StreamProvider<CurrentUser?>(
+            create: (ctx) {
+              if (FirebaseAuth.instance.currentUser != null) {
+                return CurrentUser.asStream(
+                    FirebaseAuth.instance.currentUser!.uid);
+              }
+              return null;
+            },
+            initialData: null,
+          )
         ],
         builder: (ctx, child) => MaterialApp.router(
               routerConfig: Provider.of<GoRouterChangeNotifier>(ctx).router,

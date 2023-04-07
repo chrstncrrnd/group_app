@@ -6,7 +6,9 @@ import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
 import 'package:group_app/ui/screens/home/feed.dart';
+import 'package:group_app/ui/screens/home/groups.dart';
 import 'package:group_app/ui/screens/home/home.dart';
+import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search.dart';
 
@@ -46,6 +48,16 @@ class Routes {
             path: "/",
             pageBuilder: (context, state) =>
                 noTransition(context, state, const FeedScreen()),
+          ),
+          GoRoute(
+            path: "/groups",
+            pageBuilder: (context, state) =>
+                noTransition(context, state, const GroupsScreens()),
+          ),
+          GoRoute(
+            path: "/new_post",
+            pageBuilder: (context, state) =>
+                noTransition(context, state, const NewPostScreen()),
           ),
           GoRoute(
             path: "/search",

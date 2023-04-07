@@ -13,7 +13,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<BottomNavigationBarItem> items = [
-    const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+    const BottomNavigationBarItem(
+        icon: Icon(Icons.home_rounded), label: "Home"),
+    const BottomNavigationBarItem(
+        icon: Icon(Icons.groups_2_rounded), label: "Groups"),
+    const BottomNavigationBarItem(icon: Icon(Icons.add), label: "New Post"),
     const BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
     const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
   ];
@@ -27,9 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go("/");
         break;
       case 1:
-        context.go("/search");
+        context.go("/groups");
         break;
       case 2:
+        context.go("/new_post");
+        break;
+      case 3:
+        context.go("/search");
+        break;
+      case 4:
         context.go("/profile");
         break;
     }
@@ -40,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: items,
         currentIndex: _currentIndex,
         onTap: _onTapped,

@@ -7,7 +7,17 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: const Text("This means that the user is logged in!"));
+        appBar: AppBar(
+          title: const Text(
+            "group_app",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          ),
+          centerTitle: true,
+        ),
+        body: const Center(
+            child: Text(
+          "Feed screen",
+          style: TextStyle(fontSize: 20),
+        )));
   }
 }

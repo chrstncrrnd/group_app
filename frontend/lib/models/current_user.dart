@@ -10,7 +10,7 @@ class CurrentUser {
   String username;
   String? name;
 
-  static Stream<CurrentUser> loadStream(String id) {
+  static Stream<CurrentUser> asStream(String id) {
     return FirebaseFirestore.instance
         .collection("users")
         .doc(id)
