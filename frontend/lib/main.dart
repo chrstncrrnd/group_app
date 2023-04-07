@@ -27,9 +27,13 @@ class GroupApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<GoRouterChangeNotifier>(
-        create: (ctx) => GoRouterChangeNotifier(
-            router: GoRouter(routes: Routes().routes, initialLocation: "/")),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (ctx) => GoRouterChangeNotifier(
+                  router:
+                      GoRouter(routes: Routes().routes, initialLocation: "/")))
+        ],
         builder: (ctx, child) => MaterialApp.router(
               routerConfig: Provider.of<GoRouterChangeNotifier>(ctx).router,
               theme: theme,

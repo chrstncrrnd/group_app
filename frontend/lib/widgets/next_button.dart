@@ -32,16 +32,20 @@ class _NextButtonState extends State<NextButton> {
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
-          backgroundColor: const MaterialStatePropertyAll(Colors.white),
+          backgroundColor: MaterialStatePropertyAll(
+              loading ? Colors.grey.shade400 : Colors.white),
           shape: MaterialStatePropertyAll(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)))),
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-        child: Text(widget.text,
-            style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16)),
+        child: loading
+            ? const SizedBox.square(
+                dimension: 20, child: CircularProgressIndicator.adaptive())
+            : Text(widget.text,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16)),
       ),
     );
   }

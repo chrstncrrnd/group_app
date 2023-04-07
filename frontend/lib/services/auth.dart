@@ -50,6 +50,10 @@ Future<String?> createUser(
     log(error.toString());
     await FirebaseAuth.instance.currentUser?.delete();
     return error.message.toString();
+  } on FirebaseAuthException catch (error) {
+    log(error.toString());
+    await FirebaseAuth.instance.currentUser?.delete();
+    return error.message.toString();
   } catch (error) {
     await FirebaseAuth.instance.currentUser?.delete();
     log(error.toString(), error: error);
