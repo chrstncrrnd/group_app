@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/utils/validators.dart';
-import 'package:group_app/widgets/next_button.dart';
+import 'package:group_app/ui/widgets/next_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

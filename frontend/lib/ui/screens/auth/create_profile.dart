@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/utils/validators.dart';
-import 'package:group_app/widgets/next_button.dart';
+import 'package:group_app/ui/widgets/next_button.dart';
 
 // Initial profile creation steps
 class CreateProfileScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                 "name": name.isEmpty ? null : name,
               });
             }
-          })
+          }),
         ],
       ),
     ];
