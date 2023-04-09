@@ -79,6 +79,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             height: 20,
           ),
           TextFormField(
+            textCapitalization: TextCapitalization.none,
             decoration: const InputDecoration(
               label: Text("Username"),
             ),

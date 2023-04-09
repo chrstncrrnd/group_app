@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/animations/route_animations.dart';
@@ -11,9 +12,20 @@ import 'package:group_app/ui/screens/home/home.dart';
 import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search.dart';
+import 'package:provider/provider.dart';
 
-class Routes {
-  final List<RouteBase> _authRoutes = [
+class Routes extends ChangeNotifier {
+  Routes({this.signedIn = false}) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      signedIn = user != null;
+
+      notifyListeners();
+    });
+  }
+
+  bool signedIn;
+
+  final GoRouter _authRouter = GoRouter(routes: [
     GoRoute(
         path: "/",
         builder: (context, state) => const IntroScreen(),
@@ -35,9 +47,9 @@ class Routes {
             ),
           )
         ]),
-  ];
+  ]);
 
-  final List<RouteBase> _mainRoutes = [
+  final GoRouter _mainRouter = GoRouter(routes: [
     ShellRoute(
         builder: (context, GoRouterState state, Widget child) => HomeScreen(
               state: state,
@@ -70,7 +82,7 @@ class Routes {
                 noTransition(context, state, const ProfileScreen()),
           )
         ]),
-  ];
+  ]);
 
-  List<RouteBase> routes(bool signedIn) => signedIn ? _mainRoutes : _authRoutes;
+  GoRouter get router => signedIn ? _mainRouter : _authRouter;
 }

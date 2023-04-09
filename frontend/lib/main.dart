@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:group_app/firebase_options.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/routes.dart';
-import 'package:group_app/utils/go_router_change_notifier.dart';
 import 'package:group_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -33,21 +32,21 @@ class GroupApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider<GoRouterChangeNotifier>(
-              create: (ctx) => GoRouterChangeNotifier(routes: Routes())),
-          StreamProvider<CurrentUser?>(
-            create: (ctx) {
+          ChangeNotifierProvider<Routes>.value(value: _routes),
+          FutureProvider<CurrentUser?>(
+            initialData: null,
+            create: (c) async {
               if (FirebaseAuth.instance.currentUser != null) {
-                return CurrentUser.asStream(
-                    FirebaseAuth.instance.currentUser!.uid);
+                return await CurrentUser.fromId(
+                    FirebaseAuth.instance.currentUser!.uid)
+                  ..listenForChanges();
               }
               return null;
             },
-            initialData: null,
           )
         ],
         builder: (ctx, child) => MaterialApp.router(
-              routerConfig: Provider.of<GoRouterChangeNotifier>(ctx).router,
+              routerConfig: Provider.of<Routes>(ctx).router,
               theme: theme,
             ));
   }

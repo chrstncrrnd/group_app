@@ -1,6 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +16,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var currentUser = Provider.of<CurrentUser?>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentUser?.username ?? "no username"),
+        leading: IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: FirebaseAuth.instance.signOut,
+        ),
       ),
+      body: Text(currentUser?.name ?? "hi"),
     );
   }
 }
