@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class CurrentUser extends ChangeNotifier {
   CurrentUser(
@@ -12,7 +13,23 @@ class CurrentUser extends ChangeNotifier {
 
   String username;
   String? name;
+  String? pfpUrl;
   DateTime createdAt;
+
+  Widget pfp(double size) => pfpUrl == null
+      ? Icon(
+          Icons.person,
+          color: Colors.white,
+          size: size,
+        )
+      : CachedNetworkImage(
+          width: size,
+          height: size,
+          imageUrl: pfpUrl!,
+          placeholder: (context, url) {
+            return const CircularProgressIndicator.adaptive();
+          },
+        );
 
   void listenForChanges() {
     FirebaseFirestore.instance
@@ -21,9 +38,11 @@ class CurrentUser extends ChangeNotifier {
         .snapshots()
         .listen((newData) {
       var json = newData.data();
+      print("JSON: " + json.toString());
       if (json != null) {
         updateCurrentUser(json);
       }
+      notifyListeners();
     });
   }
 
@@ -31,7 +50,7 @@ class CurrentUser extends ChangeNotifier {
     // only updatable fields (stuff like createdAt and id should not be changed)
     username = json["username"];
     name = json["name"];
-    notifyListeners();
+    pfpUrl = json["pfpUrl"];
   }
 
   static Future<CurrentUser> fromId(String id) async {

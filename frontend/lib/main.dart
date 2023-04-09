@@ -34,18 +34,20 @@ class GroupApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider<Routes>.value(value: _routes),
           FutureProvider<CurrentUser?>(
+            lazy: false,
             initialData: null,
             create: (c) async {
               if (FirebaseAuth.instance.currentUser != null) {
-                return await CurrentUser.fromId(
-                    FirebaseAuth.instance.currentUser!.uid)
-                  ..listenForChanges();
+                var currentUser = await CurrentUser.fromId(
+                    FirebaseAuth.instance.currentUser!.uid);
+                currentUser.listenForChanges();
               }
               return null;
             },
           )
         ],
         builder: (ctx, child) => MaterialApp.router(
+              debugShowCheckedModeBanner: false,
               routerConfig: Provider.of<Routes>(ctx).router,
               theme: theme,
             ));
