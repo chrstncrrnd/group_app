@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
+import 'package:group_app/ui/widgets/alert_dialog.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 
@@ -65,16 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
               NextButton(onPressed: () async {
                 String? error = await logUserIn(_email, _password);
                 if (error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.black,
-                      content: Text(
-                        "Error: $error",
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
+                  showAdaptiveDialog(context,
+                      title: const Text("An error occurred"),
+                      content: Text(error),
+                      actions: const [Text("Ok")]);
                 }
               }),
             ],

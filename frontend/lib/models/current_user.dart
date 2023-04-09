@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CurrentUser {
-  CurrentUser({this.name, required this.id, required this.username});
+  CurrentUser({
+    this.name,
+    required this.id,
+    required this.username,
+  });
 
   String id;
 

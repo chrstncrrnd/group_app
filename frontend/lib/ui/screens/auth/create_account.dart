@@ -8,6 +8,8 @@ import 'package:group_app/services/auth.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 
+import '../../widgets/alert_dialog.dart';
+
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen(
       {super.key, required this.name, required this.username});
@@ -76,17 +78,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       String? error = await createUser(
                           _email, _password, widget.username, widget.name);
                       if (error != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.black,
-                            content: Text(
-                              "Error: $error",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        );
+                        showAdaptiveDialog(context,
+                            title: const Text("An error occurred"),
+                            content: Text(error),
+                            actions: const [Text("Ok")]);
                       }
                     }
                   })

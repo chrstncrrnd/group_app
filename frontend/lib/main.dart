@@ -21,11 +21,13 @@ void main() async {
     FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
   }
 
-  runApp(const GroupApp());
+  runApp(GroupApp());
 }
 
 class GroupApp extends StatelessWidget {
-  const GroupApp({super.key});
+  GroupApp({super.key});
+
+  final Routes _routes = Routes();
 
   @override
   Widget build(BuildContext context) {
