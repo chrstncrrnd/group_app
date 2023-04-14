@@ -21,91 +21,96 @@ class Routes extends ChangeNotifier {
 
       notifyListeners();
     });
+
+    _authRouter = GoRouter(
+        redirect: (context, state) {
+          if (state.location == "/") {
+            return "/intro";
+          }
+          return null;
+        },
+        initialLocation: "/intro",
+        routes: [
+          GoRoute(
+            path: "/intro",
+            builder: (context, state) => const IntroScreen(),
+          ),
+          GoRoute(
+            path: "/login",
+            builder: (context, state) => const LoginScreen(),
+          ),
+          GoRoute(
+            path: "/create_profile",
+            builder: (context, state) => const CreateProfileScreen(),
+          ),
+          GoRoute(
+            name: "create_account",
+            path: "/create_account/:username",
+            builder: (context, state) => CreateAccountScreen(
+              username: state.params["username"]!,
+              name: state.queryParams["name"],
+            ),
+          )
+        ]);
+
+    _mainRouter = GoRouter(
+        redirect: (context, state) {
+          if (state.location == "/") {
+            return "/feed";
+          }
+          return null;
+        },
+        navigatorKey: _mainRootNavigatorKey,
+        initialLocation: "/feed",
+        routes: [
+          ShellRoute(
+              builder: (context, GoRouterState state, Widget child) =>
+                  HomeScreen(
+                    state: state,
+                    child: child,
+                  ),
+              routes: [
+                GoRoute(
+                  path: "/feed",
+                  pageBuilder: (context, state) =>
+                      noTransition(context, state, const FeedScreen()),
+                ),
+                GoRoute(
+                  path: "/groups",
+                  pageBuilder: (context, state) =>
+                      noTransition(context, state, const GroupsScreens()),
+                ),
+                GoRoute(
+                  path: "/new_post",
+                  pageBuilder: (context, state) =>
+                      noTransition(context, state, const NewPostScreen()),
+                ),
+                GoRoute(
+                  path: "/search",
+                  pageBuilder: (context, state) =>
+                      noTransition(context, state, const SearchScreen()),
+                ),
+                GoRoute(
+                  path: "/profile",
+                  pageBuilder: (context, state) =>
+                      noTransition(context, state, const ProfileScreen()),
+                )
+              ]),
+          GoRoute(
+            parentNavigatorKey: _mainRootNavigatorKey,
+            path: "/new_group",
+            builder: (context, _) => const NewGroupScreen(),
+          )
+        ]);
   }
 
-  // final GlobalKey<NavigatorState> _mainRootNavigatorKey =
-  //     GlobalKey<NavigatorState>(debugLabel: 'mainRoot');
+  final GlobalKey<NavigatorState> _mainRootNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'mainRoot');
 
   bool signedIn;
 
-  final GoRouter _authRouter = GoRouter(
-      redirect: (context, state) {
-        if (state.location == "/") {
-          return "/intro";
-        }
-        return null;
-      },
-      initialLocation: "/intro",
-      routes: [
-        GoRoute(
-          path: "/intro",
-          builder: (context, state) => const IntroScreen(),
-        ),
-        GoRoute(
-          path: "/login",
-          builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: "/create_profile",
-          builder: (context, state) => const CreateProfileScreen(),
-        ),
-        GoRoute(
-          name: "create_account",
-          path: "/create_account/:username",
-          builder: (context, state) => CreateAccountScreen(
-            username: state.params["username"]!,
-            name: state.queryParams["name"],
-          ),
-        )
-      ]);
-
-  final GoRouter _mainRouter = GoRouter(
-      redirect: (context, state) {
-        if (state.location == "/") {
-          return "/feed";
-        }
-        return null;
-      },
-      // navigatorKey: _mainRootNavigatorKey,
-      initialLocation: "/feed",
-      routes: [
-        ShellRoute(
-            builder: (context, GoRouterState state, Widget child) => HomeScreen(
-                  state: state,
-                  child: child,
-                ),
-            routes: [
-              GoRoute(
-                path: "/feed",
-                pageBuilder: (context, state) =>
-                    noTransition(context, state, const FeedScreen()),
-              ),
-              GoRoute(
-                path: "/groups",
-                pageBuilder: (context, state) =>
-                    noTransition(context, state, const GroupsScreens()),
-              ),
-              GoRoute(
-                path: "/new_post",
-                pageBuilder: (context, state) =>
-                    noTransition(context, state, const NewPostScreen()),
-              ),
-              GoRoute(
-                path: "/search",
-                pageBuilder: (context, state) =>
-                    noTransition(context, state, const SearchScreen()),
-              ),
-              GoRoute(
-                path: "/profile",
-                pageBuilder: (context, state) =>
-                    noTransition(context, state, const ProfileScreen()),
-              )
-            ]),
-        GoRoute(
-          path: "/new_group",
-          builder: (context, _) => const NewGroupScreen(),
-        )
-      ]);
+  late final GoRouter _authRouter;
+  late final GoRouter _mainRouter;
 
   GoRouter get router => signedIn ? _mainRouter : _authRouter;
 }

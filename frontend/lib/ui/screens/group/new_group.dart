@@ -14,7 +14,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => context.go("/groups"),
+          onPressed: () => context.pop("/groups"),
           icon: const Icon(Icons.close_rounded),
         ),
       ),

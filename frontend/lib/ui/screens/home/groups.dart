@@ -14,7 +14,7 @@ class GroupsScreens extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              onPressed: () => context.go(
+              onPressed: () => context.push(
                     "/new_group",
                   ),
               icon: const Icon(
