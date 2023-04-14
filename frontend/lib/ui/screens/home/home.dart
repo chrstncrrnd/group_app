@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentIndex = val;
     switch (_currentIndex) {
       case 0:
-        context.go("/");
+        context.go("/feed");
         break;
       case 1:
         context.go("/groups");
@@ -50,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         items: items,
-        currentIndex: _currentIndex,
         onTap: _onTapped,
         showSelectedLabels: false,
         showUnselectedLabels: false,

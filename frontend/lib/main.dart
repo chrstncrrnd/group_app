@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/firebase_options.dart';
-import 'package:group_app/models/current_user.dart';
 import 'package:group_app/routes.dart';
 import 'package:group_app/utils/theme.dart';
 import 'package:provider/provider.dart';
