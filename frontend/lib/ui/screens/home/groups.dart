@@ -1,11 +1,25 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/material.dart';
 
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "My groups",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => print("create a new group"),
+              icon: const Icon(
+                Icons.add_rounded,
+                size: 40,
+              ))
+        ],
+      ),
+    );
   }
 }
