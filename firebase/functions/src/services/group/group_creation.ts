@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import { validateGroupDescription, validateGroupName } from "../../utils/validators";
 import { groupNameTaken } from "../../utils/groupname_taken";
 import * as admin from "firebase-admin";
-import { log } from "firebase-functions/logger";
+import { FieldValue } from "firebase-admin/firestore";
 
 export const createGroup = functions.https.onCall(
     async (data: {groupName: string, groupDescription?: string}, ctx) =>  {
@@ -45,7 +45,7 @@ export const createGroup = functions.https.onCall(
     await doc.create(docData);
 
     await admin.firestore().collection("users").doc(userId).update({
-        memberOf: [doc.id],
-        following: [doc.id]
+        memberOf: FieldValue.arrayUnion(doc.id),
+        following: FieldValue.arrayUnion(doc.id)
     })
 })

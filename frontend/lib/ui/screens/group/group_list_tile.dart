@@ -13,12 +13,19 @@ class GroupListTile extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           group.name,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         if (group.description != null)
           Container(
               margin: const EdgeInsets.only(top: 5),
-              child: Text(group.description!))
+              child: Text(
+                group.description!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ))
       ]),
     );
   }

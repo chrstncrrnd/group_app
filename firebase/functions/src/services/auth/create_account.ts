@@ -30,7 +30,9 @@ export const createAccount = functions.https.onCall(
     await admin.firestore().collection("users").doc(ctx.auth.uid).create({
         name: data.name ?? null,
         username: username,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        following: [],
+        memberof: []
     });
 
 })

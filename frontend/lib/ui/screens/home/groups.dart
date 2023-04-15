@@ -4,9 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/ui/screens/group/group_list_tile.dart';
+import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
+
+  Widget tileLoading() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
+        ShimmerLoadingIndicator(
+            child: Text(
+          "----------------",
+          style: TextStyle(color: Colors.transparent, fontSize: 17),
+        )),
+        SizedBox(
+          height: 10,
+        ),
+        ShimmerLoadingIndicator(
+            child: Padding(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(
+                  "--------------------------------------",
+                  style: TextStyle(color: Colors.transparent),
+                )))
+      ]),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +62,8 @@ class GroupsScreens extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
+            return ListView(
+              children: List.generate(4, (index) => tileLoading()),
             );
           }
           if (snapshot.hasError) {
@@ -46,7 +71,13 @@ class GroupsScreens extends StatelessWidget {
               child: Text("Something went wrong..."),
             );
           }
+
           var docs = snapshot.data!.docs;
+          if (docs.isEmpty) {
+            return const Center(
+              child: Text("Create or join a group"),
+            );
+          }
           return ListView.separated(
             separatorBuilder: (context, index) {
               return const Divider(
