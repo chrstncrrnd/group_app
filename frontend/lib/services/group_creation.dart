@@ -19,7 +19,7 @@ Future<String?> createGroup(
   try {
     var params = {"groupName": name};
     if (description != null) {
-      params.addAll({"description": description});
+      params.addAll({"groupDescription": description});
     }
     await FirebaseFunctions.instance.httpsCallable("createGroup").call(params);
   } on FirebaseFunctionsException catch (error) {

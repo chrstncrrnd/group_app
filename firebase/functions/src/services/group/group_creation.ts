@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import { validateGroupDescription, validateGroupName } from "../../utils/validators";
 import { groupNameTaken } from "../../utils/groupname_taken";
 import * as admin from "firebase-admin";
+import { log } from "firebase-functions/logger";
 
 export const createGroup = functions.https.onCall(
     async (data: {groupName: string, groupDescription?: string}, ctx) =>  {
@@ -24,22 +25,24 @@ export const createGroup = functions.https.onCall(
         throw new functions.https.HttpsError("already-exists", `Group name: ${groupName} is already taken`);
     }
 
-    var doc = admin.firestore().collection("groups").doc();
+    const doc = admin.firestore().collection("groups").doc();
     
 
-    var userId = ctx.auth.uid;
+    const userId = ctx.auth.uid;
 
-    if (data.groupDescription == null){
-        delete data.groupDescription;
-    }
-
-    await doc.create({
+    const docData = {
         name: groupName,
-        description: data.groupDescription ?? null,
         createdAt: new Date().toISOString(),
         members: [userId],
-        followers: [userId]
-    });
+        followers: [userId],
+        description: data.groupDescription
+    }
+    
+    if (docData.description == null){
+        delete docData.description;
+    }
+
+    await doc.create(docData);
 
     await admin.firestore().collection("users").doc(userId).update({
         memberOf: [doc.id],

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
+import 'package:group_app/ui/screens/group/group_list_tile.dart';
 
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
@@ -26,13 +27,13 @@ class GroupsScreens extends StatelessWidget {
               ))
         ],
       ),
-      // THIS IS JUST TEMP!!!!!!
-      // actual should use pagination
+      // No real need for pagination yet as there just isn't much data
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("groups")
             .where("members",
                 arrayContains: FirebaseAuth.instance.currentUser?.uid)
+            .orderBy("createdAt", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -46,11 +47,19 @@ class GroupsScreens extends StatelessWidget {
             );
           }
           var docs = snapshot.data!.docs;
-          return ListView.builder(
+          return ListView.separated(
+            separatorBuilder: (context, index) {
+              return const Divider(
+                height: 1,
+                indent: 30,
+                endIndent: 30,
+                color: Color.fromARGB(47, 255, 255, 255),
+              );
+            },
             itemCount: docs.length,
             itemBuilder: (context, index) {
               var group = Group.fromJson(json: docs[index].data());
-              return Text("Group name: ${group.name}");
+              return GroupListTile(group: group);
             },
           );
         },
