@@ -50,3 +50,23 @@ String? validateName(String? value) {
 
   return null;
 }
+
+String? validateGroupName(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Please enter a group name";
+  } else if (value.length < 3) {
+    return "Group name needs to be at least 3 characters";
+  } else if (value.length > 20) {
+    return "Group name needs to be shorter than 20 characters";
+  } else if (!usernameRegExp.hasMatch(value)) {
+    return "$value is not a valid group name";
+  }
+  return null;
+}
+
+String? validateGroupDescription(String? value) {
+  if (value != null && value.length > 500) {
+    return "Group description needs to be under 500 characters";
+  }
+  return null;
+}

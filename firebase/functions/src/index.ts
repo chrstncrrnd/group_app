@@ -1,11 +1,8 @@
 import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
-export * from "./auth/create_account";
+
+
+
+export * from "./services/auth/create_account";
+export * from "./services/group/group_creation";
 
 admin.initializeApp();
-
-
-export const helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
-});

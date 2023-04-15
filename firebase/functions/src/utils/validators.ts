@@ -35,7 +35,7 @@ export function validateUsername(value: StrOrNull): StrOrNull {
   } else if (value.length > 20) {
     return "Your username needs to be shorter than 20 characters";
   } else if (!usernameRegExp.test(value)) {
-    return "$value is not a valid username";
+    return `${value} is not a valid username`;
   }
   return null;
 }
@@ -48,3 +48,26 @@ export function validateName(value: StrOrNull): StrOrNull {
   }
   return null;
 }
+
+
+
+export function validateGroupName(value: StrOrNull): StrOrNull {
+  if (value == null || value == undefined || value.length == 0) {
+    return "Please enter a group name";
+  } else if (value.length < 3) {
+    return "Group name needs to be at least 3 characters";
+  } else if (value.length > 20) {
+    return "Group name needs to be shorter than 20 characters";
+  } else if (!usernameRegExp.test(value)) {
+    return `${value} is not a valid group name`;
+  }
+  return null;
+}
+
+export function validateGroupDescription(value: StrOrNull): StrOrNull {
+  if (value != null && value != undefined && value.length > 500) {
+    return "Group description needs to be under 500 characters";
+  }
+  return null;
+}
+
