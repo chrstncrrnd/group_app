@@ -69,18 +69,25 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  NextButton(onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                  NextButton(
+                    onPressed: () async {
+                      if (!_formKey.currentState!.validate()) {
+                        return "Please double check the fields";
+                      }
+
                       String? error = await createUser(
                           _email, _password, widget.username, widget.name);
+                      return error;
+                    },
+                    after: (error) {
                       if (error != null) {
                         showAdaptiveDialog(context,
                             title: const Text("An error occurred"),
                             content: Text(error),
                             actions: const [Text("Ok")]);
                       }
-                    }
-                  })
+                    },
+                  )
                 ],
               ),
             )));

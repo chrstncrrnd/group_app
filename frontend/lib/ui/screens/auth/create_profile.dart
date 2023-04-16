@@ -1,7 +1,10 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
+
+import '../../widgets/alert_dialog.dart';
 
 // Initial profile creation steps
 class CreateProfileScreen extends StatefulWidget {
@@ -49,7 +52,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           const SizedBox(
             height: 20,
           ),
-          NextButton(onPressed: () => setState(() => currentIndex++))
+          NextButton(onPressed: () {
+            setState(() => currentIndex++);
+            return null;
+          })
         ],
       ),
       Column(
@@ -91,15 +97,34 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           const SizedBox(
             height: 20,
           ),
-          NextButton(onPressed: () {
-            if (formKey.currentState!.validate()) {
-              context.pushNamed("create_account", params: {
-                "username": username
-              }, queryParams: {
-                "name": name.isEmpty ? null : name,
-              });
-            }
-          }),
+          NextButton(
+            onPressed: () async {
+              if (!formKey.currentState!.validate()) {
+                return "Please double check the fields";
+              }
+              var res = await FirebaseFunctions.instance
+                  .httpsCallable("usernameAvailable")
+                  .call({"username": username});
+              if (res.data) {
+                return null;
+              }
+              return "Username taken";
+            },
+            after: (res) {
+              if (res != null) {
+                showAdaptiveDialog(context,
+                    title: const Text("An error occurred"),
+                    content: Text(res),
+                    actions: const [Text("Ok")]);
+              } else {
+                context.pushNamed("create_account", params: {
+                  "username": username
+                }, queryParams: {
+                  "name": name.isEmpty ? null : name,
+                });
+              }
+            },
+          ),
         ],
       ),
     ];

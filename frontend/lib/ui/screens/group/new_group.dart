@@ -50,20 +50,25 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 const SizedBox(
                   height: 40,
                 ),
-                NextButton(onPressed: () async {
-                  if (!_formKey.currentState!.validate()) {
-                    return;
-                  }
-                  var res = await createGroup(
-                      name: _groupName, description: _groupDescription);
-                  if (res != null) {
-                    showAdaptiveDialog(context,
-                        title: const Text("An error occurred"),
-                        content: Text(res),
-                        actions: const [Text("Ok")]);
-                  }
-                  context.pop();
-                })
+                NextButton(
+                  onPressed: () async {
+                    if (!_formKey.currentState!.validate()) {
+                      return "Please check all of the fields";
+                    }
+                    var res = await createGroup(
+                        name: _groupName, description: _groupDescription);
+                    return res;
+                  },
+                  after: (res) {
+                    if (res != null) {
+                      showAdaptiveDialog(context,
+                          title: const Text("An error occurred"),
+                          content: Text(res),
+                          actions: const [Text("Ok")]);
+                    }
+                    context.pop();
+                  },
+                )
               ],
             ),
           )),

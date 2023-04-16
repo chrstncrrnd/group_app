@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class NextButton extends StatefulWidget {
-  const NextButton({super.key, required this.onPressed, this.text = "Next"});
+  const NextButton(
+      {super.key, required this.onPressed, this.text = "Next", this.after});
 
   final String text;
-  final FutureOr<void> Function() onPressed;
+  final FutureOr<String?> Function() onPressed;
+  final void Function(String? onPressedRes)? after;
 
   @override
   State<NextButton> createState() => _NextButtonState();
@@ -20,12 +22,16 @@ class _NextButtonState extends State<NextButton> {
       loading = true;
     });
 
-    await widget.onPressed.call();
+    String? res = await widget.onPressed.call();
 
-    if (context.mounted) {
+    if (mounted) {
       setState(() {
         loading = false;
       });
+
+      if (widget.after != null) {
+        widget.after!.call(res);
+      }
     }
   }
 

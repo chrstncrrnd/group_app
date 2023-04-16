@@ -64,15 +64,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text("Don't have an account?")),
               const SizedBox(height: 10),
-              NextButton(onPressed: () async {
-                String? error = await logUserIn(_email, _password);
-                if (error != null) {
-                  showAdaptiveDialog(context,
-                      title: const Text("An error occurred"),
-                      content: Text(error),
-                      actions: const [Text("Ok")]);
-                }
-              }),
+              NextButton(
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) {
+                    return "Please double check all of the inputs";
+                  }
+                  String? error = await logUserIn(_email, _password);
+                  return error;
+                },
+                after: (error) {
+                  if (error != null) {
+                    showAdaptiveDialog(context,
+                        title: const Text("An error occurred"),
+                        content: Text(error),
+                        actions: const [Text("Ok")]);
+                  }
+                },
+              ),
             ],
           ),
         ),
