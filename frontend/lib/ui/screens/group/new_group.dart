@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/group_creation.dart';
 import 'package:group_app/ui/widgets/alert_dialog.dart';
+import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NewGroupScreen extends StatefulWidget {
   const NewGroupScreen({super.key});
@@ -16,6 +21,25 @@ class NewGroupScreen extends StatefulWidget {
 class _NewGroupScreenState extends State<NewGroupScreen> {
   String? _groupName;
   String? _groupDescription;
+
+  final ImagePicker _picker = ImagePicker();
+
+  File? _icon;
+
+  Widget icon(double size) {
+    if (_icon == null) {
+      return Icon(
+        Icons.group,
+        size: size,
+        color: Colors.white,
+      );
+    } else {
+      return Image.file(
+        _icon!,
+        fit: BoxFit.cover,
+      );
+    }
+  }
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,6 +60,46 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 40.0),
             child: Column(
               children: [
+                GestureDetector(
+                  child: BasicCircleAvatar(
+                    radius: 50,
+                    child: icon(50),
+                  ),
+                  onTap: () => showAdaptiveActionSheet(
+                      context: context,
+                      actions: [
+                        BottomSheetAction(
+                            title: const Text("Photo library"),
+                            onPressed: (ctx) async {
+                              var file = await _picker.pickImage(
+                                  source: ImageSource.gallery,
+                                  maxHeight: 400,
+                                  maxWidth: 400);
+                              if (file != null) {
+                                setState(() {
+                                  _icon = File(file.path);
+                                });
+                              }
+                              Navigator.of(context).pop();
+                            }),
+                        BottomSheetAction(
+                            title: const Text("Camera"),
+                            onPressed: (ctx) async {
+                              var file = await _picker.pickImage(
+                                  source: ImageSource.camera,
+                                  maxHeight: 400,
+                                  maxWidth: 400);
+                              if (file != null) {
+                                setState(() {
+                                  _icon = File(file.path);
+                                });
+                              }
+
+                              Navigator.of(context).pop();
+                            })
+                      ],
+                      cancelAction: CancelAction(title: const Text("Cancel"))),
+                ),
                 TextInputField(
                   label: "Name",
                   onChanged: (val) => _groupName = val,
