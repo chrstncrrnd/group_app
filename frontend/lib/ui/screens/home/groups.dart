@@ -9,6 +9,7 @@ import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
 
+  // this needs updating
   Widget tileLoading() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),

@@ -5,9 +5,18 @@ import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 
 export const createGroup = functions.https.onCall(
-    async (data: {groupName: string, groupDescription?: string}, ctx) =>  {
+    async (data: {
+        groupName: string, 
+        groupDescription?: string, 
+        iconLocation?: string, 
+        iconDlUrl?: string
+    }, ctx) =>  {
     if (ctx.auth == null){
         throw new functions.https.HttpsError("permission-denied", "User not signed in");
+    }
+
+    if (typeof data.iconDlUrl != typeof data.iconLocation){
+        throw new functions.https.HttpsError("invalid-argument", "Invalid icon storage location");
     }
 
     const groupName = data.groupName.trim();
@@ -35,11 +44,9 @@ export const createGroup = functions.https.onCall(
         createdAt: new Date().toISOString(),
         members: [userId],
         followers: [userId],
-        description: data.groupDescription
-    }
-    
-    if (docData.description == null){
-        delete docData.description;
+        description: data.groupDescription ?? null,
+        iconDlUrl: data.iconDlUrl ?? null,
+        iconLocation: data.iconLocation ?? null
     }
 
     await doc.create(docData);

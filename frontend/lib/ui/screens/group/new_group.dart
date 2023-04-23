@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/group_creation.dart';
 import 'package:group_app/ui/widgets/alert_dialog.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
+import 'package:group_app/ui/widgets/pick_image.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class NewGroupScreen extends StatefulWidget {
   const NewGroupScreen({super.key});
@@ -22,9 +22,9 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
   String? _groupName;
   String? _groupDescription;
 
-  final ImagePicker _picker = ImagePicker();
-
   File? _icon;
+
+  final PickImage _pickImage = PickImage();
 
   Widget icon(double size) {
     if (_icon == null) {
@@ -65,40 +65,20 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                     radius: 50,
                     child: icon(50),
                   ),
-                  onTap: () => showAdaptiveActionSheet(
-                      context: context,
-                      actions: [
-                        BottomSheetAction(
-                            title: const Text("Photo library"),
-                            onPressed: (ctx) async {
-                              var file = await _picker.pickImage(
-                                  source: ImageSource.gallery,
-                                  maxHeight: 400,
-                                  maxWidth: 400);
-                              if (file != null) {
-                                setState(() {
-                                  _icon = File(file.path);
-                                });
-                              }
-                              Navigator.of(context).pop();
-                            }),
-                        BottomSheetAction(
-                            title: const Text("Camera"),
-                            onPressed: (ctx) async {
-                              var file = await _picker.pickImage(
-                                  source: ImageSource.camera,
-                                  maxHeight: 400,
-                                  maxWidth: 400);
-                              if (file != null) {
-                                setState(() {
-                                  _icon = File(file.path);
-                                });
-                              }
+                  onTap: () async {
+                    var icon = await _pickImage.pickImage(
+                        context: context,
+                        aspectRatio:
+                            const CropAspectRatio(ratioX: 1, ratioY: 1),
+                        maxHeight: 400,
+                        maxWidth: 400);
 
-                              Navigator.of(context).pop();
-                            })
-                      ],
-                      cancelAction: CancelAction(title: const Text("Cancel"))),
+                    if (icon != null) {
+                      setState(() {
+                        _icon = icon;
+                      });
+                    }
+                  },
                 ),
                 TextInputField(
                   label: "Name",
@@ -120,7 +100,9 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                       return "Please check all of the fields";
                     }
                     var res = await createGroup(
-                        name: _groupName, description: _groupDescription);
+                        name: _groupName,
+                        description: _groupDescription,
+                        icon: _icon);
                     return res;
                   },
                   after: (res) {
