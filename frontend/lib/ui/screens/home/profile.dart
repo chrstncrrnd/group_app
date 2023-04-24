@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
@@ -61,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
                 title: Text("@${currentUser.username}"),
                 actions: [
                   IconButton(
-                      onPressed: () => print("open settings"),
+                      onPressed: () => context.push("/settings_directory"),
                       icon: const Icon(Icons.menu_rounded))
                 ],
               ),

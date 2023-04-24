@@ -6,13 +6,14 @@ import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
-import 'package:group_app/ui/screens/group/new_group.dart';
+import 'package:group_app/ui/screens/home/group/new_group.dart';
 import 'package:group_app/ui/screens/home/feed.dart';
 import 'package:group_app/ui/screens/home/groups.dart';
 import 'package:group_app/ui/screens/home/home.dart';
 import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search.dart';
+import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
 
 class Routes extends ChangeNotifier {
   Routes({this.signedIn = false}) {
@@ -94,6 +95,10 @@ class Routes extends ChangeNotifier {
                   path: "/profile",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const ProfileScreen()),
+                ),
+                GoRoute(
+                  path: "/settings_directory",
+                  builder: (context, state) => const SettingsDirectoryPage(),
                 )
               ]),
           GoRoute(

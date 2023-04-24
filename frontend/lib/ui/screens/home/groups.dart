@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
-import 'package:group_app/ui/screens/group/group_list_tile.dart';
+import 'package:group_app/ui/screens/home/group/group_list_tile.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 
 class GroupsScreens extends StatelessWidget {
