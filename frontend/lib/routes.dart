@@ -13,6 +13,7 @@ import 'package:group_app/ui/screens/home/home.dart';
 import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search.dart';
+import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
 import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
 
 class Routes extends ChangeNotifier {
@@ -97,9 +98,15 @@ class Routes extends ChangeNotifier {
                       noTransition(context, state, const ProfileScreen()),
                 ),
                 GoRoute(
-                  path: "/settings_directory",
-                  builder: (context, state) => const SettingsDirectoryPage(),
-                )
+                    path: "/settings_directory",
+                    builder: (context, state) => const SettingsDirectoryPage(),
+                    routes: [
+                      GoRoute(
+                        path: "profile_settings",
+                        builder: (context, state) =>
+                            const ProfileSettingsScreen(),
+                      )
+                    ])
               ]),
           GoRoute(
             parentNavigatorKey: _mainRootNavigatorKey,

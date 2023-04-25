@@ -12,7 +12,7 @@ class SettingDirectoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(path),
+      onTap: () => context.push(path),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

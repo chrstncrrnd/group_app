@@ -17,7 +17,9 @@ class SettingsDirectoryPage extends StatelessWidget {
       body: Column(
         children: const [
           SettingDirectoryTile(
-              icon: Icon(Icons.person), name: "Profile", path: "/profile"),
+              icon: Icon(Icons.person),
+              name: "Profile",
+              path: "/settings_directory/profile_settings"),
           SettingDirectoryTile(
               icon: Icon(Icons.lock), name: "Privacy", path: "/profile"),
           SettingDirectoryTile(
