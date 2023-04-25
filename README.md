@@ -3,6 +3,6 @@
 A mobile app for friend groups :)
 
 ## Project structure
-- frontend: contains flutter/dart frontend code
-- firebase: contains firebase configs
-- firebase/functions: contains cloud functions code
+- frontend: contains frontend code (Dart/Flutter)
+- firebase: contains firebase configs (Firebase rules lang idk)
+- firebase/functions: contains cloud functions code (Typescript)
