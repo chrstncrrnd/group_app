@@ -23,7 +23,6 @@ export const updateProfile = functions.https.onCall(
     if (data.pfpDlUrl != null && data.pfpLocation != null) {
         dataToUpdate.pfpDlUrl = data.pfpDlUrl;
         dataToUpdate.pfpLocation = data.pfpLocation;
-        functions.logger.log("we are at that stage fr");
     }
 
     // validate username
