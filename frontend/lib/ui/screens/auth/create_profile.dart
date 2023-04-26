@@ -1,6 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/services/auth.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 
@@ -102,13 +103,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
               if (!formKey.currentState!.validate()) {
                 return "Please double check the fields";
               }
-              var res = await FirebaseFunctions.instance
-                  .httpsCallable("usernameAvailable")
-                  .call({"username": username});
-              if (res.data) {
-                return null;
-              }
-              return "Username taken";
+              var res = await usernameAvailable(username);
+              return res;
             },
             after: (res) {
               if (res != null) {

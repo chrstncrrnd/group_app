@@ -43,8 +43,16 @@ class CurrentUser extends ChangeNotifier {
         id: id,
         username: json["username"],
         name: json["name"],
-        pfpUrl: json["pfpUrl"],
+        pfpUrl: json["pfpDlUrl"],
         createdAt: DateTime.parse(json["createdAt"]!));
+  }
+
+  static Future<CurrentUser> getCurrentUser() async {
+    var id = FirebaseAuth.instance.currentUser!.uid;
+    var json =
+        (await FirebaseFirestore.instance.collection("users").doc(id).get())
+            .data();
+    return CurrentUser.fromJson(json!, id);
   }
 
   static Stream<CurrentUser> asStream() {
