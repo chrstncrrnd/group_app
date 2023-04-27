@@ -110,11 +110,10 @@ Future<String?> updateProfile(
     params["username"] = username;
   }
 
+  String pfpId = getRandomString(20);
+  String pfpLoc = "profilePictures/$pfpId.jpeg";
   try {
     if (pfp != null) {
-      String pfpId = getRandomString(20);
-      String pfpLoc = "profilePictures/$pfpId.jpeg";
-
       var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
       await pfpRef.putFile(pfp);
       String pfpDlUrl = await pfpRef.getDownloadURL();
@@ -132,6 +131,11 @@ Future<String?> updateProfile(
         .call(params);
   } on FirebaseFunctionsException catch (error) {
     log(error.toString());
+    // delete pfp if it was uploaded
+    if (pfp != null) {
+      var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
+      await pfpRef.delete();
+    }
     return error.message.toString();
   } catch (error) {
     log(error.toString(), error: error);

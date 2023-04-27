@@ -31,6 +31,8 @@ export const createAccount = functions.https.onCall(
         name: data.name ?? null,
         username: username,
         createdAt: new Date().toISOString(),
+        pfpDlUrl: null,
+        pfpLocation: null,
         following: [],
         memberof: []
     });

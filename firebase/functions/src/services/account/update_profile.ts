@@ -16,15 +16,8 @@ export const updateProfile = functions.https.onCall(
 
     const dataToUpdate: any = {};
 
-    // if one is null and the other isn't
-    if (typeof data.pfpDlUrl != typeof data.pfpLocation) {
-        throw new functions.https.HttpsError("invalid-argument", "Invalid profile picture storage location")
-    }
-    if (data.pfpDlUrl != null && data.pfpLocation != null) {
-        dataToUpdate.pfpDlUrl = data.pfpDlUrl;
-        dataToUpdate.pfpLocation = data.pfpLocation;
-    }
 
+    
     // validate username
     if (data.username != null){
         const username = data.username.trim();
@@ -39,7 +32,7 @@ export const updateProfile = functions.https.onCall(
             dataToUpdate.username = username;
         }
     }
-
+    
     // validate name
     if (data.name != null) {
         const nameValid = validateName(data.name);
@@ -48,7 +41,25 @@ export const updateProfile = functions.https.onCall(
         }
         dataToUpdate.name = data.name;
     }
+    
+    const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
 
-    await admin.firestore().collection("users").doc(ctx.auth.uid).update(dataToUpdate);
+    
+    // if one is null and the other isn't
+    if (typeof data.pfpDlUrl != typeof data.pfpLocation) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid profile picture storage location")
+    }
+    if (data.pfpDlUrl != null && data.pfpLocation != null) {
+        dataToUpdate.pfpDlUrl = data.pfpDlUrl;
+        dataToUpdate.pfpLocation = data.pfpLocation;
+        
+        const pfpLocation = (await doc.get()).data()?.pfpLocation;
+        if (pfpLocation != null) {
+            const storage = admin.storage();
+            await storage.bucket().file(pfpLocation).delete();
+        }
+    }
+
+    await doc.update(dataToUpdate);
 
 })

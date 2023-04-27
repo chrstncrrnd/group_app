@@ -26,8 +26,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   File? _pfp;
 
-  final PickImage _pickImage = PickImage();
-
   Widget pfp(double size, {String? url}) {
     if (url != null) {
       return Image.network(
@@ -69,7 +67,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: BasicCircleAvatar(
                       radius: 50, child: pfp(50, url: data?.pfpUrl)),
                   onTap: () async {
-                    var newPfp = await _pickImage.pickImage(
+                    var newPfp = await pickImage(
                         context: context,
                         aspectRatio:
                             const CropAspectRatio(ratioX: 1, ratioY: 1),
@@ -77,9 +75,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         maxWidth: 400);
 
                     if (newPfp != null) {
-                      setState(() {
-                        _pfp = newPfp;
-                      });
+                      _pfp = newPfp;
+                      setState(() {});
                     }
                   },
                 ),
@@ -122,7 +119,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       context.pop();
                     }
                   },
-                )
+                ),
               ]),
             );
           }),

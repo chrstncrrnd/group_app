@@ -24,8 +24,6 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
 
   File? _icon;
 
-  final PickImage _pickImage = PickImage();
-
   Widget icon(double size) {
     if (_icon == null) {
       return Icon(
@@ -66,7 +64,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                     child: icon(50),
                   ),
                   onTap: () async {
-                    var icon = await _pickImage.pickImage(
+                    var icon = await pickImage(
                         context: context,
                         aspectRatio:
                             const CropAspectRatio(ratioX: 1, ratioY: 1),
