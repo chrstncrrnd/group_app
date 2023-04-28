@@ -17,11 +17,6 @@ export const updateProfile = functions.https.onCall(
 
     const dataToUpdate: any = {};
 
-    if (data.removeCurrentPfp == true){
-        dataToUpdate.pfpDlUrl = null;
-        dataToUpdate.pfpLocation = null;
-    }
-    
     // validate username
     if (data.username != null){
         const username = data.username.trim();
@@ -48,6 +43,18 @@ export const updateProfile = functions.https.onCall(
     
     const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
 
+
+
+    if (data.removeCurrentPfp == true){
+        dataToUpdate.pfpDlUrl = null;
+        dataToUpdate.pfpLocation = null;
+        const pfpLocation = (await doc.get()).data()?.pfpLocation;
+        if (pfpLocation != null){
+            const storage = admin.storage();
+            await storage.bucket().file(pfpLocation).delete();
+        }
+    }
+    
     
     // if one is null and the other isn't
     if (typeof data.pfpDlUrl != typeof data.pfpLocation) {
