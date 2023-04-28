@@ -91,7 +91,27 @@ class GroupsScreens extends StatelessWidget {
             itemCount: docs.length,
             itemBuilder: (context, index) {
               var group = Group.fromJson(json: docs[index].data());
-              return GroupListTile(group: group);
+              return Dismissible(
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    margin: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    alignment: Alignment.centerRight,
+                    child: const Padding(
+                        padding: EdgeInsets.only(right: 30),
+                        child: Icon(
+                          Icons.archive,
+                          color: Colors.black,
+                        )),
+                  ),
+                  onDismissed: (direction) {
+                    // this is where all of the
+                    print("Archive group now");
+                  },
+                  key: Key(docs[index].toString()),
+                  child: GroupListTile(group: group));
             },
           );
         },
