@@ -87,7 +87,7 @@ Future<String?> createUser(
 }
 
 Future<String?> updateProfile(
-    {String? name, String? username, File? pfp}) async {
+    {String? name, String? username, File? pfp, bool? removeCurrentPfp}) async {
   var params = {};
   if (name != null) {
     var nameValid = validateName(name);
@@ -108,6 +108,10 @@ Future<String?> updateProfile(
       return available;
     }
     params["username"] = username;
+  }
+
+  if (removeCurrentPfp != null) {
+    params["removeCurrentPfp"] = removeCurrentPfp;
   }
 
   String pfpId = getRandomString(20);

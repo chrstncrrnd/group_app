@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   String? _newUsername;
 
   File? _pfp;
+  bool _pfpUpdated = false;
+
+  CurrentUser? _currentUser;
 
   Widget pfp(double size, {String? url}) {
     if (url != null) {
@@ -46,6 +50,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     }
   }
 
+  Future<CurrentUser?> _future() async {
+    _currentUser ??= await CurrentUser.getCurrentUser();
+    return _currentUser;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,14 +67,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ),
       ),
       body: Suspense(
-          future: CurrentUser.getCurrentUser(),
+          future: _future(),
           builder: (context, data) {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(children: [
                 GestureDetector(
                   child: BasicCircleAvatar(
-                      radius: 50, child: pfp(50, url: data?.pfpUrl)),
+                      radius: 50,
+                      child: pfp(50, url: _pfpUpdated ? null : data?.pfpUrl)),
                   onTap: () async {
                     var newPfp = await pickImage(
                         context: context,
@@ -75,11 +85,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                         maxWidth: 400);
 
                     if (newPfp != null) {
+                      _pfpUpdated = true;
                       _pfp = newPfp;
                       setState(() {});
                     }
                   },
                 ),
+                if (_pfp != null || (data?.pfpUrl != null && !_pfpUpdated))
+                  TextButton(
+                      onPressed: () {
+                        _pfp = null;
+                        _pfpUpdated = true;
+                        setState(() {});
+                      },
+                      child: const Text("Remove profile picture")),
                 TextInputField(
                   validator: validateName,
                   label: "Name",
@@ -105,9 +124,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     if (data?.username == _newUsername) {
                       _newUsername = null;
                     }
-
+                    var rm = _pfpUpdated && _pfp == null;
+                    log("rm: $rm");
                     return await updateProfile(
-                        name: _newName, username: _newUsername, pfp: _pfp);
+                        name: _newName,
+                        username: _newUsername,
+                        pfp: _pfp,
+                        removeCurrentPfp: rm);
                   },
                   after: (res) {
                     if (res != null) {

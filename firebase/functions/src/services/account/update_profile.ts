@@ -8,7 +8,8 @@ export const updateProfile = functions.https.onCall(
         name?: string,
         username?: string, 
         pfpLocation?: string, 
-        pfpDlUrl?: string
+        pfpDlUrl?: string,
+        removeCurrentPfp?: boolean,
     }, ctx) => {
     if (ctx.auth == null){
         throw new functions.https.HttpsError("permission-denied", "User not signed in");
@@ -16,7 +17,10 @@ export const updateProfile = functions.https.onCall(
 
     const dataToUpdate: any = {};
 
-
+    if (data.removeCurrentPfp == true){
+        dataToUpdate.pfpDlUrl = null;
+        dataToUpdate.pfpLocation = null;
+    }
     
     // validate username
     if (data.username != null){
@@ -58,6 +62,11 @@ export const updateProfile = functions.https.onCall(
             const storage = admin.storage();
             await storage.bucket().file(pfpLocation).delete();
         }
+    }
+
+    // don't change document if theres nothing to change
+    if(JSON.stringify(dataToUpdate).length < 3) {
+        return;
     }
 
     await doc.update(dataToUpdate);
