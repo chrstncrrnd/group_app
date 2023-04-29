@@ -27,14 +27,21 @@ export const createAccount = functions.https.onCall(
         throw new functions.https.HttpsError("already-exists", `Username ${username} is already taken`);
     }
 
-    await admin.firestore().collection("users").doc(ctx.auth.uid).create({
+    const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
+    
+    await doc.create({
         name: data.name ?? null,
         username: username,
         createdAt: new Date().toISOString(),
         pfpDlUrl: null,
         pfpLocation: null,
         following: [],
-        memberof: []
+        memberOf: []
+    });
+    
+    // initialize private data
+    await doc.collection("private_data").doc("private_data").create({
+        "archivedGroups": null
     });
 
 })

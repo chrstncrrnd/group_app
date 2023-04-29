@@ -5,7 +5,8 @@ import '../ui/widgets/shimmer_loading_indicator.dart';
 
 class Group {
   Group(
-      {required this.name,
+      {required this.id,
+      required this.name,
       required this.createdAt,
       required this.members,
       required this.followers,
@@ -13,7 +14,7 @@ class Group {
       this.iconDlUrl,
       this.iconLocation});
 
-  Group.fromJson({required Map<String, dynamic> json})
+  Group.fromJson({required Map<String, dynamic> json, required this.id})
       : name = json["name"],
         description = json["description"],
         createdAt = DateTime.parse(json["createdAt"]),
@@ -22,6 +23,7 @@ class Group {
         iconDlUrl = json["iconDlUrl"],
         iconLocation = json["iconLocation"];
 
+  String id;
   String name;
   String? description;
   DateTime createdAt;

@@ -109,8 +109,9 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                           title: const Text("An error occurred"),
                           content: Text(res),
                           actions: const [Text("Ok")]);
+                    } else {
+                      context.pop();
                     }
-                    context.pop();
                   },
                 )
               ],

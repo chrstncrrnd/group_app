@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -44,47 +45,40 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<CurrentUser>(
-        stream: CurrentUser.asStream(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return buildPlaceholder(context);
-          }
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text("An error occurred"),
-            );
-          }
-          var currentUser = snapshot.data!;
-          return Scaffold(
-              appBar: AppBar(
-                title: Text("@${currentUser.username}"),
-                actions: [
-                  IconButton(
-                      onPressed: () => context.push("/settings_directory"),
-                      icon: const Icon(Icons.menu_rounded))
-                ],
+    var currentUser = Provider.of<CurrentUser?>(context);
+    if (currentUser == null) {
+      return const Center(
+        child: Text("An error occurred"),
+      );
+    }
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("@${currentUser.username}"),
+          actions: [
+            IconButton(
+                onPressed: () => context.push("/settings_directory"),
+                icon: const Icon(Icons.menu_rounded))
+          ],
+        ),
+        body: Center(
+            child: Column(
+          children: [
+            BasicCircleAvatar(
+              radius: 50,
+              child: currentUser.pfp(100),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            if (currentUser.name != null)
+              Text(
+                currentUser.name!,
+                style: _nameTextStyle,
               ),
-              body: Center(
-                  child: Column(
-                children: [
-                  BasicCircleAvatar(
-                    radius: 50,
-                    child: currentUser.pfp(100),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  if (currentUser.name != null)
-                    Text(
-                      currentUser.name!,
-                      style: _nameTextStyle,
-                    ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              )));
-        });
+            const SizedBox(
+              height: 20,
+            ),
+          ],
+        )));
   }
 }

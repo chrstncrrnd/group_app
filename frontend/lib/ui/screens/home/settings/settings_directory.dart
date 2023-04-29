@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/home/settings/setting_directory_tile.dart';
@@ -15,23 +16,26 @@ class SettingsDirectoryPage extends StatelessWidget {
         title: const Text("Settings"),
       ),
       body: Column(
-        children: const [
-          SettingDirectoryTile(
+        children: [
+          const SettingDirectoryTile(
               icon: Icon(Icons.person),
               name: "Profile",
               path: "/settings_directory/profile_settings"),
-          SettingDirectoryTile(
+          const SettingDirectoryTile(
               icon: Icon(Icons.lock), name: "Privacy", path: "/profile"),
-          SettingDirectoryTile(
+          const SettingDirectoryTile(
               icon: Icon(Icons.help_outline), name: "Help", path: "/profile"),
-          SettingDirectoryTile(
+          const SettingDirectoryTile(
               icon: Icon(Icons.description_outlined),
               name: "Open Source Licenses",
               path: "/profile"),
-          SettingDirectoryTile(
+          const SettingDirectoryTile(
               icon: Icon(Icons.info_outline_rounded),
               name: "About",
               path: "/profile"),
+          ElevatedButton(
+              onPressed: () async => FirebaseAuth.instance.signOut(),
+              child: const Text("Sign out"))
         ],
       ),
     );

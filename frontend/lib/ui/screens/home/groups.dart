@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
+import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/screens/home/group/group_list_tile.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
+import 'package:provider/provider.dart';
 
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
@@ -36,6 +41,7 @@ class GroupsScreens extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var currentUser = Provider.of<CurrentUser>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -57,9 +63,9 @@ class GroupsScreens extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("groups")
+            .orderBy("createdAt", descending: true)
             .where("members",
                 arrayContains: FirebaseAuth.instance.currentUser?.uid)
-            .orderBy("createdAt", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -73,24 +79,20 @@ class GroupsScreens extends StatelessWidget {
             );
           }
 
-          var docs = snapshot.data!.docs;
-          if (docs.isEmpty) {
+          var groups = snapshot.data!.docs
+              .where((e) => !currentUser.archivedGroups.contains(e.id))
+              .map((e) => Group.fromJson(json: e.data(), id: e.id))
+              .toList();
+
+          if (groups.isEmpty) {
             return const Center(
               child: Text("Create or join a group"),
             );
           }
-          return ListView.separated(
-            separatorBuilder: (context, index) {
-              return const Divider(
-                height: 1,
-                indent: 30,
-                endIndent: 30,
-                color: Color.fromARGB(47, 255, 255, 255),
-              );
-            },
-            itemCount: docs.length,
+          return ListView.builder(
+            itemCount: groups.length,
             itemBuilder: (context, index) {
-              var group = Group.fromJson(json: docs[index].data());
+              var group = groups[index];
               return Dismissible(
                   direction: DismissDirection.endToStart,
                   background: Container(
@@ -108,10 +110,27 @@ class GroupsScreens extends StatelessWidget {
                   ),
                   onDismissed: (direction) {
                     // this is where all of the
-                    print("Archive group now");
+                    currentUser.archivedGroups.add(group.id);
                   },
-                  key: Key(docs[index].toString()),
-                  child: GroupListTile(group: group));
+                  confirmDismiss: (direction) async {
+                    try {
+                      await archiveGroup(group.id);
+                      return true;
+                    } catch (e) {
+                      log(e.toString());
+                      return false;
+                    }
+                  },
+                  key: Key(group.toString()),
+                  child: Column(children: [
+                    GroupListTile(group: group),
+                    const Divider(
+                      height: 1,
+                      indent: 30,
+                      endIndent: 30,
+                      color: Color.fromARGB(47, 255, 255, 255),
+                    )
+                  ]));
             },
           );
         },

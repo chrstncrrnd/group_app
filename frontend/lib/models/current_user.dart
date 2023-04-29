@@ -10,7 +10,10 @@ class CurrentUser extends ChangeNotifier {
       required this.id,
       required this.username,
       required this.createdAt,
-      this.pfpUrl});
+      required this.memberOf,
+      required this.following,
+      this.pfpUrl,
+      required this.archivedGroups});
 
   String id;
 
@@ -18,6 +21,12 @@ class CurrentUser extends ChangeNotifier {
   String? name;
   String? pfpUrl;
   DateTime createdAt;
+
+  List<String> memberOf;
+  List<String> following;
+
+  // private data
+  List<String> archivedGroups;
 
   Widget pfp(double size) => pfpUrl == null
       ? Icon(
@@ -38,13 +47,23 @@ class CurrentUser extends ChangeNotifier {
           },
         );
 
-  static CurrentUser fromJson(Map<String, dynamic> json, String id) {
+  static Future<CurrentUser> fromJson(
+      Map<String, dynamic> json, String id) async {
+    List<String> archGroups = toListString((await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .collection("private_data")
+        .doc("private_data")
+        .get())["archivedGroups"]);
     return CurrentUser(
         id: id,
         username: json["username"],
         name: json["name"],
         pfpUrl: json["pfpDlUrl"],
-        createdAt: DateTime.parse(json["createdAt"]!));
+        createdAt: DateTime.parse(json["createdAt"]!),
+        following: toListString(json["following"]),
+        memberOf: toListString(json["memberOf"]),
+        archivedGroups: archGroups);
   }
 
   static Future<CurrentUser> getCurrentUser() async {
@@ -61,6 +80,13 @@ class CurrentUser extends ChangeNotifier {
         .collection("users")
         .doc(id)
         .snapshots()
-        .map((event) => CurrentUser.fromJson(event.data()!, id));
+        .asyncMap((event) => CurrentUser.fromJson(event.data()!, id));
   }
+}
+
+List<String> toListString(dynamic input) {
+  if (input == null) {
+    return [];
+  }
+  return (input as List<dynamic>).map((e) => e.toString()).toList();
 }
