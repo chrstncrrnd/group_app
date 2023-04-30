@@ -12,7 +12,9 @@ class Group {
       required this.followers,
       this.description,
       this.iconDlUrl,
-      this.iconLocation});
+      this.iconLocation,
+      this.bannerDlUrl,
+      this.bannerLocation});
 
   Group.fromJson({required Map<String, dynamic> json, required this.id})
       : name = json["name"],
@@ -21,7 +23,9 @@ class Group {
         members = toListString(json["members"]),
         followers = toListString(json["followers"]),
         iconDlUrl = json["iconDlUrl"],
-        iconLocation = json["iconLocation"];
+        iconLocation = json["iconLocation"],
+        bannerDlUrl = json["bannerDlUrl"],
+        bannerLocation = json["bannerLocation"];
 
   String id;
   String name;
@@ -32,6 +36,9 @@ class Group {
 
   String? iconDlUrl;
   String? iconLocation;
+
+  String? bannerDlUrl;
+  String? bannerLocation;
 
   Widget icon(double size) => iconDlUrl == null
       ? Icon(
