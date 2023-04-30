@@ -6,9 +6,10 @@ import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
-import 'package:group_app/ui/screens/home/group/new_group.dart';
+import 'package:group_app/ui/screens/home/groups/archived_groups.dart';
+import 'package:group_app/ui/screens/home/groups/new_group.dart';
 import 'package:group_app/ui/screens/home/feed.dart';
-import 'package:group_app/ui/screens/home/groups.dart';
+import 'package:group_app/ui/screens/home/groups/groups.dart';
 import 'package:group_app/ui/screens/home/home.dart';
 import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
@@ -98,7 +99,7 @@ class Routes extends ChangeNotifier {
                       noTransition(context, state, const ProfileScreen()),
                 ),
                 GoRoute(
-                    path: "/settings_directory",
+                    path: "/settings",
                     builder: (context, state) => const SettingsDirectoryPage(),
                     routes: [
                       GoRoute(
@@ -106,7 +107,11 @@ class Routes extends ChangeNotifier {
                         builder: (context, state) =>
                             const ProfileSettingsScreen(),
                       )
-                    ])
+                    ]),
+                GoRoute(
+                  path: "/archived_groups",
+                  builder: (context, state) => const ArchivedGroupsScreen(),
+                )
               ]),
           GoRoute(
             parentNavigatorKey: _mainRootNavigatorKey,

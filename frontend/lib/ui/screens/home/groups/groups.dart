@@ -7,37 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group_actions.dart';
-import 'package:group_app/ui/screens/home/group/group_list_tile.dart';
+import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 class GroupsScreens extends StatelessWidget {
   const GroupsScreens({super.key});
-
-  // this needs updating
-  Widget tileLoading() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-      child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
-        ShimmerLoadingIndicator(
-            child: Text(
-          "----------------",
-          style: TextStyle(color: Colors.transparent, fontSize: 17),
-        )),
-        SizedBox(
-          height: 10,
-        ),
-        ShimmerLoadingIndicator(
-            child: Padding(
-                padding: EdgeInsets.only(top: 5),
-                child: Text(
-                  "--------------------------------------",
-                  style: TextStyle(color: Colors.transparent),
-                )))
-      ]),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +24,9 @@ class GroupsScreens extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
         ),
         actions: [
+          IconButton(
+              onPressed: () => context.push("/archived_groups"),
+              icon: const Icon(Icons.archive_outlined)),
           IconButton(
               onPressed: () => context.push(
                     "/new_group",
@@ -63,14 +41,14 @@ class GroupsScreens extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("groups")
-            .orderBy("createdAt", descending: true)
-            .where("members",
-                arrayContains: FirebaseAuth.instance.currentUser?.uid)
-            .snapshots(),
+            .where("members", arrayContains: currentUser.id)
+            .where(FieldPath.documentId,
+                whereNotIn: [...currentUser.archivedGroups, "a"]).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return ListView(
-              children: List.generate(4, (index) => tileLoading()),
+              children:
+                  List.generate(4, (index) => const GroupListTileLoading()),
             );
           }
           if (snapshot.hasError) {
@@ -80,7 +58,7 @@ class GroupsScreens extends StatelessWidget {
           }
 
           var groups = snapshot.data!.docs
-              .where((e) => !currentUser.archivedGroups.contains(e.id))
+              // .where((e) => !currentUser.archivedGroups.contains(e.id))
               .map((e) => Group.fromJson(json: e.data(), id: e.id))
               .toList();
 
@@ -108,13 +86,10 @@ class GroupsScreens extends StatelessWidget {
                           color: Colors.black,
                         )),
                   ),
-                  onDismissed: (direction) {
-                    // this is where all of the
-                    currentUser.archivedGroups.add(group.id);
-                  },
                   confirmDismiss: (direction) async {
                     try {
                       await archiveGroup(group.id);
+                      currentUser.archivedGroups.add(group.id);
                       return true;
                     } catch (e) {
                       log(e.toString());

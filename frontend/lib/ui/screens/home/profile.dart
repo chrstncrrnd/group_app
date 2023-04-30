@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
           title: Text("@${currentUser.username}"),
           actions: [
             IconButton(
-                onPressed: () => context.push("/settings_directory"),
+                onPressed: () => context.push("/settings"),
                 icon: const Icon(Icons.menu_rounded))
           ],
         ),

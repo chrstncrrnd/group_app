@@ -11,3 +11,14 @@ Future<void> archiveGroup(String groupId) async {
     "archivedGroups": FieldValue.arrayUnion([groupId])
   });
 }
+
+Future<void> unArchiveGroup(String groupId) async {
+  FirebaseFirestore.instance
+      .collection("users")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("private_data")
+      .doc("private_data")
+      .update({
+    "archivedGroups": FieldValue.arrayRemove([groupId])
+  });
+}
