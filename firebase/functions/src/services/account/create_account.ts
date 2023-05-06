@@ -4,44 +4,50 @@ import { usernameTaken } from "../../utils/username_taken";
 import * as admin from "firebase-admin";
 
 export const createAccount = functions.https.onCall(
-     async (data: {name?: string, username: string}, ctx) => {
-    if (ctx.auth == null){
-        throw new functions.https.HttpsError("permission-denied", "User not signed in");
+  async (data: { name?: string; username: string }, ctx) => {
+    if (ctx.auth == null) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "User not signed in"
+      );
     }
 
     const username = data.username.trim();
 
     // validate username
     const usernameValid = validateUsername(username);
-    if (usernameValid != null){
-        throw new functions.https.HttpsError("invalid-argument", usernameValid);
+    if (usernameValid != null) {
+      throw new functions.https.HttpsError("invalid-argument", usernameValid);
     }
 
     // validate name
     const nameValid = validateName(data.name);
-    if (nameValid != null){
-        throw new functions.https.HttpsError("invalid-argument", nameValid);
+    if (nameValid != null) {
+      throw new functions.https.HttpsError("invalid-argument", nameValid);
     }
 
-    if(await usernameTaken(data.username)){
-        throw new functions.https.HttpsError("already-exists", `Username ${username} is already taken`);
+    if (await usernameTaken(data.username)) {
+      throw new functions.https.HttpsError(
+        "already-exists",
+        `Username ${username} is already taken`
+      );
     }
 
     const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
-    
+
     await doc.create({
-        name: data.name ?? null,
-        username: username,
-        createdAt: new Date().toISOString(),
-        pfpDlUrl: null,
-        pfpLocation: null,
-        following: [],
-        memberOf: []
-    });
-    
-    // initialize private data
-    await doc.collection("private_data").doc("private_data").create({
-        "archivedGroups": null
+      name: data.name ?? null,
+      username: username,
+      createdAt: new Date().toISOString(),
+      pfpDlUrl: null,
+      pfpLocation: null,
+      following: [],
+      memberOf: [],
     });
 
-})
+    // initialize private data
+    await doc.collection("private_data").doc("private_data").create({
+      archivedGroups: null,
+    });
+  }
+);

@@ -37,7 +37,7 @@ class GroupScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          followJoinButtons(context)
+          StatefulBuilder(builder: followJoinButtons)
         ];
         return SafeArea(
             child: ListView.builder(
@@ -53,24 +53,41 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget followJoinButtons(BuildContext context) {
+  Widget followJoinButtons(
+    BuildContext context,
+    StateSetter setState, {
+    bool following = false,
+    bool joined = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
+      children: [
         Flexible(
             flex: 1,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: InteractionButton(
+                active: !following,
                 title: "Follow",
+                onTap: () {
+                  setState(() {
+                    following = !following;
+                  });
+                },
               ),
             )),
         Flexible(
             flex: 1,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: InteractionButton(
                 title: "Join",
+                active: !joined,
+                onTap: () {
+                  setState(() {
+                    joined = !joined;
+                  });
+                },
               ),
             )),
       ],

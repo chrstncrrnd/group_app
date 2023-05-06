@@ -1,13 +1,13 @@
 // pulled from dart codebase
 
 const usernameRegExp = /^(?!_)(?!.*\.$)(?!.*\.\.)[a-z0-9._]{3,28}(?<!\.)$/;
-const emailRegExp = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
+const emailRegExp =
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
 const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
 type StrOrNull = string | null | undefined;
 
-
-export function validateEmail(value: StrOrNull ): StrOrNull {
+export function validateEmail(value: StrOrNull): StrOrNull {
   if (value == null || value == undefined || value.length == 0) {
     return "Email cannot be empty";
   } else if (!emailRegExp.test(value)) {
@@ -49,8 +49,6 @@ export function validateName(value: StrOrNull): StrOrNull {
   return null;
 }
 
-
-
 export function validateGroupName(value: StrOrNull): StrOrNull {
   if (value == null || value == undefined || value.length == 0) {
     return "Please enter a group name";
@@ -70,4 +68,3 @@ export function validateGroupDescription(value: StrOrNull): StrOrNull {
   }
   return null;
 }
-

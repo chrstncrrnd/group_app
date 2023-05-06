@@ -7,29 +7,39 @@ class InteractionButton extends StatelessWidget {
       required this.title,
       this.before,
       this.after,
-      this.textStyle});
+      this.active = true});
 
   final void Function()? onTap;
   final Widget? before;
   final Widget? after;
   final String title;
-  final TextStyle? textStyle;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(17)),
-        child: Center(
-          child: Text(
-            title,
-            style: textStyle ??
-                const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.black),
-          ),
-        ));
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: active ? Colors.white : Colors.black,
+              borderRadius: BorderRadius.circular(17)),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (before != null) before!,
+                Text(
+                  title,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: active ? Colors.black : Colors.white),
+                ),
+                if (after != null) after!
+              ],
+            ),
+          )),
+    );
   }
 }
