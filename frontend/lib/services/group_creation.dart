@@ -20,7 +20,7 @@ Future<String?> createGroup(
   }
 
   try {
-    var params = {"groupName": name};
+    Map<String, dynamic> params = {"groupName": name};
 
     if (icon != null) {
       String iconId = getRandomString(20);
@@ -29,7 +29,9 @@ Future<String?> createGroup(
       var iconRef = FirebaseStorage.instance.ref(iconLoc);
       await iconRef.putFile(icon);
       String iconDlUrl = await iconRef.getDownloadURL();
-      params.addAll({"iconLocation": iconLoc, "iconDlUrl": iconDlUrl});
+      params.addAll({
+        "pfp": {"location": iconLoc, "dlUrl": iconDlUrl}
+      });
     }
 
     if (description != null) {

@@ -1,70 +1,37 @@
-// pulled from dart codebase
+import { z } from "zod";
 
-const usernameRegExp = /^(?!_)(?!.*\.$)(?!.*\.\.)[a-z0-9._]{3,28}(?<!\.)$/;
-const emailRegExp =
-  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
-const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+export const usernameRegExp =
+	/^(?!_)(?!.*\.$)(?!.*\.\.)[a-z0-9._]{3,28}(?<!\.)$/;
+export const emailRegExp =
+	/^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
+export const passwordRegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
-type StrOrNull = string | null | undefined;
+export const storagePathRegExp = /(.+\/.+)*/gm;
 
-export function validateEmail(value: StrOrNull): StrOrNull {
-  if (value == null || value == undefined || value.length == 0) {
-    return "Email cannot be empty";
-  } else if (!emailRegExp.test(value)) {
-    return "Invalid email format";
-  }
-  return null;
-}
+export const usernameShape = z
+	.string()
+	.regex(usernameRegExp, "Invalid username")
+	.min(3, "Username is too short")
+	.max(20, "Username is too long");
 
-export function validatePassword(value: StrOrNull): StrOrNull {
-  if (value == null || value == undefined || value.length == 0) {
-    return "Password is too short password";
-  } else if (value.length < 8) {
-    return "Password must be at least 8 characters";
-  } else if (!passwordRegExp.test(value)) {
-    return "Password must contain upper and lowercase letters and numbers";
-  }
-  return null;
-}
+export const emailShape = z.string().email();
 
-export function validateUsername(value: StrOrNull): StrOrNull {
-  if (value == null || value == undefined || value.length == 0) {
-    return "Please enter your username";
-  } else if (value.length < 3) {
-    return "Your username needs to be at least 3 characters";
-  } else if (value.length > 20) {
-    return "Your username needs to be shorter than 20 characters";
-  } else if (!usernameRegExp.test(value)) {
-    return `${value} is not a valid username`;
-  }
-  return null;
-}
+export const nameShape = z
+	.string()
+	.max(50, "Name is too long")
+	.min(1, "Name is too short");
 
-export function validateName(value: StrOrNull): StrOrNull {
-  if (value == null || value == undefined || value.length == 0) {
-    return null;
-  } else if (value.length > 50) {
-    return "Name should be under 50 characters";
-  }
-  return null;
-}
+export const groupNameShape = z
+	.string()
+	.min(3, "Group name is too short")
+	.max(20, "Group name is too long")
+	.regex(usernameRegExp);
 
-export function validateGroupName(value: StrOrNull): StrOrNull {
-  if (value == null || value == undefined || value.length == 0) {
-    return "Please enter a group name";
-  } else if (value.length < 3) {
-    return "Group name needs to be at least 3 characters";
-  } else if (value.length > 20) {
-    return "Group name needs to be shorter than 20 characters";
-  } else if (!usernameRegExp.test(value)) {
-    return `${value} is not a valid group name`;
-  }
-  return null;
-}
+export const groupDescriptionShape = z
+	.string()
+	.max(500, "Description is too long")
+	.min(1, "Description is too short");
 
-export function validateGroupDescription(value: StrOrNull): StrOrNull {
-  if (value != null && value != undefined && value.length > 500) {
-    return "Group description needs to be under 500 characters";
-  }
-  return null;
-}
+// A string with a limit of 1024 characters because
+// you don't want people to use this string to upload blobs
+export const limStr = z.string().max(4096);

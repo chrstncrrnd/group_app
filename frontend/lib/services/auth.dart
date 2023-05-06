@@ -121,7 +121,9 @@ Future<String?> updateProfile(
       var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
       await pfpRef.putFile(pfp);
       String pfpDlUrl = await pfpRef.getDownloadURL();
-      params.addAll({"pfpLocation": pfpLoc, "pfpDlUrl": pfpDlUrl});
+      params.addAll({
+        "pfp": {"location": pfpLoc, "dlUrl": pfpDlUrl}
+      });
     }
 
     log(params.toString());

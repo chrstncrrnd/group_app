@@ -1,88 +1,93 @@
 import * as functions from "firebase-functions";
-import { validateName, validateUsername } from "../../utils/validators";
 import { usernameTaken } from "../../utils/username_taken";
 import * as admin from "firebase-admin";
+import { z } from "zod";
+import {
+	limStr,
+	nameShape,
+	storagePathRegExp,
+	usernameShape,
+} from "../../utils/validators";
+
+const profileUpdateParams = z.object({
+	name: z.optional(nameShape),
+	username: z.optional(usernameShape),
+	pfp: z.optional(
+		z.object({
+			location: limStr.regex(storagePathRegExp),
+			dlUrl: limStr.url(),
+		}),
+	),
+	removeCurrentPfp: z.optional(z.boolean()),
+});
 
 export const updateProfile = functions.https.onCall(
-  async (
-    data: {
-      name?: string;
-      username?: string;
-      pfpLocation?: string;
-      pfpDlUrl?: string;
-      removeCurrentPfp?: boolean;
-    },
-    ctx
-  ) => {
-    if (ctx.auth == null) {
-      throw new functions.https.HttpsError(
-        "permission-denied",
-        "User not signed in"
-      );
-    }
+	async (
+		data: {
+			name?: string;
+			username?: string;
+			pfp?: { location: string; dlUrl: string };
+			removeCurrentPfp?: boolean;
+		},
+		ctx,
+	) => {
+		if (ctx.auth == null) {
+			throw new functions.https.HttpsError(
+				"permission-denied",
+				"User not signed in",
+			);
+		}
 
-    const dataToUpdate: any = {};
+		const dataToUpdate: {
+			name?: string;
+			username?: string;
+			pfp?: {
+				location: string;
+				dlUrl: string;
+			} | null;
+		} = {};
 
-    // validate username
-    if (data.username != null) {
-      const username = data.username.trim();
-      const usernameValid = validateUsername(username);
-      if (usernameValid != null) {
-        throw new functions.https.HttpsError("invalid-argument", usernameValid);
-      } else if (await usernameTaken(data.username)) {
-        throw new functions.https.HttpsError(
-          "already-exists",
-          `Username ${username} is already taken`
-        );
-      } else {
-        dataToUpdate.username = username;
-      }
-    }
+		const profileUpdateData = profileUpdateParams.parse(data);
 
-    // validate name
-    if (data.name != null) {
-      const nameValid = validateName(data.name);
-      if (nameValid != null) {
-        throw new functions.https.HttpsError("invalid-argument", nameValid);
-      }
-      dataToUpdate.name = data.name;
-    }
+		// validate username
+		if (profileUpdateData.username != null) {
+			const username = profileUpdateData.username.trim();
+			if (await usernameTaken(profileUpdateData.username)) {
+				throw new functions.https.HttpsError(
+					"already-exists",
+					`Username ${username} is already taken`,
+				);
+			} else {
+				dataToUpdate.username = username;
+			}
+		}
 
-    const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
+		// validate name
+		if (profileUpdateData.name != null) {
+			dataToUpdate.name = profileUpdateData.name;
+		}
 
-    if (data.removeCurrentPfp == true) {
-      dataToUpdate.pfpDlUrl = null;
-      dataToUpdate.pfpLocation = null;
-      const pfpLocation = (await doc.get()).data()?.pfpLocation;
-      if (pfpLocation != null) {
-        const storage = admin.storage();
-        await storage.bucket().file(pfpLocation).delete();
-      }
-    }
+		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
 
-    // if one is null and the other isn't
-    if (typeof data.pfpDlUrl != typeof data.pfpLocation) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Invalid profile picture storage location"
-      );
-    }
-    if (data.pfpDlUrl != null && data.pfpLocation != null) {
-      dataToUpdate.pfpDlUrl = data.pfpDlUrl;
-      dataToUpdate.pfpLocation = data.pfpLocation;
+		if (profileUpdateData.removeCurrentPfp === true) {
+			dataToUpdate.pfp = null;
+			const oldPfpLocation = (await doc.get()).data()?.pfp?.location;
+			if (oldPfpLocation != null) {
+				const storage = admin.storage();
+				await storage.bucket().file(oldPfpLocation).delete();
+			}
+		}
 
-      const pfpLocation = (await doc.get()).data()?.pfpLocation;
-      if (pfpLocation != null) {
-        const storage = admin.storage();
-        await storage.bucket().file(pfpLocation).delete();
-      }
-    }
+		if (profileUpdateData.pfp !== null) {
+			dataToUpdate.pfp = profileUpdateData.pfp;
 
-    // don't change document if theres nothing to change
-    if (JSON.stringify(dataToUpdate).length < 3) {
-      return;
-    }
+			const oldPfpLocation = (await doc.get()).data()?.pfp?.location;
+			if (oldPfpLocation != null) {
+				const storage = admin.storage();
+				await storage.bucket().file(oldPfpLocation).delete();
+			}
+		}
 
-    await doc.update(dataToUpdate);
-  }
+		await doc.update(dataToUpdate);
+	},
 );

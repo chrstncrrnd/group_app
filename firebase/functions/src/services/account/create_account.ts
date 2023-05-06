@@ -1,53 +1,51 @@
 import * as functions from "firebase-functions";
-import { validateName, validateUsername } from "../../utils/validators";
 import { usernameTaken } from "../../utils/username_taken";
 import * as admin from "firebase-admin";
+import { z } from "zod";
+import { nameShape, usernameShape } from "../../utils/validators";
+
+const createAccountParams = z.object({
+	username: usernameShape,
+	name: z.optional(nameShape),
+});
 
 export const createAccount = functions.https.onCall(
-  async (data: { name?: string; username: string }, ctx) => {
-    if (ctx.auth == null) {
-      throw new functions.https.HttpsError(
-        "permission-denied",
-        "User not signed in"
-      );
-    }
+	async (data: { name?: string; username: string }, ctx) => {
+		if (ctx.auth == null) {
+			throw new functions.https.HttpsError(
+				"permission-denied",
+				"User not signed in",
+			);
+		}
 
-    const username = data.username.trim();
+		const d = createAccountParams.parse(data);
 
-    // validate username
-    const usernameValid = validateUsername(username);
-    if (usernameValid != null) {
-      throw new functions.https.HttpsError("invalid-argument", usernameValid);
-    }
+		const username = d.username.trim();
 
-    // validate name
-    const nameValid = validateName(data.name);
-    if (nameValid != null) {
-      throw new functions.https.HttpsError("invalid-argument", nameValid);
-    }
+		if (await usernameTaken(d.username)) {
+			throw new functions.https.HttpsError(
+				"already-exists",
+				`Username ${username} is already taken`,
+			);
+		}
 
-    if (await usernameTaken(data.username)) {
-      throw new functions.https.HttpsError(
-        "already-exists",
-        `Username ${username} is already taken`
-      );
-    }
+		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
 
-    const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
+		await doc.create({
+			name: d.name ?? null,
+			username: username,
+			createdAt: new Date().toISOString(),
+			pfp: {
+				dlUrl: null,
+				location: null,
+			},
+			following: [],
+			memberOf: [],
+		});
 
-    await doc.create({
-      name: data.name ?? null,
-      username: username,
-      createdAt: new Date().toISOString(),
-      pfpDlUrl: null,
-      pfpLocation: null,
-      following: [],
-      memberOf: [],
-    });
-
-    // initialize private data
-    await doc.collection("private_data").doc("private_data").create({
-      archivedGroups: null,
-    });
-  }
+		// initialize private data
+		await doc.collection("private_data").doc("private_data").create({
+			archivedGroups: null,
+		});
+	},
 );

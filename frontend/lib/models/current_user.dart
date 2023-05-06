@@ -59,7 +59,7 @@ class CurrentUser extends ChangeNotifier {
         id: id,
         username: json["username"],
         name: json["name"],
-        pfpUrl: json["pfpDlUrl"],
+        pfpUrl: json["pfp"]["dlUrl"],
         createdAt: DateTime.parse(json["createdAt"]!),
         following: toListString(json["following"]),
         memberOf: toListString(json["memberOf"]),
