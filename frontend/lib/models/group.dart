@@ -22,10 +22,10 @@ class Group {
         createdAt = DateTime.parse(json["createdAt"]),
         members = toListString(json["members"]),
         followers = toListString(json["followers"]),
-        iconDlUrl = json["icon"]["dlUrl"],
-        iconLocation = json["icon"]["location"],
-        bannerDlUrl = json["banner"]["dlUrl"],
-        bannerLocation = json["banner"]["location"];
+        iconDlUrl = json["icon"]?["dlUrl"],
+        iconLocation = json["icon"]?["location"],
+        bannerDlUrl = json["banner"]?["dlUrl"],
+        bannerLocation = json["banner"]?["location"];
 
   String id;
   String name;

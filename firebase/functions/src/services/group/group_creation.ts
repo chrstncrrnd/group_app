@@ -61,7 +61,7 @@ export const createGroup = functions.https.onCall(
 			members: [userId],
 			followers: [userId],
 			description: d.groupDescription ?? null,
-			icon: d.icon,
+			icon: d.icon ?? null,
 		};
 
 		await doc.create(docData);
