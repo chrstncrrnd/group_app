@@ -4,5 +4,6 @@ export * from "./services/account/create_account";
 export * from "./services/group/group_creation";
 export * from "./services/account/username_available";
 export * from "./services/account/update_profile";
+export * from "./services/group/user_group_base_interactions";
 
 admin.initializeApp();

@@ -62,9 +62,16 @@ export const createGroup = functions.https.onCall(
 			followers: [userId],
 			description: d.groupDescription ?? null,
 			icon: d.icon ?? null,
+			banner: null,
+			private: false,
 		};
 
 		await doc.create(docData);
+
+		await doc.collection("private_data").doc("private_data").create({
+			followRequests: [],
+			joinRequests: [],
+		});
 
 		await admin
 			.firestore()

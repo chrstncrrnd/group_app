@@ -6,7 +6,7 @@ export const usernameAvailable = functions.https.onCall(
 		if (data.username === null || data.username === undefined) {
 			throw new functions.https.HttpsError(
 				"invalid-argument",
-				"Username not supplied",
+				MISSING_AUTH_MSG,
 			);
 		}
 		return !(await usernameTaken(data.username));

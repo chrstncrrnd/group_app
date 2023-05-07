@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
+import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
+import 'package:provider/provider.dart';
 
 class GroupScreen extends StatelessWidget {
   const GroupScreen({super.key, required this.initialGroupState});
@@ -11,6 +16,7 @@ class GroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context);
     return StreamBuilder<Group>(
       initialData: initialGroupState,
       stream: FirebaseFirestore.instance
@@ -37,7 +43,7 @@ class GroupScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          StatefulBuilder(builder: followJoinButtons)
+          followJoinButtons(context, group, currentUser),
         ];
         return SafeArea(
             child: ListView.builder(
@@ -54,42 +60,86 @@ class GroupScreen extends StatelessWidget {
   }
 
   Widget followJoinButtons(
-    BuildContext context,
-    StateSetter setState, {
-    bool following = false,
-    bool joined = false,
-  }) {
+      BuildContext context, Group group, CurrentUser currentUser) {
+    Widget wrapper({required Widget child}) {
+      return Flexible(
+        flex: 1,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: child,
+        ),
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: InteractionButton(
-                active: !following,
-                title: "Follow",
-                onTap: () {
-                  setState(() {
-                    following = !following;
-                  });
-                },
-              ),
-            )),
-        Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: InteractionButton(
-                title: "Join",
-                active: !joined,
-                onTap: () {
-                  setState(() {
-                    joined = !joined;
-                  });
-                },
-              ),
-            )),
+        wrapper(
+          child: InteractionButton(
+            activeTitle: "Follow",
+            inactiveTitle: "Unfollow",
+            errorTitle: "An error occurred",
+            initState: () async {
+              if (group.followers.contains(currentUser.id)) {
+                return InteractionButtonState.inactive;
+              } else {
+                return InteractionButtonState.active;
+              }
+            },
+            onTap: (state) async {
+              if (state == InteractionButtonState.active) {
+                try {
+                  await followGroup(group.id);
+                  return InteractionButtonState.inactive;
+                } catch (error) {
+                  log(error.toString());
+                  return InteractionButtonState.error;
+                }
+              } else {
+                try {
+                  await unFollowGroup(group.id);
+                  return InteractionButtonState.active;
+                } catch (error) {
+                  log(error.toString());
+                  return InteractionButtonState.error;
+                }
+              }
+            },
+          ),
+        ),
+        wrapper(
+          child: InteractionButton(
+            activeTitle: "Join",
+            inactiveTitle: "Leave",
+            errorTitle: "An error occurred",
+            initState: () async {
+              if (group.members.contains(currentUser.id)) {
+                return InteractionButtonState.inactive;
+              } else {
+                return InteractionButtonState.active;
+              }
+            },
+            onTap: (state) async {
+              if (state == InteractionButtonState.active) {
+                try {
+                  await joinGroup(group.id);
+                  return InteractionButtonState.inactive;
+                } catch (error) {
+                  log(error.toString());
+                  return InteractionButtonState.error;
+                }
+              } else {
+                try {
+                  await leaveGroup(group.id);
+                  return InteractionButtonState.active;
+                } catch (error) {
+                  log(error.toString());
+                  return InteractionButtonState.error;
+                }
+              }
+            },
+          ),
+        ),
       ],
     );
   }

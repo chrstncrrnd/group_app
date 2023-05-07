@@ -34,7 +34,7 @@ export const updateProfile = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				"User not signed in",
+				MISSING_AUTH_MSG,
 			);
 		}
 
