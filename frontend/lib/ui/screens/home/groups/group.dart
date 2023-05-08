@@ -76,7 +76,7 @@ class GroupScreen extends StatelessWidget {
       children: [
         wrapper(
           child: InteractionButton(
-            activeTitle: "Follow",
+            activeTitle: group.private ? "Request follow" : "Follow",
             inactiveTitle: "Unfollow",
             errorTitle: "An error occurred",
             initState: () async {
@@ -109,7 +109,7 @@ class GroupScreen extends StatelessWidget {
         ),
         wrapper(
           child: InteractionButton(
-            activeTitle: "Join",
+            activeTitle: "Request join",
             inactiveTitle: "Leave",
             errorTitle: "An error occurred",
             initState: () async {

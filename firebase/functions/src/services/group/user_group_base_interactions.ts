@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import { z } from "zod";
 import * as admin from "firebase-admin";
 import { groupModel, groupPrivateDataModel } from "../../models/group";
+import { FieldValue } from "firebase-admin/firestore";
 
 const paramsShape = z.object({
 	groupId: z.string(),
@@ -47,17 +48,17 @@ export const followGroup = functions.https.onCall(
 
 		if (groupData.private) {
 			await groupPrivateDataDoc.update({
-				followRequests: admin.firestore.FieldValue.arrayUnion([userId]),
+				followRequests: FieldValue.arrayUnion(userId),
 			});
 			await userDoc.update({
-				followRequests: admin.firestore.FieldValue.arrayUnion([d.groupId]),
+				followRequests: FieldValue.arrayUnion(d.groupId),
 			});
 		} else {
 			await groupDoc.update({
-				followers: admin.firestore.FieldValue.arrayUnion([userId]),
+				followers: FieldValue.arrayUnion(userId),
 			});
 			await userDoc.update({
-				following: admin.firestore.FieldValue.arrayUnion([d.groupId]),
+				following: FieldValue.arrayUnion(d.groupId),
 			});
 		}
 	},
@@ -91,10 +92,12 @@ export const unFollowGroup = functions.https.onCall(
 			return;
 		} else {
 			await groupDoc.update({
-				followers: admin.firestore.FieldValue.arrayRemove([userId]),
+				followers: FieldValue.arrayRemove(userId),
+				members: FieldValue.arrayRemove(userId),
 			});
 			await userDoc.update({
-				following: admin.firestore.FieldValue.arrayRemove([d.groupId]),
+				following: FieldValue.arrayRemove(d.groupId),
+				memberOf: FieldValue.arrayRemove(d.groupId),
 			});
 		}
 
@@ -110,10 +113,10 @@ export const unFollowGroup = functions.https.onCall(
 			return;
 		} else {
 			await groupPrivateDataDoc.update({
-				followRequests: admin.firestore.FieldValue.arrayRemove([userId]),
+				followRequests: FieldValue.arrayRemove(userId),
 			});
 			await userDoc.update({
-				followRequests: admin.firestore.FieldValue.arrayRemove([d.groupId]),
+				followRequests: FieldValue.arrayRemove(d.groupId),
 			});
 		}
 	},
@@ -159,17 +162,19 @@ export const joinGroup = functions.https.onCall(
 
 		if (groupData.private) {
 			await groupPrivateDataDoc.update({
-				joinRequests: admin.firestore.FieldValue.arrayUnion([userId]),
+				joinRequests: FieldValue.arrayUnion(userId),
 			});
 			await userDoc.update({
-				joinRequests: admin.firestore.FieldValue.arrayUnion([d.groupId]),
+				joinRequests: FieldValue.arrayUnion(d.groupId),
 			});
 		} else {
 			await groupDoc.update({
-				members: admin.firestore.FieldValue.arrayUnion([userId]),
+				members: FieldValue.arrayUnion(userId),
+				followers: FieldValue.arrayUnion(userId),
 			});
 			await userDoc.update({
-				memberOf: admin.firestore.FieldValue.arrayUnion([d.groupId]),
+				memberOf: FieldValue.arrayUnion(d.groupId),
+				following: FieldValue.arrayUnion(d.groupId),
 			});
 		}
 	},
@@ -203,10 +208,10 @@ export const leaveGroup = functions.https.onCall(
 			return;
 		} else {
 			await groupDoc.update({
-				members: admin.firestore.FieldValue.arrayRemove([userId]),
+				members: FieldValue.arrayRemove(userId),
 			});
 			await userDoc.update({
-				memberOf: admin.firestore.FieldValue.arrayRemove([d.groupId]),
+				memberOf: FieldValue.arrayRemove(d.groupId),
 			});
 		}
 
@@ -222,10 +227,10 @@ export const leaveGroup = functions.https.onCall(
 			return;
 		} else {
 			await groupPrivateDataDoc.update({
-				joinRequests: admin.firestore.FieldValue.arrayRemove([userId]),
+				joinRequests: FieldValue.arrayRemove(userId),
 			});
 			await userDoc.update({
-				joinRequests: admin.firestore.FieldValue.arrayRemove([d.groupId]),
+				joinRequests: FieldValue.arrayRemove(d.groupId),
 			});
 		}
 	},

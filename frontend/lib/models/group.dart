@@ -10,6 +10,7 @@ class Group {
       required this.createdAt,
       required this.members,
       required this.followers,
+      required this.private,
       this.description,
       this.iconDlUrl,
       this.iconLocation,
@@ -25,7 +26,8 @@ class Group {
         iconDlUrl = json["icon"]?["dlUrl"],
         iconLocation = json["icon"]?["location"],
         bannerDlUrl = json["banner"]?["dlUrl"],
-        bannerLocation = json["banner"]?["location"];
+        bannerLocation = json["banner"]?["location"],
+        private = json["private"];
 
   String id;
   String name;
@@ -33,6 +35,8 @@ class Group {
   DateTime createdAt;
   List<String> members;
   List<String> followers;
+
+  bool private;
 
   String? iconDlUrl;
   String? iconLocation;

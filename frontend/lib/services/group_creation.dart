@@ -30,7 +30,7 @@ Future<String?> createGroup(
       await iconRef.putFile(icon);
       String iconDlUrl = await iconRef.getDownloadURL();
       params.addAll({
-        "pfp": {"location": iconLoc, "dlUrl": iconDlUrl}
+        "icon": {"location": iconLoc, "dlUrl": iconDlUrl}
       });
     }
 
