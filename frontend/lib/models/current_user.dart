@@ -13,7 +13,9 @@ class CurrentUser extends ChangeNotifier {
       required this.memberOf,
       required this.following,
       this.pfpUrl,
-      required this.archivedGroups});
+      required this.archivedGroups,
+      required this.followRequests,
+      required this.joinRequests});
 
   String id;
 
@@ -27,6 +29,9 @@ class CurrentUser extends ChangeNotifier {
 
   // private data
   List<String> archivedGroups;
+
+  List<String> followRequests;
+  List<String> joinRequests;
 
   Widget pfp(double size) => pfpUrl == null
       ? Icon(
@@ -49,12 +54,18 @@ class CurrentUser extends ChangeNotifier {
 
   static Future<CurrentUser> fromJson(
       Map<String, dynamic> json, String id) async {
-    List<String> archGroups = toListString((await FirebaseFirestore.instance
-        .collection("users")
-        .doc(id)
-        .collection("private_data")
-        .doc("private_data")
-        .get())["archivedGroups"]);
+    var privDataDocData = (await FirebaseFirestore.instance
+            .collection("users")
+            .doc(id)
+            .collection("private_data")
+            .doc("private_data")
+            .get())
+        .data();
+
+    List<String> archGroups = toListString(privDataDocData?["archivedGroups"]);
+    List<String> followRequests =
+        toListString(privDataDocData?["followRequests"]);
+    List<String> joinRequests = toListString(privDataDocData?["joinRequests"]);
     return CurrentUser(
         id: id,
         username: json["username"],
@@ -63,7 +74,9 @@ class CurrentUser extends ChangeNotifier {
         createdAt: DateTime.parse(json["createdAt"]!),
         following: toListString(json["following"]),
         memberOf: toListString(json["memberOf"]),
-        archivedGroups: archGroups);
+        archivedGroups: archGroups,
+        joinRequests: joinRequests,
+        followRequests: followRequests);
   }
 
   static Future<CurrentUser> getCurrentUser() async {

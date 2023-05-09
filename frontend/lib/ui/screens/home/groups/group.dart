@@ -43,7 +43,7 @@ class GroupScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          followJoinButtons(context, group, currentUser),
+          Builder(builder: (ctx) => followJoinButtons(ctx, group, currentUser)),
         ];
         return SafeArea(
             child: ListView.builder(
@@ -110,7 +110,9 @@ class GroupScreen extends StatelessWidget {
         wrapper(
           child: InteractionButton(
             activeTitle: "Request join",
-            inactiveTitle: "Leave",
+            inactiveTitle: currentUser.joinRequests.contains(group.id)
+                ? "Requested"
+                : "Leave",
             errorTitle: "An error occurred",
             initState: () async {
               if (group.members.contains(currentUser.id)) {

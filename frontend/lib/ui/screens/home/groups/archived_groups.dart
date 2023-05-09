@@ -32,7 +32,8 @@ class ArchivedGroupsScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return ListView(
-              children: List.generate(4, (index) => GroupListTileLoading()),
+              children:
+                  List.generate(4, (index) => const GroupListTileLoading()),
             );
           }
           if (snapshot.hasError) {
@@ -42,7 +43,6 @@ class ArchivedGroupsScreen extends StatelessWidget {
           }
 
           var groups = snapshot.data!.docs
-              // .where((e) => !currentUser.archivedGroups.contains(e.id))
               .map((e) => Group.fromJson(json: e.data(), id: e.id))
               .toList();
 
