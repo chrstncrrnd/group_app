@@ -16,7 +16,6 @@ class GroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CurrentUser currentUser = Provider.of<CurrentUser>(context);
     return StreamBuilder<Group>(
       initialData: initialGroupState,
       stream: FirebaseFirestore.instance
@@ -43,7 +42,9 @@ class GroupScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Builder(builder: (ctx) => followJoinButtons(ctx, group, currentUser)),
+          StatefulBuilder(
+              builder: (ctx, stateSetter) =>
+                  followJoinButtons(ctx, group, stateSetter)),
         ];
         return SafeArea(
             child: ListView.builder(
@@ -60,7 +61,9 @@ class GroupScreen extends StatelessWidget {
   }
 
   Widget followJoinButtons(
-      BuildContext context, Group group, CurrentUser currentUser) {
+      BuildContext context, Group group, StateSetter setState) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context);
+
     Widget wrapper({required Widget child}) {
       return Flexible(
         flex: 1,
@@ -77,10 +80,13 @@ class GroupScreen extends StatelessWidget {
         wrapper(
           child: InteractionButton(
             activeTitle: group.private ? "Request follow" : "Follow",
-            inactiveTitle: "Unfollow",
+            inactiveTitle: currentUser.followRequests.contains(group.id)
+                ? "Requested"
+                : "Unfollow",
             errorTitle: "An error occurred",
             initState: () async {
-              if (group.followers.contains(currentUser.id)) {
+              if (group.followers.contains(currentUser.id) ||
+                  currentUser.followRequests.contains(group.id)) {
                 return InteractionButtonState.inactive;
               } else {
                 return InteractionButtonState.active;
@@ -90,6 +96,13 @@ class GroupScreen extends StatelessWidget {
               if (state == InteractionButtonState.active) {
                 try {
                   await followGroup(group.id);
+                  if (group.private) {
+                    // we only need to update this because currentUser.following
+                    // will will be updated server side causing a rerender
+                    currentUser.followRequests.add(group.id);
+                    setState(() {});
+                  }
+
                   return InteractionButtonState.inactive;
                 } catch (error) {
                   log(error.toString());
@@ -98,6 +111,8 @@ class GroupScreen extends StatelessWidget {
               } else {
                 try {
                   await unFollowGroup(group.id);
+                  currentUser.followRequests.remove(group.id);
+                  setState(() {});
                   return InteractionButtonState.active;
                 } catch (error) {
                   log(error.toString());
@@ -115,7 +130,8 @@ class GroupScreen extends StatelessWidget {
                 : "Leave",
             errorTitle: "An error occurred",
             initState: () async {
-              if (group.members.contains(currentUser.id)) {
+              if (group.members.contains(currentUser.id) ||
+                  currentUser.joinRequests.contains(group.id)) {
                 return InteractionButtonState.inactive;
               } else {
                 return InteractionButtonState.active;
@@ -125,6 +141,9 @@ class GroupScreen extends StatelessWidget {
               if (state == InteractionButtonState.active) {
                 try {
                   await joinGroup(group.id);
+                  currentUser.joinRequests.add(group.id);
+
+                  setState(() {});
                   return InteractionButtonState.inactive;
                 } catch (error) {
                   log(error.toString());
@@ -133,6 +152,8 @@ class GroupScreen extends StatelessWidget {
               } else {
                 try {
                   await leaveGroup(group.id);
+                  currentUser.joinRequests.remove(group.id);
+                  setState(() {});
                   return InteractionButtonState.active;
                 } catch (error) {
                   log(error.toString());

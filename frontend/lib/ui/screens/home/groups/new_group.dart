@@ -93,6 +93,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                   height: 40,
                 ),
                 NextButton(
+                  text: "Create group",
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
                       return "Please check all of the fields";
