@@ -45,6 +45,7 @@ class GroupScreen extends StatelessWidget {
           StatefulBuilder(
               builder: (ctx, stateSetter) =>
                   followJoinButtons(ctx, group, stateSetter)),
+          noAccess(context, group)
         ];
         return SafeArea(
             child: ListView.builder(
@@ -57,6 +58,31 @@ class GroupScreen extends StatelessWidget {
           },
         ));
       },
+    );
+  }
+
+  Widget noAccess(BuildContext context, Group group) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context);
+    if (!group.private ||
+        group.followers.contains(currentUser.id) ||
+        group.members.contains(currentUser.id)) {
+      return Container();
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      child: Center(
+          child: Column(
+        children: const [
+          Text(
+            "Private group",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text("Follow or join this group to view posts")
+        ],
+      )),
     );
   }
 
