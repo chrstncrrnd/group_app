@@ -45,7 +45,8 @@ export const updateProfile = functions.https.onCall(
 				location: string;
 				dlUrl: string;
 			} | null;
-		} = {};
+			a: string;
+		} = { a: "a" };
 
 		const profileUpdateData = profileUpdateParams.parse(data);
 

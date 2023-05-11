@@ -75,7 +75,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 GestureDetector(
                   child: BasicCircleAvatar(
                       radius: 50,
-                      child: pfp(50, url: _pfpUpdated ? null : data?.pfpUrl)),
+                      child: pfp(50, url: _pfpUpdated ? null : data?.pfpDlUrl)),
                   onTap: () async {
                     var newPfp = await pickImage(
                         context: context,
@@ -91,7 +91,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     }
                   },
                 ),
-                if (_pfp != null || (data?.pfpUrl != null && !_pfpUpdated))
+                if (_pfp != null || (data?.pfpDlUrl != null && !_pfpUpdated))
                   TextButton(
                       onPressed: () {
                         _pfp = null;

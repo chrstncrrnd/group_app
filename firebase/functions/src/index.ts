@@ -7,3 +7,4 @@ export * from "./services/account/update_profile";
 export * from "./services/group/user_group_base_interactions";
 
 admin.initializeApp();
+admin.firestore().settings({ ignoreUndefinedProperties: true });

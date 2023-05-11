@@ -12,7 +12,7 @@ class CurrentUser extends ChangeNotifier {
       required this.createdAt,
       required this.memberOf,
       required this.following,
-      this.pfpUrl,
+      this.pfpDlUrl,
       required this.archivedGroups,
       required this.followRequests,
       required this.joinRequests});
@@ -21,7 +21,7 @@ class CurrentUser extends ChangeNotifier {
 
   String username;
   String? name;
-  String? pfpUrl;
+  String? pfpDlUrl;
   DateTime createdAt;
 
   List<String> memberOf;
@@ -33,7 +33,7 @@ class CurrentUser extends ChangeNotifier {
   List<String> followRequests;
   List<String> joinRequests;
 
-  Widget pfp(double size) => pfpUrl == null
+  Widget pfp(double size) => pfpDlUrl == null
       ? Icon(
           Icons.person,
           color: Colors.white,
@@ -42,7 +42,7 @@ class CurrentUser extends ChangeNotifier {
       : CachedNetworkImage(
           width: size,
           height: size,
-          imageUrl: pfpUrl!,
+          imageUrl: pfpDlUrl!,
           placeholder: (context, url) {
             return ShimmerLoadingIndicator(
               width: size,
@@ -70,7 +70,7 @@ class CurrentUser extends ChangeNotifier {
         id: id,
         username: json["username"],
         name: json["name"],
-        pfpUrl: json["pfp"]["dlUrl"],
+        pfpDlUrl: json["pfp"]?["dlUrl"],
         createdAt: DateTime.parse(json["createdAt"]!),
         following: toListString(json["following"]),
         memberOf: toListString(json["memberOf"]),
