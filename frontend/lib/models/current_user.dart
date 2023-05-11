@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
+import 'package:group_app/utils/to_list_string.dart';
 
 class CurrentUser extends ChangeNotifier {
   CurrentUser(
@@ -95,11 +96,4 @@ class CurrentUser extends ChangeNotifier {
         .snapshots()
         .asyncMap((event) => CurrentUser.fromJson(event.data()!, id));
   }
-}
-
-List<String> toListString(dynamic input) {
-  if (input == null) {
-    return [];
-  }
-  return (input as List<dynamic>).map((e) => e.toString()).toList();
 }

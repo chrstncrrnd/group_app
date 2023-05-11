@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:group_app/utils/to_list_string.dart';
 
 import '../ui/widgets/shimmer_loading_indicator.dart';
 
@@ -62,8 +63,4 @@ class Group {
             );
           },
         );
-}
-
-List<String> toListString(dynamic input) {
-  return (input as List<dynamic>).map((e) => e.toString()).toList();
 }

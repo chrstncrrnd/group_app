@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group_actions.dart';
+import 'package:group_app/ui/screens/home/groups/widgets/affiliated_users_view.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,7 @@ class GroupScreen extends StatelessWidget {
         }
 
         var group = snapshot.data!;
+        var currentUser = Provider.of<CurrentUser>(context);
         List<Widget> top = [
           header(group, context),
           const SizedBox(
@@ -45,7 +47,8 @@ class GroupScreen extends StatelessWidget {
           StatefulBuilder(
               builder: (ctx, stateSetter) =>
                   followJoinButtons(ctx, group, stateSetter)),
-          noAccess(context, group)
+          AffiliatedUsersView(group: group),
+          if (!userHasAccess(group, currentUser)) noAccess(context)
         ];
         return SafeArea(
             child: ListView.builder(
@@ -55,19 +58,20 @@ class GroupScreen extends StatelessWidget {
               return top[index];
             }
             index -= top.length;
+            return null;
           },
         ));
       },
     );
   }
 
-  Widget noAccess(BuildContext context, Group group) {
-    CurrentUser currentUser = Provider.of<CurrentUser>(context);
-    if (!group.private ||
-        group.followers.contains(currentUser.id) ||
-        group.members.contains(currentUser.id)) {
-      return Container();
-    }
+  bool userHasAccess(Group group, CurrentUser currentUser) {
+    return group.followers.contains(currentUser.id) ||
+        group.members.contains(currentUser.id) ||
+        !group.private;
+  }
+
+  Widget noAccess(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 50),
       child: Center(
