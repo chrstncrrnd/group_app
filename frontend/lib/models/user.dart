@@ -56,4 +56,6 @@ class User {
             );
           },
         );
+
+  bool get isNamed => name != null;
 }

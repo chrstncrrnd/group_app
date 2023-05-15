@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
+import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/suspense.dart';
+import 'package:group_app/utils/max.dart';
 
 enum ViewType {
   members,
@@ -32,9 +34,11 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
   ViewType _viewType = ViewType.followers;
 
   Widget selectViewTypeButton(ViewType viewType) {
+    bool currentlySelected = _viewType == viewType;
+
     return TextButton(
         onPressed: () {
-          if (_viewType == viewType) return;
+          if (currentlySelected) return;
           setState(() {
             _viewType = viewType;
           });
@@ -44,9 +48,9 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 17,
-              decoration: viewType == _viewType
-                  ? TextDecoration.underline
-                  : TextDecoration.none),
+              color: currentlySelected
+                  ? Colors.grey.shade300
+                  : Colors.grey.shade600),
         ));
   }
 
@@ -56,37 +60,40 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
         ? widget.group.followers.length
         : widget.group.members.length;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            selectViewTypeButton(ViewType.followers),
-            selectViewTypeButton(ViewType.members),
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20)),
-          height: 80,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: itemCount,
-            itemBuilder: (context, index) {
-              String userId = _viewType == ViewType.followers
-                  ? widget.group.followers[index]
-                  : widget.group.members[index];
-              return _AffiliatedUserTile(
-                userId: userId,
-              );
-            },
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              selectViewTypeButton(ViewType.followers),
+              selectViewTypeButton(ViewType.members),
+            ],
           ),
-        ),
-      ],
+          Container(
+            width: Max.width(context),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20)),
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: itemCount,
+              itemBuilder: (context, index) {
+                String userId = _viewType == ViewType.followers
+                    ? widget.group.followers[index]
+                    : widget.group.members[index];
+                return _AffiliatedUserTile(
+                  userId: userId,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -95,6 +102,15 @@ class _AffiliatedUserTile extends StatelessWidget {
   const _AffiliatedUserTile({super.key, required this.userId});
 
   final String userId;
+  final double radius = 20;
+  final TextStyle primaryText = const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      overflow: TextOverflow.ellipsis,
+      fontSize: 14);
+
+  final TextStyle secondaryText = const TextStyle(
+      color: Colors.grey, overflow: TextOverflow.ellipsis, fontSize: 11);
 
   @override
   Widget build(BuildContext context) {
@@ -107,14 +123,46 @@ class _AffiliatedUserTile extends StatelessWidget {
           }
           return Column(
             children: [
-              BasicCircleAvatar(radius: 20, child: user.pfp(40)),
-              Text(user.username)
+              BasicCircleAvatar(radius: radius, child: user.pfp(radius * 2)),
+              const SizedBox(
+                height: 2,
+              ),
+              if (user.isNamed) ...[
+                Text(
+                  user.name!,
+                  style: primaryText,
+                ),
+                Text(
+                  user.username,
+                  style: secondaryText,
+                )
+              ] else
+                Text(
+                  user.username,
+                  style: primaryText,
+                )
             ],
           );
         });
   }
 
   Widget placeholder() {
-    return const Text("loading");
+    return Column(
+      children: [
+        BasicCircleAvatar(
+            radius: radius,
+            child: ShimmerLoadingIndicator(
+                borderRadius: BorderRadius.circular(radius / 2))),
+        const SizedBox(
+          height: 2,
+        ),
+        const ShimmerLoadingIndicator(
+          child: Text(
+            "placeholder",
+            style: TextStyle(color: Colors.transparent),
+          ),
+        )
+      ],
+    );
   }
 }
