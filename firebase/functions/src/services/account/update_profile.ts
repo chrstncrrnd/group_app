@@ -39,7 +39,7 @@ export const updateProfile = functions.https.onCall(
 		}
 
 		const dataToUpdate: {
-			name?: string;
+			name?: string | null;
 			username?: string;
 			pfp?: {
 				location: string;
@@ -65,7 +65,12 @@ export const updateProfile = functions.https.onCall(
 
 		// validate name
 		if (profileUpdateData.name != null) {
-			dataToUpdate.name = profileUpdateData.name;
+			const newName = profileUpdateData.name.trim();
+			if (newName.length !== 0) {
+				dataToUpdate.name = newName;
+			} else {
+				dataToUpdate.name = null;
+			}
 		}
 
 		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
