@@ -56,6 +56,8 @@ class GroupScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             if (index < top.length) {
               return top[index];
+            } else {
+              if (!userHasAccess(group, currentUser)) return null;
             }
             index -= top.length;
             return null;

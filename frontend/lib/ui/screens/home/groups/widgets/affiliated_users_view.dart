@@ -33,6 +33,10 @@ class AffiliatedUsersView extends StatefulWidget {
 class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
   ViewType _viewType = ViewType.followers;
 
+  int getNumPeople(vt) => vt == ViewType.followers
+      ? widget.group.followers.length
+      : widget.group.members.length;
+
   Widget selectViewTypeButton(ViewType viewType) {
     bool currentlySelected = _viewType == viewType;
 
@@ -44,7 +48,7 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
           });
         },
         child: Text(
-          viewType.toString(),
+          "${viewType.toString()} ${getNumPeople(viewType)}",
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 17,
