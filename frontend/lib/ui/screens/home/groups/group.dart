@@ -234,7 +234,7 @@ class GroupScreen extends StatelessWidget {
                               Colors.white.withOpacity(0.15))),
                     ),
                     IconButton(
-                      onPressed: () => print("show the menu"),
+                      onPressed: () => log("show the menu"),
                       icon: const Icon(Icons.menu),
                       style: ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll(

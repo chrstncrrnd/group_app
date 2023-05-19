@@ -103,7 +103,7 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
 }
 
 class _AffiliatedUserTile extends StatelessWidget {
-  const _AffiliatedUserTile({super.key, required this.userId});
+  const _AffiliatedUserTile({required this.userId});
 
   final String userId;
   final double radius = 20;

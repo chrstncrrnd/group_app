@@ -29,6 +29,7 @@ class IntroScreen extends StatelessWidget {
         showNextButton: false,
         overrideDone: NextButton(onPressed: () {
           context.go("/login");
+          return null;
         }),
       ),
     );
