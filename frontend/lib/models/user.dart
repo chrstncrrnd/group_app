@@ -30,6 +30,13 @@ class User {
     return User.fromJson(json: data, id: id);
   }
 
+  static Stream<User> asStream({required String id}) =>
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(id)
+          .snapshots()
+          .map((event) => User.fromJson(json: event.data()!, id: id));
+
   String? name;
   String username;
   String id;

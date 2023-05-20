@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
@@ -125,27 +126,30 @@ class _AffiliatedUserTile extends StatelessWidget {
           if (user == null) {
             return const Text("Something went wrong...");
           }
-          return Column(
-            children: [
-              BasicCircleAvatar(radius: radius, child: user.pfp(radius * 2)),
-              const SizedBox(
-                height: 2,
-              ),
-              if (user.isNamed) ...[
-                Text(
-                  user.name!,
-                  style: primaryText,
+          return GestureDetector(
+            onTap: () => context.push("/user", extra: user),
+            child: Column(
+              children: [
+                BasicCircleAvatar(radius: radius, child: user.pfp(radius * 2)),
+                const SizedBox(
+                  height: 2,
                 ),
-                Text(
-                  user.username,
-                  style: secondaryText,
-                )
-              ] else
-                Text(
-                  user.username,
-                  style: primaryText,
-                )
-            ],
+                if (user.isNamed) ...[
+                  Text(
+                    user.name!,
+                    style: primaryText,
+                  ),
+                  Text(
+                    user.username,
+                    style: secondaryText,
+                  )
+                ] else
+                  Text(
+                    user.username,
+                    style: primaryText,
+                  )
+              ],
+            ),
           );
         });
   }

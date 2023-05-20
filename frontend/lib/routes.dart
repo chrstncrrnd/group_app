@@ -19,7 +19,7 @@ import 'package:group_app/ui/screens/home/search.dart';
 import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
 import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
 import 'package:group_app/ui/screens/home/user/user_profile.dart';
-import 'package:group_app/models/user.dart' as GroupAppUser;
+import 'package:group_app/models/user.dart' as group_app_user;
 
 class Routes extends ChangeNotifier {
   Routes({this.signedIn = false}) {
@@ -124,7 +124,7 @@ class Routes extends ChangeNotifier {
                 GoRoute(
                     path: "/user",
                     builder: (context, state) => UserProfileScreen(
-                        initialUserState: state.extra! as GroupAppUser.User))
+                        initialUserState: state.extra! as group_app_user.User))
               ]),
           GoRoute(
             parentNavigatorKey: _mainRootNavigatorKey,
