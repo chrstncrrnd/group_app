@@ -9,8 +9,8 @@ import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
 import 'package:provider/provider.dart';
 
-class GroupsScreens extends StatelessWidget {
-  const GroupsScreens({super.key});
+class GroupsScreen extends StatelessWidget {
+  const GroupsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -85,7 +85,7 @@ class Routes extends ChangeNotifier {
                 GoRoute(
                   path: "/groups",
                   pageBuilder: (context, state) =>
-                      noTransition(context, state, const GroupsScreens()),
+                      noTransition(context, state, const GroupsScreen()),
                 ),
                 GoRoute(
                   path: "/new_post",
