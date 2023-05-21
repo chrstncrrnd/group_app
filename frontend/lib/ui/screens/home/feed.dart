@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FeedScreen extends StatelessWidget {
   const FeedScreen({super.key});
@@ -11,6 +12,11 @@ class FeedScreen extends StatelessWidget {
             "group_app",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
+          actions: [
+            IconButton(
+                onPressed: () => context.push("/notifications"),
+                icon: const Icon(Icons.notifications_none_rounded))
+          ],
           centerTitle: true,
         ),
         body: const Center(

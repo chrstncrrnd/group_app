@@ -7,15 +7,19 @@ class ProgressIndicatorButton extends StatefulWidget {
   const ProgressIndicatorButton(
       {super.key,
       required this.onPressed,
-      required this.text,
+      this.text,
       this.style,
-      this.child})
+      this.child,
+      this.progressIndicatorHeight,
+      this.progressIndicatorWidth})
       : assert(text != null || child != null);
 
   final FutureOr<void> Function() onPressed;
   final String? text;
   final Widget? child;
   final ButtonStyle? style;
+  final double? progressIndicatorWidth;
+  final double? progressIndicatorHeight;
 
   @override
   State<ProgressIndicatorButton> createState() =>
@@ -42,10 +46,15 @@ class _ProgressIndicatorButtonState extends State<ProgressIndicatorButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return TextButton(
       onPressed: onPressed,
       style: widget.style,
-      child: widget.child ?? Text(widget.text!),
+      child: loading
+          ? SizedBox(
+              width: widget.progressIndicatorWidth,
+              height: widget.progressIndicatorHeight,
+              child: const CircularProgressIndicator.adaptive())
+          : widget.child ?? Text(widget.text!),
     );
   }
 }
