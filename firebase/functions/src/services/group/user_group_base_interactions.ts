@@ -1,19 +1,110 @@
 import * as functions from "firebase-functions";
 import { z } from "zod";
 import * as admin from "firebase-admin";
-import { groupModel, groupPrivateDataModel } from "../../models/group";
+import { groupModel } from "../../models/group";
 import { FieldValue } from "firebase-admin/firestore";
 
 const paramsShape = z.object({
 	groupId: z.string(),
 });
 
+const createRequest = async (data: {
+	type: "follow" | "join";
+	userId: string;
+	groupId: string;
+}): Promise<"success" | "failure"> => {
+	const fs = admin.firestore();
+
+	const groupData = groupModel.parse(
+		(await fs.collection("groups").doc(data.groupId).get()).data()
+	);
+	if (data.type == "follow" && groupData.followers.includes(data.userId)) {
+		return "failure";
+	}
+	if (data.type == "join" && groupData.members.includes(data.groupId)) {
+		return "failure";
+	}
+
+	const reqDoc = fs
+		.collection("groups")
+		.doc(data.groupId)
+		.collection("requests")
+		.doc(`${data.userId}:${data.type}`);
+
+	// update group
+	try {
+		await reqDoc.create({
+			type: data.type,
+			userId: data.userId,
+			createdAt: new Date().toISOString(),
+		});
+	} catch {
+		return "failure";
+	}
+
+	const userPrivDoc = fs
+		.collection("users")
+		.doc(data.userId)
+		.collection("private_data")
+		.doc("private_data");
+
+	// update user
+	const updateData: {
+		followRequests?: FieldValue;
+		joinRequests?: FieldValue;
+	} = {};
+
+	if (data.type == "follow") {
+		updateData.followRequests = FieldValue.arrayUnion(data.groupId);
+	} else {
+		updateData.joinRequests = FieldValue.arrayUnion(data.groupId);
+	}
+	await userPrivDoc.update(updateData);
+	return "success";
+};
+
+const deleteRequest = async (data: {
+	type: "follow" | "join";
+	userId: string;
+	groupId: string;
+}) => {
+	const fs = admin.firestore();
+
+	const reqDoc = fs
+		.collection("groups")
+		.doc(data.groupId)
+		.collection("requests")
+		.doc(`${data.userId}:${data.type}`);
+
+	// update group
+	await reqDoc.delete();
+
+	const userPrivDoc = fs
+		.collection("users")
+		.doc(data.userId)
+		.collection("private_data")
+		.doc("private_data");
+
+	// update user
+	const updateData: {
+		followRequests?: FieldValue;
+		joinRequests?: FieldValue;
+	} = {};
+
+	if (data.type == "follow") {
+		updateData.followRequests = FieldValue.arrayRemove(data.groupId);
+	} else {
+		updateData.joinRequests = FieldValue.arrayRemove(data.groupId);
+	}
+	await userPrivDoc.update(updateData);
+};
+
 export const followGroup = functions.https.onCall(
-	async (data: { groupId: String }, ctx) => {
+	async (data: { groupId: string }, ctx) => {
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				MISSING_AUTH_MSG
 			);
 		}
 
@@ -29,50 +120,24 @@ export const followGroup = functions.https.onCall(
 		if (groupData.followers.includes(userId)) {
 			return;
 		}
-
-		const groupPrivateDataDoc = groupDoc
-			.collection("private_data")
-			.doc("private_data");
-
-		const groupPrivateData = groupPrivateDataModel.parse(
-			(await groupPrivateDataDoc.get()).data(),
-		);
-		// if they already sent a follow request, return
-		if (groupPrivateData.followRequests?.includes(userId)) {
-			return;
-		}
-
-		const userDoc = admin.firestore().collection("users").doc(userId);
-
-		const userPrivDoc = userDoc.collection("private_data").doc("private_data");
-
-		// if the group is private, just send a request
 		if (groupData.private) {
-			await groupPrivateDataDoc.update({
-				followRequests: FieldValue.arrayUnion(userId),
+			await createRequest({
+				type: "follow",
+				userId: userId,
+				groupId: d.groupId,
 			});
-			await userPrivDoc.update({
-				followRequests: FieldValue.arrayUnion(d.groupId),
-			});
+		} else {
+			await groupDoc.update({ followers: FieldValue.arrayUnion(userId) });
 		}
-		// if its not private, add yourself directly to followers
-		else {
-			await groupDoc.update({
-				followers: FieldValue.arrayUnion(userId),
-			});
-			await userDoc.update({
-				following: FieldValue.arrayUnion(d.groupId),
-			});
-		}
-	},
+	}
 );
 
 export const unFollowGroup = functions.https.onCall(
-	async (data: { groupId: String }, ctx) => {
+	async (data: { groupId: string }, ctx) => {
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				MISSING_AUTH_MSG
 			);
 		}
 
@@ -101,86 +166,40 @@ export const unFollowGroup = functions.https.onCall(
 				memberOf: FieldValue.arrayRemove(d.groupId),
 			});
 		}
-
-		const userPrivDoc = userDoc.collection("private_data").doc("private_data");
-
-		// Just left a follow request
-		const groupPrivateDataDoc = groupDoc
-			.collection("private_data")
-			.doc("private_data");
-
-		const groupPrivateData = groupPrivateDataModel.parse(
-			(await groupPrivateDataDoc.get()).data(),
-		);
-		// if the user just left a follow request
-		if (groupPrivateData.followRequests?.includes(userId)) {
-			await groupPrivateDataDoc.update({
-				followRequests: FieldValue.arrayRemove(userId),
-			});
-			await userPrivDoc.update({
-				followRequests: FieldValue.arrayRemove(d.groupId),
-			});
-		}
-	},
+		// also delete the request
+		await deleteRequest({
+			type: "follow",
+			userId: ctx.auth.uid,
+			groupId: d.groupId,
+		});
+	}
 );
 
 export const joinGroup = functions.https.onCall(
-	async (data: { groupId: String }, ctx) => {
+	async (data: { groupId: string }, ctx) => {
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				MISSING_AUTH_MSG
 			);
 		}
 
 		const d = paramsShape.parse(data);
 
-		// parse group data
-		const groupDoc = admin.firestore().collection("groups").doc(d.groupId);
-		const groupData = groupModel.parse((await groupDoc.get()).data());
-
-		const userId = ctx.auth.uid;
-
-		// if user is not a member, return
-		if (groupData.members.includes(userId)) {
-			return;
-		}
-
-		const groupPrivateDataDoc = groupDoc
-			.collection("private_data")
-			.doc("private_data");
-
-		const groupPrivateData = groupPrivateDataModel.parse(
-			(await groupPrivateDataDoc.get()).data(),
-		);
-		// if user already requested, return
-		if (groupPrivateData.joinRequests?.includes(userId)) {
-			return;
-		}
-
-		const userPrivDoc = admin
-			.firestore()
-			.collection("users")
-			.doc(userId)
-			.collection("private_data")
-			.doc("private_data");
-
-		// joins always need to be approved
-		await groupPrivateDataDoc.update({
-			joinRequests: FieldValue.arrayUnion(userId),
+		await createRequest({
+			type: "join",
+			groupId: d.groupId,
+			userId: ctx.auth.uid,
 		});
-		await userPrivDoc.update({
-			joinRequests: FieldValue.arrayUnion(d.groupId),
-		});
-	},
+	}
 );
 
 export const leaveGroup = functions.https.onCall(
-	async (data: { groupId: String }, ctx) => {
+	async (data: { groupId: string }, ctx) => {
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				MISSING_AUTH_MSG
 			);
 		}
 
@@ -207,21 +226,6 @@ export const leaveGroup = functions.https.onCall(
 			});
 		}
 
-		// Just left a join request
-		const groupPrivateDataDoc = groupDoc
-			.collection("private_data")
-			.doc("private_data");
-
-		const groupPrivateData = groupPrivateDataModel.parse(
-			(await groupPrivateDataDoc.get()).data(),
-		);
-		if (groupPrivateData.joinRequests?.includes(userId)) {
-			await groupPrivateDataDoc.update({
-				joinRequests: FieldValue.arrayRemove(userId),
-			});
-			await userPrivDoc.update({
-				joinRequests: FieldValue.arrayRemove(d.groupId),
-			});
-		}
-	},
+		await deleteRequest({ type: "join", groupId: d.groupId, userId: userId });
+	}
 );

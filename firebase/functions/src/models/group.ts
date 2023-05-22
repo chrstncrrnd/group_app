@@ -25,8 +25,3 @@ export const groupModel = z.object({
 		}),
 	),
 });
-
-export const groupPrivateDataModel = z.object({
-	followRequests: z.array(z.string()).optional(),
-	joinRequests: z.array(z.string()).optional(),
-});

@@ -46,7 +46,10 @@ class NotificationsScreen extends StatelessWidget {
               await Future.delayed(const Duration(seconds: 1));
               print("accepted");
             },
-            onDeny: () async => print("denied"),
+            onDeny: () async {
+              await Future.delayed(const Duration(seconds: 1));
+              print("denied");
+            },
           ),
           const SizedBox(
             height: 10,

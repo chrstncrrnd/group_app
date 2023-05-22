@@ -5,6 +5,9 @@
       },
       {
         "path": "firebase"
+      },
+      {
+        "path": "firebase/functions"
       }
     ]
   }
