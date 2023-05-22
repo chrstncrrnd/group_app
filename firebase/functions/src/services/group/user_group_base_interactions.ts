@@ -156,14 +156,10 @@ export const unFollowGroup = functions.https.onCall(
 			// remove user from followers on that group
 			await groupDoc.update({
 				followers: FieldValue.arrayRemove(userId),
-				// if a member of a group un follows that group,
-				// they also leave the group (len(followers) >= len(members))
-				members: FieldValue.arrayRemove(userId),
 			});
 			// remove group from self following
 			await userDoc.update({
 				following: FieldValue.arrayRemove(d.groupId),
-				memberOf: FieldValue.arrayRemove(d.groupId),
 			});
 		}
 		// also delete the request
