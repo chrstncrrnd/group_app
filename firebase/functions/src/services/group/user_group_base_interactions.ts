@@ -12,17 +12,23 @@ const createRequest = async (data: {
 	type: "follow" | "join";
 	userId: string;
 	groupId: string;
-}): Promise<"success" | "failure"> => {
+}) => {
 	const fs = admin.firestore();
 
 	const groupData = groupModel.parse(
-		(await fs.collection("groups").doc(data.groupId).get()).data()
+		(await fs.collection("groups").doc(data.groupId).get()).data(),
 	);
 	if (data.type == "follow" && groupData.followers.includes(data.userId)) {
-		return "failure";
+		throw new functions.https.HttpsError(
+			"already-exists",
+			USER_ALREADY_FOLLOWER_MSG,
+		);
 	}
 	if (data.type == "join" && groupData.members.includes(data.groupId)) {
-		return "failure";
+		throw new functions.https.HttpsError(
+			"already-exists",
+			USER_ALREADY_MEMBER_MSG,
+		);
 	}
 
 	const reqDoc = fs
@@ -39,7 +45,10 @@ const createRequest = async (data: {
 			createdAt: new Date().toISOString(),
 		});
 	} catch {
-		return "failure";
+		throw new functions.https.HttpsError(
+			"already-exists",
+			USER_ALREADY_SENT_REQUEST_MSG,
+		);
 	}
 
 	const userPrivDoc = fs
@@ -60,7 +69,6 @@ const createRequest = async (data: {
 		updateData.joinRequests = FieldValue.arrayUnion(data.groupId);
 	}
 	await userPrivDoc.update(updateData);
-	return "success";
 };
 
 const deleteRequest = async (data: {
@@ -104,7 +112,7 @@ export const followGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG
+				MISSING_AUTH_MSG,
 			);
 		}
 
@@ -129,7 +137,7 @@ export const followGroup = functions.https.onCall(
 		} else {
 			await groupDoc.update({ followers: FieldValue.arrayUnion(userId) });
 		}
-	}
+	},
 );
 
 export const unFollowGroup = functions.https.onCall(
@@ -137,7 +145,7 @@ export const unFollowGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG
+				MISSING_AUTH_MSG,
 			);
 		}
 
@@ -168,7 +176,7 @@ export const unFollowGroup = functions.https.onCall(
 			userId: ctx.auth.uid,
 			groupId: d.groupId,
 		});
-	}
+	},
 );
 
 export const joinGroup = functions.https.onCall(
@@ -176,7 +184,7 @@ export const joinGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG
+				MISSING_AUTH_MSG,
 			);
 		}
 
@@ -187,7 +195,7 @@ export const joinGroup = functions.https.onCall(
 			groupId: d.groupId,
 			userId: ctx.auth.uid,
 		});
-	}
+	},
 );
 
 export const leaveGroup = functions.https.onCall(
@@ -195,7 +203,7 @@ export const leaveGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG
+				MISSING_AUTH_MSG,
 			);
 		}
 
@@ -211,7 +219,10 @@ export const leaveGroup = functions.https.onCall(
 
 		// if the user is an admin, reject the leave request
 		if (groupData.admins.includes(userId)) {
-			throw new functions.https.HttpsError("aborted", ADMIN_CANNOT_LEAVE_GROUP_MSG);
+			throw new functions.https.HttpsError(
+				"aborted",
+				ADMIN_CANNOT_LEAVE_GROUP_MSG,
+			);
 		}
 
 		// if you are a member, remove the stuff
@@ -228,5 +239,5 @@ export const leaveGroup = functions.https.onCall(
 		}
 
 		await deleteRequest({ type: "join", groupId: d.groupId, userId: userId });
-	}
+	},
 );

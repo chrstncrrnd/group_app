@@ -37,8 +37,6 @@ export const createGroup = functions.https.onCall(
 			throw new functions.https.HttpsError(
 				"permission-denied",
 				MISSING_AUTH_MSG,
-
-
 			);
 		}
 
