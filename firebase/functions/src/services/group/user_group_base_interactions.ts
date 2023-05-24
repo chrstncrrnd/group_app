@@ -42,6 +42,7 @@ const createRequest = async (data: {
 		await reqDoc.create({
 			type: data.type,
 			userId: data.userId,
+			groupId: data.groupId,
 			createdAt: new Date().toISOString(),
 		});
 	} catch {

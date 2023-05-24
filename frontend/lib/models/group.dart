@@ -31,6 +31,13 @@ class Group {
         bannerLocation = json["banner"]?["location"],
         private = json["private"];
 
+  static Future<Group> fromId({required String id}) async {
+    Map<String, dynamic> data =
+        (await FirebaseFirestore.instance.collection("groups").doc(id).get())
+            .data()!;
+    return Group.fromJson(json: data, id: id);
+  }
+
   String id;
   String name;
   String? description;

@@ -55,8 +55,8 @@ class Routes extends ChangeNotifier {
             name: "create_account",
             path: "/create_account/:username",
             builder: (context, state) => CreateAccountScreen(
-              username: state.params["username"]!,
-              name: state.queryParams["name"],
+              username: state.pathParameters["username"]!,
+              name: state.queryParameters["name"],
             ),
           )
         ]);

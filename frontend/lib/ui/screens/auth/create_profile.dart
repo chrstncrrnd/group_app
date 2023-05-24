@@ -112,9 +112,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     content: Text(res),
                     actions: const [Text("Ok")]);
               } else {
-                context.pushNamed("create_account", params: {
+                context.pushNamed("create_account", pathParameters: {
                   "username": username
-                }, queryParams: {
+                }, queryParameters: {
                   "name": name.isEmpty ? null : name,
                 });
               }

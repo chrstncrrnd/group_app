@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/ui/screens/home/notifications/notification_tile.dart';
+import 'package:group_app/models/request.dart';
+import 'package:group_app/services/notifications.dart';
+import 'package:group_app/ui/screens/home/notifications/request_notification_tile.dart';
+import 'package:group_app/ui/widgets/suspense.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -13,6 +13,7 @@ class NotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CurrentUser currentUser = Provider.of<CurrentUser>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
@@ -24,27 +25,31 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collectionGroup("requests")
-                // idk how this is going to work
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          child: Suspense<List<Request>>(
+            future: fetchRequests(fromGroups: currentUser.adminOf),
+            builder: (context, requests) {
+              if (requests == null) {
                 return const Center(
-                  child: CircularProgressIndicator.adaptive(),
+                  child: Text("Something went wrong"),
                 );
               }
-              if (snapshot.hasError || snapshot.data == null) {
+              if (requests.isEmpty) {
                 return const Center(
-                  child: Text("Something went wrong..."),
+                  child: Text("Follow and join requests will appear here"),
                 );
               }
               return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    return Text(snapshot.data!.docs[index].get("createdAt"));
-                  });
+                itemCount: requests.length,
+                itemBuilder: (context, index) => RequestNotificationTile(
+                  onAccept: () async {
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  onDeny: () async {
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  request: requests[index],
+                ),
+              );
             },
           )),
     );

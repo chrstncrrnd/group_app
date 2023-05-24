@@ -28,8 +28,10 @@ export const createAccount = functions.https.onCall(
 				USERNAME_TAKEN_MSG,
 			);
 		}
+		functions.logger.log(ctx.auth.uid);
 
 		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
+
 
 		await doc.create({
 			name: d.name ?? null,

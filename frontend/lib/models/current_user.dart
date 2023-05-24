@@ -13,6 +13,7 @@ class CurrentUser extends ChangeNotifier {
       required this.createdAt,
       required this.memberOf,
       required this.following,
+      required this.adminOf,
       this.pfpDlUrl,
       required this.archivedGroups,
       required this.followRequests,
@@ -27,6 +28,7 @@ class CurrentUser extends ChangeNotifier {
 
   List<String> memberOf;
   List<String> following;
+  List<String> adminOf;
 
   // private data
   List<String> archivedGroups;
@@ -75,6 +77,7 @@ class CurrentUser extends ChangeNotifier {
         createdAt: DateTime.parse(json["createdAt"]!),
         following: toListString(json["following"]),
         memberOf: toListString(json["memberOf"]),
+        adminOf: toListString(json["adminOf"]),
         archivedGroups: archGroups,
         joinRequests: joinRequests,
         followRequests: followRequests);

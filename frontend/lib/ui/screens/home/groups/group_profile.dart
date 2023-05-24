@@ -70,9 +70,9 @@ class GroupScreen extends StatelessWidget {
   Widget noAccess(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 50),
-      child: Center(
+      child: const Center(
           child: Column(
-        children: const [
+        children: [
           Text(
             "Private group",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
