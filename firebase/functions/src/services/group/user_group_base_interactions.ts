@@ -209,6 +209,11 @@ export const leaveGroup = functions.https.onCall(
 		const groupDoc = admin.firestore().collection("groups").doc(d.groupId);
 		const groupData = groupModel.parse((await groupDoc.get()).data());
 
+		// if the user is an admin, reject the leave request
+		if (groupData.admins.includes(userId)) {
+			throw new functions.https.HttpsError("aborted", ADMIN_CANNOT_LEAVE_GROUP_MSG);
+		}
+
 		// if you are a member, remove the stuff
 		if (groupData.members.includes(userId)) {
 			await groupDoc.update({

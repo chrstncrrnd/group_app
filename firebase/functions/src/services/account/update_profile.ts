@@ -56,7 +56,7 @@ export const updateProfile = functions.https.onCall(
 			if (await usernameTaken(profileUpdateData.username)) {
 				throw new functions.https.HttpsError(
 					"already-exists",
-					`Username ${username} is already taken`,
+					USERNAME_TAKEN_MSG,
 				);
 			} else {
 				dataToUpdate.username = username;

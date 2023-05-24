@@ -10,6 +10,7 @@ export const groupModel = z.object({
 	description: z.nullable(groupDescriptionShape),
 	followers: z.array(z.string()),
 	members: z.array(z.string()),
+	admins: z.array(z.string()),
 	name: groupNameShape,
 	private: z.boolean(),
 	icon: z.nullable(

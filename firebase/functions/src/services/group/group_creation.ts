@@ -36,7 +36,9 @@ export const createGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				"User not signed in",
+				MISSING_AUTH_MSG,
+
+
 			);
 		}
 
@@ -47,7 +49,7 @@ export const createGroup = functions.https.onCall(
 		if (await groupNameTaken(groupName)) {
 			throw new functions.https.HttpsError(
 				"already-exists",
-				`Group name: ${groupName} is already taken`,
+				GROUP_NAME_TAKEN_MSG,
 			);
 		}
 
@@ -60,6 +62,7 @@ export const createGroup = functions.https.onCall(
 			createdAt: new Date().toISOString(),
 			members: [userId],
 			followers: [userId],
+			admins: [userId],
 			description: d.groupDescription ?? null,
 			icon: d.icon ?? null,
 			banner: null,
@@ -68,11 +71,6 @@ export const createGroup = functions.https.onCall(
 
 		await doc.create(docData);
 
-		await doc.collection("private_data").doc("private_data").create({
-			followRequests: [],
-			joinRequests: [],
-		});
-
 		await admin
 			.firestore()
 			.collection("users")
@@ -80,6 +78,7 @@ export const createGroup = functions.https.onCall(
 			.update({
 				memberOf: FieldValue.arrayUnion(doc.id),
 				following: FieldValue.arrayUnion(doc.id),
+				adminOf: FieldValue.arrayUnion(doc.id),
 			});
 	},
 );

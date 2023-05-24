@@ -25,7 +25,7 @@ export const createAccount = functions.https.onCall(
 		if (await usernameTaken(d.username)) {
 			throw new functions.https.HttpsError(
 				"already-exists",
-				`Username ${username} is already taken`,
+				USERNAME_TAKEN_MSG,
 			);
 		}
 
