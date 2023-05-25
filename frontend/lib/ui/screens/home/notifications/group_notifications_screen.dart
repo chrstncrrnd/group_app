@@ -38,7 +38,7 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
       // first time
       _count = (await query.count().get()).count;
     }
-    QuerySnapshot querySnapshot = await query.limit(1).get();
+    QuerySnapshot querySnapshot = await query.limit(10).get();
 
     _lastDoc = querySnapshot.docs.last;
     _requests.addAll(querySnapshot.docs.map(
