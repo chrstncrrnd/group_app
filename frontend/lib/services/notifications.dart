@@ -1,18 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:group_app/models/request.dart';
+import 'package:group_app/models/group.dart';
 
-Future<List<Request>> fetchRequests({required List<String> fromGroups}) async {
-  List<Request> requests = [];
+Future<List<(Group group, int requestCount)>> fetchGroupsWithRequests(
+    {required String userId}) async {
+  List<(Group group, int requestCount)> out = [];
 
-  for (String g in fromGroups) {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("groups")
-        .doc(g)
-        .collection("requests")
-        .get();
-    requests.addAll(querySnapshot.docs.map(
-        (e) => Request.fromJson(json: (e.data() as Map<String, dynamic>))));
-  }
+  Query query = FirebaseFirestore.instance
+      .collection("groups")
+      .where("admins", arrayContains: userId)
+      .where("requestCount", isGreaterThanOrEqualTo: 1)
+      .orderBy("requestCount")
+      .orderBy("lastChange");
 
-  return requests;
+  QuerySnapshot querySnapshot = await query.get();
+
+  out.addAll(querySnapshot.docs.map((doc) => (
+        Group.fromJson(json: doc.data() as Map<String, dynamic>, id: doc.id),
+        doc["requestCount"]
+      )));
+
+  return out;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
 import 'package:group_app/models/user.dart';
@@ -34,105 +35,83 @@ class RequestNotificationTile extends StatelessWidget {
   final Future<void> Function() onAccept;
   final Future<void> Function() onDeny;
 
-  Future<(User, Group)> _loadUserAndGroup() async {
-    return (
-      await User.fromId(id: request.requester),
-      await Group.fromId(id: request.groupRequested)
-    );
+  Future<User> _loadUser() async {
+    return (await User.fromId(id: request.requester));
   }
 
   @override
   Widget build(BuildContext context) {
     const double avatarSize = 30;
 
-    return Suspense<(User, Group)>(
-        future: _loadUserAndGroup(),
+    return Suspense<User>(
+        future: _loadUser(),
         builder: (ctx, data) {
-          var (user, group) = data!;
-          return Container(
-            margin: const EdgeInsets.all(10),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(15)),
-            width: Max.width(ctx),
-            child: Column(children: [
-              Text(
-                "${request.requestType.toString()} request",
-                style: const TextStyle(color: Colors.grey),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      // user pfp moves left x pixels, so this moves it right again x pixels
-                      // where x = avatarSize / 2
-                      const SizedBox(width: avatarSize / 2),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned(
-                              left: -(avatarSize / 2),
-                              child: BasicCircleAvatar(
-                                  radius: avatarSize / 2,
-                                  child: user.pfp(avatarSize))),
-                          Positioned(
-                              child: BasicCircleAvatar(
-                                  radius: avatarSize / 2,
-                                  child: group.icon(avatarSize))),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(children: [
+          var user = data!;
+          return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
                         Text(
-                          user.username,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          "${request.requestType.toString()} request",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                        const SizedBox(
+                          height: 5,
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "in ",
-                              style: TextStyle(color: Colors.grey.shade400),
+                            GestureDetector(
+                                onTap: () {
+                                  context.push("/user", extra: user);
+                                },
+                                child: BasicCircleAvatar(
+                                    radius: avatarSize / 2,
+                                    child: user.pfp(avatarSize))),
+                            const SizedBox(
+                              width: 10,
                             ),
                             Text(
-                              group.name,
+                              user.username,
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
-                            )
+                            ),
                           ],
-                        )
-                      ]),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      ProgressIndicatorButton(
-                        progressIndicatorHeight: 10,
-                        progressIndicatorWidth: 10,
-                        onPressed: onAccept,
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(
-                                Colors.white.withOpacity(0.8))),
-                        child: const Text(
-                          "Confirm",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      ProgressIndicatorButton(
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        ProgressIndicatorButton(
                           progressIndicatorHeight: 10,
                           progressIndicatorWidth: 10,
-                          onPressed: onDeny,
-                          text: "Deny")
-                    ],
-                  )
-                ],
-              )
-            ]),
-          );
+                          onPressed: onAccept,
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.white.withOpacity(0.8))),
+                          child: const Text(
+                            "Confirm",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        ProgressIndicatorButton(
+                            progressIndicatorHeight: 10,
+                            progressIndicatorWidth: 10,
+                            onPressed: onDeny,
+                            text: "Deny")
+                      ],
+                    )
+                  ],
+                ),
+              ));
         });
   }
 }

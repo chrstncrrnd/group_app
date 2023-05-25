@@ -15,8 +15,10 @@ const createRequest = async (data: {
 }) => {
 	const fs = admin.firestore();
 
+	const groupRef = fs.collection("groups").doc(data.groupId);
+
 	const groupData = groupModel.parse(
-		(await fs.collection("groups").doc(data.groupId).get()).data(),
+		(await groupRef.get()).data(),
 	);
 	if (data.type == "follow" && groupData.followers.includes(data.userId)) {
 		throw new functions.https.HttpsError(
@@ -31,9 +33,7 @@ const createRequest = async (data: {
 		);
 	}
 
-	const reqDoc = fs
-		.collection("groups")
-		.doc(data.groupId)
+	const reqDoc = groupRef
 		.collection("requests")
 		.doc(`${data.userId}:${data.type}`);
 
@@ -70,6 +70,12 @@ const createRequest = async (data: {
 		updateData.joinRequests = FieldValue.arrayUnion(data.groupId);
 	}
 	await userPrivDoc.update(updateData);
+
+	// update group request count
+	await groupRef.update({
+		requestCount: FieldValue.increment(1),
+		lastChange: new Date().toISOString()
+	});
 };
 
 const deleteRequest = async (data: {
@@ -79,9 +85,10 @@ const deleteRequest = async (data: {
 }) => {
 	const fs = admin.firestore();
 
-	const reqDoc = fs
-		.collection("groups")
-		.doc(data.groupId)
+
+	const groupRef = fs.collection("groups").doc(data.groupId);
+
+	const reqDoc = groupRef
 		.collection("requests")
 		.doc(`${data.userId}:${data.type}`);
 
@@ -106,6 +113,15 @@ const deleteRequest = async (data: {
 		updateData.joinRequests = FieldValue.arrayRemove(data.groupId);
 	}
 	await userPrivDoc.update(updateData);
+
+	const groupData = groupModel.parse(await groupRef.get());
+	// make sure that we don't accidentally set request count to anything negative
+	if (groupData.requestCount != null && groupData.requestCount > 0) {
+		await groupRef.update({
+			requestCount: FieldValue.increment(-1),
+			lastChange: new Date().toISOString()
+		})
+	}
 };
 
 export const followGroup = functions.https.onCall(
@@ -136,7 +152,10 @@ export const followGroup = functions.https.onCall(
 				groupId: d.groupId,
 			});
 		} else {
-			await groupDoc.update({ followers: FieldValue.arrayUnion(userId) });
+			await groupDoc.update({
+				followers: FieldValue.arrayUnion(userId),
+				lastChange: new Date().toISOString()
+			});
 		}
 	},
 );
@@ -165,6 +184,7 @@ export const unFollowGroup = functions.https.onCall(
 			// remove user from followers on that group
 			await groupDoc.update({
 				followers: FieldValue.arrayRemove(userId),
+				lastChange: new Date().toISOString()
 			});
 			// remove group from self following
 			await userDoc.update({
@@ -230,6 +250,7 @@ export const leaveGroup = functions.https.onCall(
 		if (groupData.members.includes(userId)) {
 			await groupDoc.update({
 				members: FieldValue.arrayRemove(userId),
+				lastChange: new Date().toISOString()
 			});
 			await userDoc.update({
 				memberOf: FieldValue.arrayRemove(d.groupId),

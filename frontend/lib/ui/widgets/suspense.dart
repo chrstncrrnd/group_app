@@ -25,7 +25,7 @@ class Suspense<T> extends StatelessWidget {
           return placeholder ??
               const Center(child: CircularProgressIndicator.adaptive());
         } else if (snapshot.hasError) {
-          return error ?? const Text("Something went wrong...");
+          return Center(child: error ?? const Text("Something went wrong..."));
         }
         return builder(context, snapshot.data);
       },

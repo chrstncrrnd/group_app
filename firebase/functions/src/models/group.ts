@@ -13,6 +13,7 @@ export const groupModel = z.object({
 	admins: z.array(z.string()),
 	name: groupNameShape,
 	private: z.boolean(),
+	requestCount: z.optional(z.number()),
 	icon: z.nullable(
 		z.object({
 			dlUrl: z.string().url(),

@@ -54,10 +54,11 @@ export const createGroup = functions.https.onCall(
 		const userId = ctx.auth.uid;
 
 		const doc = admin.firestore().collection("groups").doc();
+		const now = new Date().toISOString();
 
 		const docData = {
 			name: groupName,
-			createdAt: new Date().toISOString(),
+			createdAt: now,
 			members: [userId],
 			followers: [userId],
 			admins: [userId],
@@ -65,6 +66,7 @@ export const createGroup = functions.https.onCall(
 			icon: d.icon ?? null,
 			banner: null,
 			private: false,
+			lastChange: now
 		};
 
 		await doc.create(docData);

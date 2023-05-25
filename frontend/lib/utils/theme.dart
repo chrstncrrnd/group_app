@@ -4,6 +4,7 @@ const Color accentColor = Color.fromARGB(255, 132, 0, 255);
 
 final theme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: Colors.black,
+    cardTheme: const CardTheme(surfaceTintColor: Colors.white),
     primaryColor: Colors.white,
     indicatorColor: Colors.white,
     colorScheme: const ColorScheme.dark().copyWith(

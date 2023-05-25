@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/request.dart';
+import 'package:group_app/models/group.dart';
 import 'package:group_app/services/notifications.dart';
-import 'package:group_app/ui/screens/home/notifications/request_notification_tile.dart';
+import 'package:group_app/ui/screens/home/notifications/group_notifications_tile.dart';
 import 'package:group_app/ui/widgets/suspense.dart';
 import 'package:provider/provider.dart';
 
@@ -25,31 +25,30 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Suspense<List<Request>>(
-            future: fetchRequests(fromGroups: currentUser.adminOf),
-            builder: (context, requests) {
-              if (requests == null) {
+          child: Suspense<List<(Group, int)>>(
+            future: fetchGroupsWithRequests(userId: currentUser.id),
+            builder: (context, data) {
+              if (data == null) {
                 return const Center(
                   child: Text("Something went wrong"),
                 );
               }
-              if (requests.isEmpty) {
+              if (data.isEmpty) {
                 return const Center(
                   child: Text("Follow and join requests will appear here"),
                 );
               }
-              return ListView.builder(
-                itemCount: requests.length,
-                itemBuilder: (context, index) => RequestNotificationTile(
-                  onAccept: () async {
-                    await Future.delayed(const Duration(seconds: 1));
-                  },
-                  onDeny: () async {
-                    await Future.delayed(const Duration(seconds: 1));
-                  },
-                  request: requests[index],
-                ),
-              );
+              return ListView.separated(
+                  separatorBuilder: (context, index) => const Divider(
+                      color: Color.fromARGB(55, 255, 255, 255),
+                      endIndent: 10,
+                      indent: 10),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    var (group, requestCount) = data[index];
+                    return GroupNotificationsTile(
+                        group: group, requestCount: requestCount);
+                  });
             },
           )),
     );
