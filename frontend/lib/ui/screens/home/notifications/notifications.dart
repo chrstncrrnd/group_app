@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/notifications.dart';
-import 'package:group_app/ui/screens/home/notifications/group_notifications_tile.dart';
+import 'package:group_app/ui/screens/home/notifications/widgets/group_notifications_tile.dart';
 import 'package:group_app/ui/widgets/suspense.dart';
 import 'package:provider/provider.dart';
 

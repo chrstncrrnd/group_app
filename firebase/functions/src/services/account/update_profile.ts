@@ -34,7 +34,7 @@ export const updateProfile = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -56,7 +56,7 @@ export const updateProfile = functions.https.onCall(
 			if (await usernameTaken(profileUpdateData.username)) {
 				throw new functions.https.HttpsError(
 					"already-exists",
-					USERNAME_TAKEN_MSG,
+					username_taken_msg,
 				);
 			} else {
 				dataToUpdate.username = username;

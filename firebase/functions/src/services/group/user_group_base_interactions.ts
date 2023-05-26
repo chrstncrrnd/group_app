@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as admin from "firebase-admin";
 import { groupModel } from "../../models/group";
 import { FieldValue } from "firebase-admin/firestore";
+import { admin_cannot_leave_group_msg, missing_auth_msg, request_does_not_exists_msg, user_already_follower_msg, user_already_member_msg, user_already_sent_request_msg, user_not_admin_msg } from "../../utils/constants";
 
 const paramsShape = z.object({
 	groupId: z.string(),
@@ -17,19 +18,17 @@ const createRequest = async (data: {
 
 	const groupRef = fs.collection("groups").doc(data.groupId);
 
-	const groupData = groupModel.parse(
-		(await groupRef.get()).data(),
-	);
+	const groupData = groupModel.parse((await groupRef.get()).data());
 	if (data.type == "follow" && groupData.followers.includes(data.userId)) {
 		throw new functions.https.HttpsError(
 			"already-exists",
-			USER_ALREADY_FOLLOWER_MSG,
+			user_already_follower_msg,
 		);
 	}
 	if (data.type == "join" && groupData.members.includes(data.groupId)) {
 		throw new functions.https.HttpsError(
 			"already-exists",
-			USER_ALREADY_MEMBER_MSG,
+			user_already_member_msg,
 		);
 	}
 
@@ -48,7 +47,7 @@ const createRequest = async (data: {
 	} catch {
 		throw new functions.https.HttpsError(
 			"already-exists",
-			USER_ALREADY_SENT_REQUEST_MSG,
+			user_already_sent_request_msg,
 		);
 	}
 
@@ -74,7 +73,7 @@ const createRequest = async (data: {
 	// update group request count
 	await groupRef.update({
 		requestCount: FieldValue.increment(1),
-		lastChange: new Date().toISOString()
+		lastChange: new Date().toISOString(),
 	});
 };
 
@@ -84,7 +83,6 @@ const deleteRequest = async (data: {
 	groupId: string;
 }) => {
 	const fs = admin.firestore();
-
 
 	const groupRef = fs.collection("groups").doc(data.groupId);
 
@@ -114,13 +112,13 @@ const deleteRequest = async (data: {
 	}
 	await userPrivDoc.update(updateData);
 
-	const groupData = groupModel.parse(await groupRef.get());
+	const groupData = groupModel.parse((await groupRef.get()).data());
 	// make sure that we don't accidentally set request count to anything negative
 	if (groupData.requestCount != null && groupData.requestCount > 0) {
 		await groupRef.update({
 			requestCount: FieldValue.increment(-1),
-			lastChange: new Date().toISOString()
-		})
+			lastChange: new Date().toISOString(),
+		});
 	}
 };
 
@@ -129,7 +127,7 @@ export const followGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -154,7 +152,7 @@ export const followGroup = functions.https.onCall(
 		} else {
 			await groupDoc.update({
 				followers: FieldValue.arrayUnion(userId),
-				lastChange: new Date().toISOString()
+				lastChange: new Date().toISOString(),
 			});
 		}
 	},
@@ -165,7 +163,7 @@ export const unFollowGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -184,7 +182,7 @@ export const unFollowGroup = functions.https.onCall(
 			// remove user from followers on that group
 			await groupDoc.update({
 				followers: FieldValue.arrayRemove(userId),
-				lastChange: new Date().toISOString()
+				lastChange: new Date().toISOString(),
 			});
 			// remove group from self following
 			await userDoc.update({
@@ -205,7 +203,7 @@ export const joinGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -224,7 +222,7 @@ export const leaveGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -242,7 +240,7 @@ export const leaveGroup = functions.https.onCall(
 		if (groupData.admins.includes(userId)) {
 			throw new functions.https.HttpsError(
 				"aborted",
-				ADMIN_CANNOT_LEAVE_GROUP_MSG,
+				admin_cannot_leave_group_msg,
 			);
 		}
 
@@ -250,7 +248,7 @@ export const leaveGroup = functions.https.onCall(
 		if (groupData.members.includes(userId)) {
 			await groupDoc.update({
 				members: FieldValue.arrayRemove(userId),
-				lastChange: new Date().toISOString()
+				lastChange: new Date().toISOString(),
 			});
 			await userDoc.update({
 				memberOf: FieldValue.arrayRemove(d.groupId),
@@ -261,5 +259,114 @@ export const leaveGroup = functions.https.onCall(
 		}
 
 		await deleteRequest({ type: "join", groupId: d.groupId, userId: userId });
+	},
+);
+
+export const acceptRequest = functions.https.onCall(
+	async (
+		data: { userId: string; groupId: string; type: "follow" | "join" },
+		ctx,
+	) => {
+		if (ctx.auth == null) {
+			throw new functions.https.HttpsError(
+				"permission-denied",
+				missing_auth_msg,
+			);
+		}
+
+		const paramsShape = z.object({
+			groupId: z.string(),
+			userId: z.string(),
+			type: z.union([z.literal("follow"), z.literal("join")]),
+		});
+
+		const fs = admin.firestore();
+
+		functions.logger.log("we got here0")
+		const d = paramsShape.parse(data);
+
+		const groupDoc = fs.collection("groups").doc(d.groupId);
+
+
+		const reqDoc = groupDoc.collection("requests").doc(`${d.userId}:${d.type}`);
+
+		if (!(await reqDoc.get()).exists) {
+			throw new functions.https.HttpsError(
+				"aborted",
+				request_does_not_exists_msg,
+			);
+		}
+		functions.logger.log("we got here1")
+		const groupData = groupModel.parse((await groupDoc.get()).data());
+		functions.logger.log("we got here2")
+
+		if (d.type == "follow" && groupData.followers.includes(d.userId)) {
+			throw new functions.https.HttpsError(
+				"aborted",
+				user_already_follower_msg,
+			);
+		} else if (d.type == "join" && groupData.members.includes(d.userId)) {
+			throw new functions.https.HttpsError("aborted", user_already_member_msg);
+		}
+
+
+		if (!groupData.admins.includes(ctx.auth.uid)) {
+			throw new functions.https.HttpsError(
+				"permission-denied",
+				user_not_admin_msg,
+			);
+		}
+
+		await deleteRequest(d);
+
+		const userDoc = fs.collection("users").doc(d.userId);
+		if (d.type == "follow") {
+			await groupDoc.update({
+				followers: FieldValue.arrayUnion(d.userId),
+			});
+			await userDoc.update({
+				following: FieldValue.arrayUnion(d.groupId),
+			});
+		} else {
+			await groupDoc.update({
+				members: FieldValue.arrayUnion(d.userId),
+			});
+			await userDoc.update({
+				memberOf: FieldValue.arrayUnion(d.groupId),
+			});
+		}
+	},
+);
+
+export const denyRequest = functions.https.onCall(
+	async (
+		data: { userId: string; groupId: string; type: "follow" | "join" },
+		ctx,
+	) => {
+		if (ctx.auth == null) {
+			throw new functions.https.HttpsError(
+				"permission-denied",
+				missing_auth_msg,
+			);
+		}
+
+		const paramsShape = z.object({
+			groupId: z.string(),
+			userId: z.string(),
+			type: z.union([z.literal("follow"), z.literal("join")]),
+		});
+
+		const fs = admin.firestore();
+		const d = paramsShape.parse(data);
+
+		const groupDoc = fs.collection("groups").doc(d.groupId);
+
+		const groupData = groupModel.parse((await groupDoc.get()).data());
+
+		if (!groupData.admins.includes(ctx.auth.uid)) {
+			throw new functions.https.HttpsError("aborted", user_not_admin_msg);
+		}
+
+		await deleteRequest(d);
 	},
 );

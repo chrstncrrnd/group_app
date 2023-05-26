@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
-import 'package:group_app/ui/screens/home/notifications/request_notification_tile.dart';
+import 'package:group_app/services/notifications.dart';
+import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
@@ -21,9 +22,30 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
 
   int _count = 0;
 
-  Future<void> _onAccept() async {}
+  Future<void> _onAccept(
+      {required String groupId,
+      required String userId,
+      required RequestType requestType}) async {
+    try {
+      await acceptRequest(
+          userId: userId, groupId: groupId, requestType: requestType);
+    } catch (_) {
+      print("fuck you ");
+    }
+  }
 
-  Future<void> _onDeny() async {}
+  Future<void> _onDeny(
+      {required String groupId,
+      required String userId,
+      required RequestType requestType}) async {
+    try {
+
+      await denyRequest(
+          userId: userId, groupId: groupId, requestType: requestType);
+    } catch (_) {
+      print("im going to mks");
+    }
+  }
 
   Future<void> _loadMore() async {
     Query query = FirebaseFirestore.instance
@@ -100,8 +122,14 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
                         child: CircularProgressIndicator.adaptive());
                   }
                   return RequestNotificationTile(
-                      onAccept: _onAccept,
-                      onDeny: _onDeny,
+                      onAccept: () => _onAccept(
+                          groupId: widget.group.id,
+                          requestType: _requests[index].requestType,
+                          userId: _requests[index].requester),
+                      onDeny: () => _onDeny(
+                          groupId: widget.group.id,
+                          requestType: _requests[index].requestType,
+                          userId: _requests[index].requester),
                       request: _requests[index]);
                 },
               ));

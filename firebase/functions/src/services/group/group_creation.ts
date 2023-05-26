@@ -36,7 +36,7 @@ export const createGroup = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -47,7 +47,7 @@ export const createGroup = functions.https.onCall(
 		if (await groupNameTaken(groupName)) {
 			throw new functions.https.HttpsError(
 				"already-exists",
-				GROUP_NAME_TAKEN_MSG,
+				group_name_taken_msg,
 			);
 		}
 
@@ -66,7 +66,7 @@ export const createGroup = functions.https.onCall(
 			icon: d.icon ?? null,
 			banner: null,
 			private: false,
-			lastChange: now
+			lastChange: now,
 		};
 
 		await doc.create(docData);

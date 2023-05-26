@@ -14,7 +14,7 @@ export const createAccount = functions.https.onCall(
 		if (ctx.auth == null) {
 			throw new functions.https.HttpsError(
 				"permission-denied",
-				MISSING_AUTH_MSG,
+				missing_auth_msg,
 			);
 		}
 
@@ -25,13 +25,12 @@ export const createAccount = functions.https.onCall(
 		if (await usernameTaken(d.username)) {
 			throw new functions.https.HttpsError(
 				"already-exists",
-				USERNAME_TAKEN_MSG,
+				username_taken_msg,
 			);
 		}
 		functions.logger.log(ctx.auth.uid);
 
 		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
-
 
 		await doc.create({
 			name: d.name ?? null,
