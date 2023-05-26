@@ -3,7 +3,15 @@ import { z } from "zod";
 import * as admin from "firebase-admin";
 import { groupModel } from "../../models/group";
 import { FieldValue } from "firebase-admin/firestore";
-import { admin_cannot_leave_group_msg, missing_auth_msg, request_does_not_exists_msg, user_already_follower_msg, user_already_member_msg, user_already_sent_request_msg, user_not_admin_msg } from "../../utils/constants";
+import {
+	admin_cannot_leave_group_msg,
+	missing_auth_msg,
+	request_does_not_exists_msg,
+	user_already_follower_msg,
+	user_already_member_msg,
+	user_already_sent_request_msg,
+	user_not_admin_msg,
+} from "../../utils/constants";
 
 const paramsShape = z.object({
 	groupId: z.string(),
@@ -19,13 +27,13 @@ const createRequest = async (data: {
 	const groupRef = fs.collection("groups").doc(data.groupId);
 
 	const groupData = groupModel.parse((await groupRef.get()).data());
-	if (data.type == "follow" && groupData.followers.includes(data.userId)) {
+	if (data.type === "follow" && groupData.followers.includes(data.userId)) {
 		throw new functions.https.HttpsError(
 			"already-exists",
 			user_already_follower_msg,
 		);
 	}
-	if (data.type == "join" && groupData.members.includes(data.groupId)) {
+	if (data.type === "join" && groupData.members.includes(data.groupId)) {
 		throw new functions.https.HttpsError(
 			"already-exists",
 			user_already_member_msg,
@@ -63,7 +71,7 @@ const createRequest = async (data: {
 		joinRequests?: FieldValue;
 	} = {};
 
-	if (data.type == "follow") {
+	if (data.type === "follow") {
 		updateData.followRequests = FieldValue.arrayUnion(data.groupId);
 	} else {
 		updateData.joinRequests = FieldValue.arrayUnion(data.groupId);
@@ -105,7 +113,7 @@ const deleteRequest = async (data: {
 		joinRequests?: FieldValue;
 	} = {};
 
-	if (data.type == "follow") {
+	if (data.type === "follow") {
 		updateData.followRequests = FieldValue.arrayRemove(data.groupId);
 	} else {
 		updateData.joinRequests = FieldValue.arrayRemove(data.groupId);
@@ -282,11 +290,10 @@ export const acceptRequest = functions.https.onCall(
 
 		const fs = admin.firestore();
 
-		functions.logger.log("we got here0")
+		functions.logger.log("we got here0");
 		const d = paramsShape.parse(data);
 
 		const groupDoc = fs.collection("groups").doc(d.groupId);
-
 
 		const reqDoc = groupDoc.collection("requests").doc(`${d.userId}:${d.type}`);
 
@@ -296,19 +303,18 @@ export const acceptRequest = functions.https.onCall(
 				request_does_not_exists_msg,
 			);
 		}
-		functions.logger.log("we got here1")
+		functions.logger.log("we got here1");
 		const groupData = groupModel.parse((await groupDoc.get()).data());
-		functions.logger.log("we got here2")
+		functions.logger.log("we got here2");
 
-		if (d.type == "follow" && groupData.followers.includes(d.userId)) {
+		if (d.type === "follow" && groupData.followers.includes(d.userId)) {
 			throw new functions.https.HttpsError(
 				"aborted",
 				user_already_follower_msg,
 			);
-		} else if (d.type == "join" && groupData.members.includes(d.userId)) {
+		} else if (d.type === "join" && groupData.members.includes(d.userId)) {
 			throw new functions.https.HttpsError("aborted", user_already_member_msg);
 		}
-
 
 		if (!groupData.admins.includes(ctx.auth.uid)) {
 			throw new functions.https.HttpsError(
@@ -320,7 +326,7 @@ export const acceptRequest = functions.https.onCall(
 		await deleteRequest(d);
 
 		const userDoc = fs.collection("users").doc(d.userId);
-		if (d.type == "follow") {
+		if (d.type === "follow") {
 			await groupDoc.update({
 				followers: FieldValue.arrayUnion(d.userId),
 			});
