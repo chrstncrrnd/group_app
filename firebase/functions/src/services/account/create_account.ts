@@ -3,6 +3,7 @@ import { usernameTaken } from "../../utils/username_taken";
 import * as admin from "firebase-admin";
 import { z } from "zod";
 import { nameShape, usernameShape } from "../../utils/validators";
+import { missing_auth_msg, username_taken_msg } from "../../utils/constants";
 
 const createAccountParams = z.object({
 	username: usernameShape,

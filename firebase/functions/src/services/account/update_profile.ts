@@ -8,6 +8,7 @@ import {
 	storagePathRegExp,
 	usernameShape,
 } from "../../utils/validators";
+import { missing_auth_msg, username_taken_msg } from "../../utils/constants";
 
 const profileUpdateParams = z.object({
 	name: z.optional(nameShape),
