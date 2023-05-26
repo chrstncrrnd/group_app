@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
-import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/group_notifications_tile.dart';
-import 'package:group_app/ui/widgets/suspense.dart';
+import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -25,32 +25,23 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Suspense<List<(Group, int)>>(
-            future: fetchGroupsWithRequests(userId: currentUser.id),
-            builder: (context, data) {
-              if (data == null) {
-                return const Center(
-                  child: Text("Something went wrong"),
-                );
-              }
-              if (data.isEmpty) {
-                return const Center(
-                  child: Text("Follow and join requests will appear here"),
-                );
-              }
-              return ListView.separated(
-                  separatorBuilder: (context, index) => const Divider(
-                      color: Color.fromARGB(55, 255, 255, 255),
-                      endIndent: 10,
-                      indent: 10),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    var (group, requestCount) = data[index];
-                    return GroupNotificationsTile(
-                        group: group, requestCount: requestCount);
-                  });
+          child: PaginatedStreamedListView(
+            query: FirebaseFirestore.instance
+                .collection("groups")
+                .where("admins", arrayContains: currentUser.id)
+                .where("requestCount", isGreaterThanOrEqualTo: 1)
+                .orderBy("requestCount")
+                .orderBy("lastChange"),
+            pageSize: 10,
+            itemBuilder: (item) {
+              var json = item.data() as Map<String, dynamic>;
+              Group group = Group.fromJson(json: json, id: item.id);
+              int requestCount = json["requestCount"];
+              return GroupNotificationsTile(
+                  group: group, requestCount: requestCount);
             },
-          )),
+          ),
+        )
     );
   }
 }

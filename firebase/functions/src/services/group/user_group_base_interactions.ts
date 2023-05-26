@@ -290,7 +290,6 @@ export const acceptRequest = functions.https.onCall(
 
 		const fs = admin.firestore();
 
-		functions.logger.log("we got here0");
 		const d = paramsShape.parse(data);
 
 		const groupDoc = fs.collection("groups").doc(d.groupId);
@@ -303,9 +302,7 @@ export const acceptRequest = functions.https.onCall(
 				request_does_not_exists_msg,
 			);
 		}
-		functions.logger.log("we got here1");
 		const groupData = groupModel.parse((await groupDoc.get()).data());
-		functions.logger.log("we got here2");
 
 		if (d.type === "follow" && groupData.followers.includes(d.userId)) {
 			throw new functions.https.HttpsError(

@@ -6,6 +6,7 @@ import 'package:group_app/models/request.dart';
 import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
+import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
   const GroupNotificationScreen({super.key, required this.group});
@@ -17,63 +18,22 @@ class GroupNotificationScreen extends StatefulWidget {
 }
 
 class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
-  final List<Request> _requests = [];
-  DocumentSnapshot? _lastDoc;
-
-  int _count = 0;
-
   Future<void> _onAccept(
       {required String groupId,
       required String userId,
       required RequestType requestType}) async {
-    try {
       await acceptRequest(
-          userId: userId, groupId: groupId, requestType: requestType);
-    } catch (_) {
-      print("fuck you ");
-    }
+        userId: userId, groupId: groupId, requestType: requestType);
   }
 
   Future<void> _onDeny(
       {required String groupId,
       required String userId,
       required RequestType requestType}) async {
-    try {
-
       await denyRequest(
-          userId: userId, groupId: groupId, requestType: requestType);
-    } catch (_) {
-      print("im going to mks");
-    }
+        userId: userId, groupId: groupId, requestType: requestType);
   }
 
-  Future<void> _loadMore() async {
-    Query query = FirebaseFirestore.instance
-        .collection("groups")
-        .doc(widget.group.id)
-        .collection("requests")
-        .orderBy("createdAt", descending: true);
-
-    if (_lastDoc != null) {
-      query = query.startAfterDocument(_lastDoc!);
-    } else {
-      // first time
-      _count = (await query.count().get()).count;
-    }
-    QuerySnapshot querySnapshot = await query.limit(10).get();
-
-    _lastDoc = querySnapshot.docs.last;
-    _requests.addAll(querySnapshot.docs.map(
-        (doc) => Request.fromJson(json: doc.data() as Map<String, dynamic>)));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadMore().then((value) => setState(
-          () {},
-        ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,31 +67,28 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
           ),
           centerTitle: true,
         ),
-        body: _count == 0
-            ? const Center(
-                child: Text("Follow and join requests will appear here"),
-              )
-            : ListView.builder(
-                itemCount: _count,
-                itemBuilder: (context, index) {
-                  if (index >= _requests.length) {
-                    _loadMore().then((value) => setState(
-                          () {},
-                        ));
-                    return const Center(
-                        child: CircularProgressIndicator.adaptive());
-                  }
-                  return RequestNotificationTile(
+      body: PaginatedStreamedListView(
+          pageSize: 10,
+          query: FirebaseFirestore.instance
+              .collection("groups")
+              .doc(widget.group.id)
+              .collection("requests")
+              .orderBy("createdAt", descending: true),
+          itemBuilder: (item) {
+            Request request =
+                Request.fromJson(json: item.data() as Map<String, dynamic>);
+
+            return RequestNotificationTile(
                       onAccept: () => _onAccept(
                           groupId: widget.group.id,
-                          requestType: _requests[index].requestType,
-                          userId: _requests[index].requester),
+                    requestType: request.requestType,
+                    userId: request.requester),
                       onDeny: () => _onDeny(
                           groupId: widget.group.id,
-                          requestType: _requests[index].requestType,
-                          userId: _requests[index].requester),
-                      request: _requests[index]);
-                },
-              ));
+                    requestType: request.requestType,
+                    userId: request.requester),
+                request: request);
+          }),
+    );
   }
 }

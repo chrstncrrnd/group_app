@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/home/settings/setting_directory_tile.dart';
+import 'package:group_app/utils/clear_cache.dart';
 
 class SettingsDirectoryPage extends StatelessWidget {
   const SettingsDirectoryPage({super.key});
@@ -33,6 +34,12 @@ class SettingsDirectoryPage extends StatelessWidget {
               icon: Icon(Icons.info_outline_rounded),
               name: "About",
               path: "/profile"),
+
+          const SettingDirectoryTile(
+            icon: Icon(Icons.delete_forever_rounded),
+            name: "Clear cache",
+            onPressed: clearCache,
+          ),
           ElevatedButton(
               onPressed: () async => FirebaseAuth.instance.signOut(),
               child: const Text("Sign out"))

@@ -125,7 +125,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       _newUsername = null;
                     }
                     var rm = _pfpUpdated && _pfp == null;
-                    log("rm: $rm");
                     return await updateProfile(
                         name: _newName,
                         username: _newUsername,

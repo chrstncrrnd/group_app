@@ -3,16 +3,22 @@ import 'package:go_router/go_router.dart';
 
 class SettingDirectoryTile extends StatelessWidget {
   const SettingDirectoryTile(
-      {super.key, required this.name, required this.icon, required this.path});
+      {super.key,
+      required this.name,
+      required this.icon,
+      this.path,
+      this.onPressed})
+      : assert(path != null || onPressed != null);
 
   final String name;
   final Icon icon;
-  final String path;
+  final String? path;
+  final Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push(path),
+      onTap: () => path == null ? onPressed!() : context.push(path!),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
