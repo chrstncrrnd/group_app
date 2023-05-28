@@ -10,8 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:group_app/utils/validators.dart';
 
-import '../utils/rand_str.dart';
-
 Future<String?> logUserIn(String email, String password) async {
   var emailValid = validateEmail(email);
   if (emailValid != null) {
@@ -87,7 +85,10 @@ Future<String?> createUser(
 }
 
 Future<String?> updateProfile(
-    {String? name, String? username, File? pfp, bool? removeCurrentPfp}) async {
+    {String? name,
+    String? username,
+    File? pfp,
+    required bool removeCurrentPfp}) async {
   var params = {};
   if (name != null) {
     var nameValid = validateName(name);
@@ -110,42 +111,43 @@ Future<String?> updateProfile(
     params["username"] = username;
   }
 
-  if (removeCurrentPfp != null) {
-    params["removeCurrentPfp"] = removeCurrentPfp;
-  }
+  String userId = FirebaseAuth.instance.currentUser!.uid;
+  String pfpLoc = "users/$userId/pfp.jpeg";
 
-  String pfpId = getRandomString(20);
-  String pfpLoc = "profilePictures/$pfpId.jpeg";
+  var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
+
   try {
+    if (removeCurrentPfp) {
+      await pfpRef.delete();
+      params.addAll({"pfp": null});
+    }
     if (pfp != null) {
-      var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
       await pfpRef.putFile(pfp);
-      String pfpDlUrl = await pfpRef.getDownloadURL();
+      var pfpDlUrl = await pfpRef.getDownloadURL();
       params.addAll({
-        "pfp": {"location": pfpLoc, "dlUrl": pfpDlUrl}
+        "pfp": {"dlUrl": pfpDlUrl, "location": pfpLoc}
       });
     }
-
-    log(params.toString());
-    // don't bother if there isn't anything to change
-    if (params.isEmpty) {
-      return null;
-    }
-
-    await FirebaseFunctions.instance
-        .httpsCallable("updateProfile")
-        .call(params);
-  } on FirebaseFunctionsException catch (error) {
-    log(error.toString());
+  } catch (e) {
     // delete pfp if it was uploaded
     if (pfp != null) {
       var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
       await pfpRef.delete();
     }
+    log(e.toString(), error: e);
+  }
+
+  try {
+    await FirebaseFunctions.instance
+        .httpsCallable("updateProfile")
+        .call(params);
+  } on FirebaseFunctionsException catch (error) {
+    log(error.toString());
     return error.message.toString();
   } catch (error) {
     log(error.toString(), error: error);
     return "Something went wrong...";
   }
+
   return null;
 }

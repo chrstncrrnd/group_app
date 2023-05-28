@@ -8,10 +8,10 @@ import 'package:group_app/ui/widgets/alert_dialog.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
-import 'package:group_app/ui/widgets/suspense.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:provider/provider.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -25,125 +25,122 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   String? _newUsername;
 
   File? _pfp;
-  bool _pfpUpdated = false;
+  String? _pfpDlUrl;
 
-  CurrentUser? _currentUser;
+  bool _firstTimeBuilding = true;
 
-  Widget pfp(double size, {String? url}) {
-    if (url != null) {
-      return Image.network(
-        url,
+  bool _removePfp = false;
+
+  Widget pfp(double size) {
+    if (_pfp != null) {
+      return Image.file(
+        _pfp!,
         fit: BoxFit.cover,
       );
-    } else if (_pfp == null) {
+    } else if (_pfpDlUrl != null) {
+      return Image.network(
+        _pfpDlUrl!,
+        fit: BoxFit.cover,
+      );
+    } else {
       return Icon(
         Icons.person,
         size: size,
         color: Colors.white,
       );
-    } else {
-      return Image.file(
-        _pfp!,
-        fit: BoxFit.cover,
-      );
     }
-  }
-
-  Future<CurrentUser?> _future() async {
-    _currentUser ??= await CurrentUser.getCurrentUser();
-    return _currentUser;
   }
 
   @override
   Widget build(BuildContext context) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context);
+    if (_firstTimeBuilding) {
+      _pfpDlUrl = currentUser.pfpDlUrl;
+      _firstTimeBuilding = false;
+    }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Update profile"),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.pop(),
+        appBar: AppBar(
+          title: const Text("Update profile"),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () => context.pop(),
+          ),
         ),
-      ),
-      body: Suspense(
-          future: _future(),
-          builder: (context, data) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(children: [
-                GestureDetector(
-                  child: BasicCircleAvatar(
-                      radius: 50,
-                      child: pfp(50, url: _pfpUpdated ? null : data?.pfpDlUrl)),
-                  onTap: () async {
-                    var newPfp = await pickImage(
-                        context: context,
-                        aspectRatio:
-                            const CropAspectRatio(ratioX: 1, ratioY: 1),
-                        maxHeight: 400,
-                        maxWidth: 400);
+        body: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(children: [
+            GestureDetector(
+              child: BasicCircleAvatar(radius: 50, child: pfp(50)),
+              onTap: () async {
+                var newPfp = await pickImage(
+                    context: context,
+                    aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+                    maxHeight: 200,
+                    maxWidth: 200);
 
-                    if (newPfp != null) {
-                      _pfpUpdated = true;
-                      _pfp = newPfp;
-                      setState(() {});
-                    }
+                if (newPfp != null) {
+                  setState(() {
+                    _pfp = newPfp;
+                    _pfpDlUrl = null;
+                    _removePfp = false;
+                  });
+                }
+              },
+            ),
+            if (_pfp != null || _pfpDlUrl != null)
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _pfp = null;
+                      _pfpDlUrl = null;
+                      _removePfp = true;
+                    });
                   },
-                ),
-                if (_pfp != null || (data?.pfpDlUrl != null && !_pfpUpdated))
-                  TextButton(
-                      onPressed: () {
-                        _pfp = null;
-                        _pfpUpdated = true;
-                        setState(() {});
-                      },
-                      child: const Text("Remove profile picture")),
-                TextInputField(
-                  validator: validateName,
-                  label: "Name",
-                  onChanged: (val) => _newName = val,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextInputField(
-                  validator: validateUsername,
-                  label: "Username",
-                  onChanged: (val) => _newUsername = val,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                NextButton(
-                  text: "Update",
-                  onPressed: () async {
-                    if (data?.name == _newName) {
-                      _newName = null;
-                    }
-                    if (data?.username == _newUsername) {
-                      _newUsername = null;
-                    }
-                    var rm = _pfpUpdated && _pfp == null;
-                    return await updateProfile(
-                        name: _newName,
-                        username: _newUsername,
-                        pfp: _pfp,
-                        removeCurrentPfp: rm);
-                  },
-                  after: (res) {
-                    if (res != null) {
-                      showAdaptiveDialog(context,
-                          title: const Text("An error occurred"),
-                          content: Text(res),
-                          actions: const [Text("Ok")]);
-                    } else {
-                      context.pop();
-                    }
-                  },
-                ),
-              ]),
-            );
-          }),
-    );
+                  child: const Text("Remove profile picture")),
+            TextInputField(
+              validator: validateName,
+              label: "Name",
+              onChanged: (val) => _newName = val,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextInputField(
+              validator: validateUsername,
+              label: "Username",
+              onChanged: (val) => _newUsername = val,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            NextButton(
+              text: "Update",
+              onPressed: () async {
+                if (currentUser.name == _newName) {
+                  _newName = null;
+                }
+                if (currentUser.username == _newUsername) {
+                  _newUsername = null;
+                }
+                return await updateProfile(
+                    name: _newName,
+                    username: _newUsername,
+                    pfp: _pfp,
+                    removeCurrentPfp: _removePfp);
+              },
+              after: (res) {
+                if (res != null) {
+                  showAdaptiveDialog(context,
+                      title: const Text("An error occurred"),
+                      content: Text(res),
+                      actions: const [Text("Ok")]);
+                } else {
+                  context.pop();
+                }
+              },
+            ),
+          ]),
+        ));
   }
 }

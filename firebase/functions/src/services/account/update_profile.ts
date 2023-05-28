@@ -13,13 +13,11 @@ import { missing_auth_msg, username_taken_msg } from "../../utils/constants";
 const profileUpdateParams = z.object({
 	name: z.optional(nameShape),
 	username: z.optional(usernameShape),
-	pfp: z.optional(
+	pfp: 
 		z.object({
 			location: limStr.regex(storagePathRegExp),
 			dlUrl: limStr.url(),
-		}),
-	),
-	removeCurrentPfp: z.optional(z.boolean()),
+		}).nullable().optional(),
 });
 
 export const updateProfile = functions.https.onCall(
@@ -28,7 +26,6 @@ export const updateProfile = functions.https.onCall(
 			name?: string;
 			username?: string;
 			pfp?: { location: string; dlUrl: string };
-			removeCurrentPfp?: boolean;
 		},
 		ctx,
 	) => {
@@ -46,8 +43,7 @@ export const updateProfile = functions.https.onCall(
 				location: string;
 				dlUrl: string;
 			} | null;
-			a: string;
-		} = { a: "a" };
+		} = {};
 
 		const profileUpdateData = profileUpdateParams.parse(data);
 
@@ -76,24 +72,7 @@ export const updateProfile = functions.https.onCall(
 
 		const doc = admin.firestore().collection("users").doc(ctx.auth.uid);
 
-		if (profileUpdateData.removeCurrentPfp === true) {
-			dataToUpdate.pfp = null;
-			const oldPfpLocation = (await doc.get()).data()?.pfp?.location;
-			if (oldPfpLocation != null) {
-				const storage = admin.storage();
-				await storage.bucket().file(oldPfpLocation).delete();
-			}
-		}
-
-		if (profileUpdateData.pfp !== null) {
 			dataToUpdate.pfp = profileUpdateData.pfp;
-
-			const oldPfpLocation = (await doc.get()).data()?.pfp?.location;
-			if (oldPfpLocation != null) {
-				const storage = admin.storage();
-				await storage.bucket().file(oldPfpLocation).delete();
-			}
-		}
 
 		await doc.update(dataToUpdate);
 	},

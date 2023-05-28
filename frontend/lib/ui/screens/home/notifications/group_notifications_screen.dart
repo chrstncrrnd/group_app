@@ -5,7 +5,6 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
 import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
@@ -65,7 +64,12 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
               .doc(widget.group.id)
               .collection("requests")
               .orderBy("createdAt", descending: true),
-          itemBuilder: (item) {
+
+          ifEmpty: Center(
+            child: Text(
+                "Follow or join requests for ${widget.group.name} will appear here"),
+          ),
+          itemBuilder: (context, item) {
             Request request =
                 Request.fromJson(json: item.data() as Map<String, dynamic>);
 

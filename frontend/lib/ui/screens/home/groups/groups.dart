@@ -7,6 +7,7 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
+import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
 import 'package:provider/provider.dart';
 
 class GroupsScreen extends StatelessWidget {
@@ -35,40 +36,16 @@ class GroupsScreen extends StatelessWidget {
               ))
         ],
       ),
-      // No real need for pagination yet as there just isn't much data
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
+      body: PaginatedStreamedListView(
+        query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
             .where(FieldPath.documentId,
-                whereNotIn: [...currentUser.archivedGroups, "a"]).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return ListView(
-              children:
-                  List.generate(4, (index) => const GroupListTileLoading()),
-            );
-          }
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text("Something went wrong..."),
-            );
-          }
-
-          var groups = snapshot.data!.docs
-              // .where((e) => !currentUser.archivedGroups.contains(e.id))
-              .map((e) => Group.fromJson(json: e.data(), id: e.id))
-              .toList();
-
-          if (groups.isEmpty) {
-            return const Center(
-              child: Text("Create or join a group"),
-            );
-          }
-          return ListView.builder(
-            itemCount: groups.length,
-            itemBuilder: (context, index) {
-              var group = groups[index];
+                whereNotIn: [...currentUser.archivedGroups, "a"]),
+        pageSize: 1,
+        itemBuilder: (context, item) {
+          var group = Group.fromJson(
+              json: item.data() as Map<String, dynamic>, id: item.id);
               return Dismissible(
                   direction: DismissDirection.endToStart,
                   background: Container(
@@ -104,9 +81,7 @@ class GroupsScreen extends StatelessWidget {
                       color: Color.fromARGB(47, 255, 255, 255),
                     )
                   ]));
-            },
-          );
-        },
+        }, 
       ),
     );
   }

@@ -3,13 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PaginatedStreamedListView extends StatefulWidget {
   final Query query;
-  final Widget Function(DocumentSnapshot item) itemBuilder;
+  final Widget Function(BuildContext context, DocumentSnapshot item)
+      itemBuilder;
   final int pageSize;
+  final Widget? ifEmpty;
 
   const PaginatedStreamedListView({
     required this.query,
     required this.itemBuilder,
     this.pageSize = 10,
+    this.ifEmpty,
     Key? key,
   }) : super(key: key);
 
@@ -77,13 +80,16 @@ class _PaginatedStreamedListViewState extends State<PaginatedStreamedListView> {
       stream: _stream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          if (_items.isEmpty && widget.ifEmpty != null) {
+            return widget.ifEmpty!;
+          }
           final items = [..._items, ...snapshot.data!.docs];
           return ListView.builder(
             controller: _scrollController,
             itemCount: items.length + (_isLoading ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < items.length) {
-                return widget.itemBuilder(items[index]);
+                return widget.itemBuilder(context, items[index]);
               } else {
                 return _buildLoader();
               }

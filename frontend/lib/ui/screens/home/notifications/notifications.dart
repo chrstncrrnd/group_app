@@ -33,7 +33,11 @@ class NotificationsScreen extends StatelessWidget {
                 .orderBy("requestCount")
                 .orderBy("lastChange"),
             pageSize: 10,
-            itemBuilder: (item) {
+            ifEmpty: const Center(
+              child:
+                  Text("Groups with follow or join requests will appear here"),
+            ),
+            itemBuilder: (context, item) {
               var json = item.data() as Map<String, dynamic>;
               Group group = Group.fromJson(json: json, id: item.id);
               int requestCount = json["requestCount"];
