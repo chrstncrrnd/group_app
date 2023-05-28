@@ -91,8 +91,11 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
                 String userId = _viewType == ViewType.followers
                     ? widget.group.followers[index]
                     : widget.group.members[index];
-                return _AffiliatedUserTile(
-                  userId: userId,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _AffiliatedUserTile(
+                    userId: userId,
+                  ),
                 );
               },
             ),

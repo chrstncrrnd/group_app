@@ -37,7 +37,6 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const double groupIconSize = 30;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -51,24 +50,16 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
                 onTap: () {
                   context.push("/group", extra: widget.group);
                 },
-                child: BasicCircleAvatar(
-                    radius: groupIconSize / 2,
-                    child: widget.group.icon(groupIconSize)),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              child: 
               Text(
-                widget.group.name,
-                style:
-                    const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                widget.group.name),
               ),
             ],
           ),
           centerTitle: true,
         ),
       body: PaginatedStreamedListView(
-          pageSize: 10,
+          pageSize: 1,
           query: FirebaseFirestore.instance
               .collection("groups")
               .doc(widget.group.id)
