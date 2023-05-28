@@ -6,8 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/firebase_options.dart';
-import 'package:group_app/models/current_user.dart';
 import 'package:group_app/routes.dart';
+import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,6 @@ void main() async {
     FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
     FirebaseStorage.instance.useStorageEmulator("localhost", 9199);
   }
-
   runApp(GroupApp());
 }
 
@@ -35,11 +34,10 @@ class GroupApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<Routes>.value(value: _routes),
-          if (FirebaseAuth.instance.currentUser != null)
-            StreamProvider<CurrentUser?>(
-                create: (ctx) => CurrentUser.asStream(),
-                initialData: null,
-                lazy: false)
+          ChangeNotifierProvider<CurrentUserProvider>(
+            create: (ctx) => CurrentUserProvider(),
+            lazy: false,
+          )
         ],
         builder: (ctx, child) => MaterialApp.router(
               debugShowCheckedModeBanner: false,

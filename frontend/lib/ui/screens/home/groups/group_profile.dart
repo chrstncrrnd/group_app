@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
+import 'package:group_app/models/current_user_private_data.dart';
 import 'package:group_app/models/group.dart';
+import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/affiliated_users_view.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
@@ -32,7 +34,8 @@ class GroupScreen extends StatelessWidget {
         }
 
         var group = snapshot.data!;
-        var currentUser = Provider.of<CurrentUser>(context);
+        var currentUser =
+            Provider.of<CurrentUserProvider>(context).currentUser!;
         List<Widget> top = [
           header(group, context),
           const SizedBox(
@@ -88,7 +91,8 @@ class GroupScreen extends StatelessWidget {
 
   Widget followJoinButtons(
       BuildContext context, Group group, StateSetter setState) {
-    CurrentUser currentUser = Provider.of<CurrentUser>(context);
+    CurrentUserPrivateData privateData =
+        Provider.of<CurrentUserProvider>(context).privateData!;
 
     Widget wrapper({required Widget child}) {
       return Flexible(
@@ -106,13 +110,13 @@ class GroupScreen extends StatelessWidget {
         wrapper(
           child: InteractionButton(
             activeTitle: group.private ? "Request follow" : "Follow",
-            inactiveTitle: currentUser.followRequests.contains(group.id)
+            inactiveTitle: privateData.followRequests.contains(group.id)
                 ? "Requested"
                 : "Unfollow",
             errorTitle: "An error occurred",
             initState: () async {
-              if (group.followers.contains(currentUser.id) ||
-                  currentUser.followRequests.contains(group.id)) {
+              if (group.followers.contains(privateData.id) ||
+                  privateData.followRequests.contains(group.id)) {
                 return InteractionButtonState.inactive;
               } else {
                 return InteractionButtonState.active;
@@ -125,7 +129,7 @@ class GroupScreen extends StatelessWidget {
                   if (group.private) {
                     // we only need to update this because currentUser.following
                     // will will be updated server side causing a rerender
-                    currentUser.followRequests.add(group.id);
+                    privateData.followRequests.add(group.id);
                     setState(() {});
                   }
 
@@ -137,7 +141,7 @@ class GroupScreen extends StatelessWidget {
               } else {
                 try {
                   await unFollowGroup(group.id);
-                  currentUser.followRequests.remove(group.id);
+                  privateData.followRequests.remove(group.id);
                   setState(() {});
                   return InteractionButtonState.active;
                 } catch (error) {
@@ -151,13 +155,13 @@ class GroupScreen extends StatelessWidget {
         wrapper(
           child: InteractionButton(
             activeTitle: "Request join",
-            inactiveTitle: currentUser.joinRequests.contains(group.id)
+            inactiveTitle: privateData.joinRequests.contains(group.id)
                 ? "Requested"
                 : "Leave",
             errorTitle: "An error occurred",
             initState: () async {
-              if (group.members.contains(currentUser.id) ||
-                  currentUser.joinRequests.contains(group.id)) {
+              if (group.members.contains(privateData.id) ||
+                  privateData.joinRequests.contains(group.id)) {
                 return InteractionButtonState.inactive;
               } else {
                 return InteractionButtonState.active;
@@ -167,7 +171,7 @@ class GroupScreen extends StatelessWidget {
               if (state == InteractionButtonState.active) {
                 try {
                   await joinGroup(group.id);
-                  currentUser.joinRequests.add(group.id);
+                  privateData.joinRequests.add(group.id);
 
                   setState(() {});
                   return InteractionButtonState.inactive;
@@ -178,7 +182,7 @@ class GroupScreen extends StatelessWidget {
               } else {
                 try {
                   await leaveGroup(group.id);
-                  currentUser.joinRequests.remove(group.id);
+                  privateData.joinRequests.remove(group.id);
                   setState(() {});
                   return InteractionButtonState.active;
                 } catch (error) {

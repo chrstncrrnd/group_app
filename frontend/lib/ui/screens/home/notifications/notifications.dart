@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
+import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/group_notifications_tile.dart';
 import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,8 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CurrentUser currentUser = Provider.of<CurrentUser>(context);
+    final CurrentUser currentUser =
+        Provider.of<CurrentUserProvider>(context).currentUser!;
 
     return Scaffold(
       appBar: AppBar(

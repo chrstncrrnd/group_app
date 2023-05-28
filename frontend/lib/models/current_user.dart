@@ -14,10 +14,8 @@ class CurrentUser extends ChangeNotifier {
       required this.memberOf,
       required this.following,
       required this.adminOf,
-      this.pfpDlUrl,
-      required this.archivedGroups,
-      required this.followRequests,
-      required this.joinRequests});
+    this.pfpDlUrl,
+  });
 
   String id;
 
@@ -29,12 +27,6 @@ class CurrentUser extends ChangeNotifier {
   List<String> memberOf;
   List<String> following;
   List<String> adminOf;
-
-  // private data
-  List<String> archivedGroups;
-
-  List<String> followRequests;
-  List<String> joinRequests;
 
   Widget pfp(double size) => pfpDlUrl == null
       ? Icon(
@@ -55,20 +47,7 @@ class CurrentUser extends ChangeNotifier {
           },
         );
 
-  static Future<CurrentUser> fromJson(
-      Map<String, dynamic> json, String id) async {
-    var privDataDocData = (await FirebaseFirestore.instance
-            .collection("users")
-            .doc(id)
-            .collection("private_data")
-            .doc("private_data")
-            .get())
-        .data();
-
-    List<String> archGroups = toListString(privDataDocData?["archivedGroups"]);
-    List<String> followRequests =
-        toListString(privDataDocData?["followRequests"]);
-    List<String> joinRequests = toListString(privDataDocData?["joinRequests"]);
+  static CurrentUser fromJson(Map<String, dynamic> json, String id) {
     return CurrentUser(
         id: id,
         username: json["username"],
@@ -77,10 +56,7 @@ class CurrentUser extends ChangeNotifier {
         createdAt: DateTime.parse(json["createdAt"]!),
         following: toListString(json["following"]),
         memberOf: toListString(json["memberOf"]),
-        adminOf: toListString(json["adminOf"]),
-        archivedGroups: archGroups,
-        joinRequests: joinRequests,
-        followRequests: followRequests);
+        adminOf: toListString(json["adminOf"]));
   }
 
   static Future<CurrentUser> getCurrentUser() async {
@@ -91,12 +67,11 @@ class CurrentUser extends ChangeNotifier {
     return CurrentUser.fromJson(json!, id);
   }
 
-  static Stream<CurrentUser> asStream() {
-    var id = FirebaseAuth.instance.currentUser!.uid;
+  static Stream<CurrentUser> asStream({required String id}) {
     return FirebaseFirestore.instance
         .collection("users")
         .doc(id)
         .snapshots()
-        .asyncMap((event) => CurrentUser.fromJson(event.data()!, id));
+        .map((event) => CurrentUser.fromJson(event.data()!, id));
   }
 }
