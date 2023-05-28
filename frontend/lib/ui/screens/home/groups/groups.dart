@@ -45,8 +45,13 @@ class GroupsScreen extends StatelessWidget {
             .where("members", arrayContains: currentUser.id)
             .where(FieldPath.documentId,
                 whereNotIn: [...privateData.archivedGroups, "a"]),
-        pageSize: 1,
+        // .orderBy("lastChange"),
+        pageSize: 10,
+        ifEmpty: const Center(
+          child: Text("Create or join a group"),
+        ),
         itemBuilder: (context, item) {
+          // if (privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(
               json: item.data() as Map<String, dynamic>, id: item.id);
           return Dismissible(

@@ -32,10 +32,16 @@ class ArchivedGroupsScreen extends StatelessWidget {
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
-            .where(FieldPath.documentId,
-                whereIn: [...privateData.archivedGroups, "a"]),
+            // .where(FieldPath.documentId,
+            //     whereIn: [...privateData.archivedGroups, "a"]),
+            .orderBy("lastChange"),
         pageSize: 1,
+        ifEmpty: const Center(
+          child: Text("Swipe left on a group to archive it"),
+        ),
         itemBuilder: (context, item) {
+
+          if (!privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(
               json: item.data() as Map<String, dynamic>, id: item.id);
           return Dismissible(
