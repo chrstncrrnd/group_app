@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group_actions.dart';
@@ -32,8 +31,6 @@ class ArchivedGroupsScreen extends StatelessWidget {
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
-            // .where(FieldPath.documentId,
-            //     whereIn: [...privateData.archivedGroups, "a"]),
             .orderBy("lastChange"),
         pageSize: 1,
         ifEmpty: const Center(
@@ -62,14 +59,13 @@ class ArchivedGroupsScreen extends StatelessWidget {
               confirmDismiss: (direction) async {
                 try {
                   await unArchiveGroup(group.id);
-                  privateData.archivedGroups.remove(group.id);
                   return true;
                 } catch (error) {
                   log(error.toString());
                   return false;
                 }
               },
-              key: Key(group.toString()),
+              key: UniqueKey(),
               child: Column(children: [
                 GroupListTile(group: group),
                 const Divider(

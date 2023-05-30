@@ -3,7 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> archiveGroup(String groupId) async {
-  FirebaseFirestore.instance
+  await FirebaseFirestore.instance
       .collection("users")
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection("private_data")
@@ -14,7 +14,7 @@ Future<void> archiveGroup(String groupId) async {
 }
 
 Future<void> unArchiveGroup(String groupId) async {
-  FirebaseFirestore.instance
+  await FirebaseFirestore.instance
       .collection("users")
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection("private_data")

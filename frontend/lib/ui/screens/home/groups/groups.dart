@@ -19,6 +19,7 @@ class GroupsScreen extends StatelessWidget {
         Provider.of<CurrentUserProvider>(context, listen: true);
     var currentUser = currentUserProvider.currentUser!;
     var privateData = currentUserProvider.privateData!;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -43,15 +44,13 @@ class GroupsScreen extends StatelessWidget {
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
-            .where(FieldPath.documentId,
-                whereNotIn: [...privateData.archivedGroups, "a"]),
-        // .orderBy("lastChange"),
+            .orderBy("lastChange"),
         pageSize: 10,
         ifEmpty: const Center(
           child: Text("Create or join a group"),
         ),
         itemBuilder: (context, item) {
-          // if (privateData.archivedGroups.contains(item.id)) return Container();
+          if (privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(
               json: item.data() as Map<String, dynamic>, id: item.id);
           return Dismissible(
@@ -72,14 +71,13 @@ class GroupsScreen extends StatelessWidget {
               confirmDismiss: (direction) async {
                 try {
                   await archiveGroup(group.id);
-                  privateData.archivedGroups.add(group.id);
                   return true;
                 } catch (e) {
                   log(e.toString());
                   return false;
                 }
               },
-              key: Key(group.toString()),
+              key: UniqueKey(),
               child: Column(children: [
                 GroupListTile(group: group),
                 const Divider(

@@ -12,7 +12,6 @@ class CurrentUserProvider extends ChangeNotifier {
   CurrentUserProvider() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        log("User signed in");
         CurrentUser.asStream(id: user.uid).listen((event) {
           currentUser = event;
           notifyListeners();

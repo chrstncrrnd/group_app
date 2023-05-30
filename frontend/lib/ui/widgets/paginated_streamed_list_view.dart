@@ -80,13 +80,13 @@ class _PaginatedStreamedListViewState extends State<PaginatedStreamedListView> {
       stream: _stream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (_items.isEmpty && widget.ifEmpty != null) {
-            return widget.ifEmpty!;
-          }
           final items = [..._items, ...snapshot.data!.docs];
-          return ListView.builder(
+          var itemCount = items.length + (_isLoading ? 1 : 0);
+          return itemCount == 0 && widget.ifEmpty != null
+              ? widget.ifEmpty!
+              : ListView.builder(
             controller: _scrollController,
-            itemCount: items.length + (_isLoading ? 1 : 0),
+                  itemCount: itemCount,
             itemBuilder: (context, index) {
               if (index < items.length) {
                 return widget.itemBuilder(context, items[index]);
