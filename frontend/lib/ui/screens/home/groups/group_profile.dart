@@ -10,6 +10,7 @@ import 'package:group_app/services/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/affiliated_users_view.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
+import 'package:group_app/ui/widgets/native_context_menu.dart';
 import 'package:provider/provider.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -232,7 +233,20 @@ class GroupScreen extends StatelessWidget {
                               Colors.white.withOpacity(0.15))),
                     ),
                     IconButton(
-                      onPressed: () => log("show the menu"),
+                      onPressed: () => showNativeContextMenu(context, [
+                        (
+                          child: const Text("Share"),
+                          onPressed: () => log("pressed share")
+                        ),
+                        (
+                          child: const Text("Edit"),
+                          onPressed: () => log("pressed edit")
+                        ),
+                        (
+                          child: const Text("Report"),
+                          onPressed: () => log("pressed report")
+                        )
+                      ]),
                       icon: const Icon(Icons.menu),
                       style: ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll(
