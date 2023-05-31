@@ -13,6 +13,7 @@ class Group {
       required this.members,
       required this.followers,
       required this.private,
+      required this.admins,
       this.description,
       this.iconDlUrl,
       this.iconLocation,
@@ -24,6 +25,7 @@ class Group {
         description = json["description"],
         createdAt = DateTime.parse(json["createdAt"]),
         members = toListString(json["members"]),
+        admins = toListString(json["admins"]),
         followers = toListString(json["followers"]),
         iconDlUrl = json["icon"]?["dlUrl"],
         iconLocation = json["icon"]?["location"],
@@ -44,6 +46,7 @@ class Group {
   DateTime createdAt;
   List<String> members;
   List<String> followers;
+  List<String> admins;
 
   bool private;
 

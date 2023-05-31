@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
-import 'package:group_app/services/auth.dart';
+import 'package:group_app/services/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/widgets/alert_dialog.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';

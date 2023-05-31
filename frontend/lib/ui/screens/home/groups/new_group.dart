@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/services/group_creation.dart';
+import 'package:group_app/services/group/group_creation.dart';
 import 'package:group_app/ui/widgets/alert_dialog.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';

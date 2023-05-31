@@ -3,11 +3,14 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:group_app/utils/rand_str.dart';
 import 'package:group_app/utils/validators.dart';
 
 /// Returns a with an error if something went wrong
 Future<String?> createGroup(
     {required String? name, String? description, File? icon}) async {
+  final String id = getRandomString(24);
+
   var nameValid = validateGroupName(name);
   if (nameValid != null) {
     return nameValid;
@@ -19,10 +22,10 @@ Future<String?> createGroup(
   }
 
   try {
-    Map<String, dynamic> params = {"groupName": name};
+    Map<String, dynamic> params = {"groupName": name, "id": id};
 
     if (icon != null) {
-      String iconLoc = "groups/$name/icon.jpeg";
+      String iconLoc = "groups/$id/icon.jpeg";
 
       var iconRef = FirebaseStorage.instance.ref(iconLoc);
       await iconRef.putFile(icon);

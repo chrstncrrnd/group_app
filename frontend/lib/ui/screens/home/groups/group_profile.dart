@@ -6,11 +6,12 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/current_user_private_data.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/services/group_actions.dart';
+import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/affiliated_users_view.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
 import 'package:group_app/ui/widgets/native_context_menu.dart';
+import 'package:group_app/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -38,7 +39,7 @@ class GroupScreen extends StatelessWidget {
         var currentUser =
             Provider.of<CurrentUserProvider>(context).currentUser!;
         List<Widget> top = [
-          header(group, context),
+          header(group, context, currentUser),
           const SizedBox(
             height: 10,
           ),
@@ -198,9 +199,9 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget header(Group group, BuildContext context) {
+  Widget header(Group group, BuildContext context, CurrentUser currentUser) {
     return SizedBox(
-      height: 300,
+      height: bannerHeight.toDouble(),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -234,13 +235,15 @@ class GroupScreen extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () => showNativeContextMenu(context, [
+                        if (group.admins.contains(currentUser.id))
+                          (
+                            child: const Text("Edit"),
+                            onPressed: () =>
+                                context.push("/group/edit", extra: group)
+                          ),
                         (
                           child: const Text("Share"),
                           onPressed: () => log("pressed share")
-                        ),
-                        (
-                          child: const Text("Edit"),
-                          onPressed: () => log("pressed edit")
                         ),
                         (
                           child: const Text("Report"),
