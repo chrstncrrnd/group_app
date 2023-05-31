@@ -46,6 +46,10 @@ class GroupScreen extends StatelessWidget {
           StatefulBuilder(
               builder: (ctx, stateSetter) =>
                   followJoinButtons(ctx, group, stateSetter)),
+          const SizedBox(
+            height: 20,
+          ),
+          description(context, group.description),
           AffiliatedUsersView(group: group),
           if (!userHasAccess(group, currentUser)) noAccess(context)
         ];
@@ -88,6 +92,19 @@ class GroupScreen extends StatelessWidget {
           Text("Follow or join this group to view posts")
         ],
       )),
+    );
+  }
+
+  Widget description(BuildContext context, String? description) {
+    if (description == null) {
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      child: Text(
+        description,
+        style: const TextStyle(color: Colors.grey),
+      ),
     );
   }
 

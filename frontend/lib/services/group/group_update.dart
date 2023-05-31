@@ -14,8 +14,12 @@ Future<Map<String, dynamic>> _updateStorage(
   Map<String, dynamic> out = {};
 
   if (removeCurrent) {
-    await ref.delete();
-    out[valueName] = null;
+    try {
+      await ref.delete();
+      out[valueName] = null;
+    } catch (e) {
+      log("Firebase storage error", error: e);
+    }
   }
   if (fileToUpload != null) {
     await ref.putFile(fileToUpload);
@@ -47,7 +51,7 @@ Future<String?> updateGroup(
     if (descriptionInvalid != null) {
       return descriptionInvalid;
     }
-    params["description"] = description;
+    params["groupDescription"] = description;
   }
   String bannerLoc = "groups/$groupId/banner.jpeg";
 
@@ -66,7 +70,6 @@ Future<String?> updateGroup(
       removeCurrent: removeIcon,
       fileToUpload: icon);
   params.addAll(iconRes);
-  log(params.toString());
 
   if (params.isEmpty) {
     return null;
