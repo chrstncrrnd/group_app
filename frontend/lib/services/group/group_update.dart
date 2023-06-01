@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/group.dart';
 import 'package:group_app/utils/validators.dart';
 
 Future<Map<String, dynamic>> _updateStorage(
@@ -86,7 +84,7 @@ Future<String?> updateGroup(
   return null;
 }
 
-Future<String?> deleteGroup({required String groupId}) async {
+Future<void> deleteGroup({required String groupId}) async {
   await FirebaseFunctions.instance
       .httpsCallable("deleteGroup")
       .call({"groupId": groupId});
