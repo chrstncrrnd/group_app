@@ -4,7 +4,7 @@ import 'package:group_app/services/auth.dart';
 import 'package:group_app/utils/validators.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 
-import '../../widgets/alert_dialog.dart';
+import '../../widgets/adaptive_dialog.dart';
 
 // Initial profile creation steps
 class CreateProfileScreen extends StatefulWidget {

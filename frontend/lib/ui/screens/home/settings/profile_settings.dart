@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/services/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/widgets/alert_dialog.dart';
+import 'package:group_app/ui/widgets/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';

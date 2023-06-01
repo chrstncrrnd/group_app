@@ -11,6 +11,7 @@ final theme = ThemeData.dark().copyWith(
         background: Colors.black,
         primary: Colors.white,
         tertiary: Colors.grey,
+        error: const Color.fromARGB(255, 148, 41, 41),
         secondary: accentColor),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.black,

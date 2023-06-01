@@ -27,10 +27,7 @@ export const groupNameShape = z
   .max(20, 'Group name is too long')
   .regex(usernameRegExp);
 
-export const groupDescriptionShape = z
-  .string()
-  .max(500, 'Description is too long')
-  .min(1, 'Description is too short');
+export const groupDescriptionShape = z.string().max(500, 'Description is too long');
 
 // A string with a limit of 1024 characters because
 // you don't want people to use this string to upload blobs

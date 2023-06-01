@@ -9,17 +9,20 @@ class TextInputField extends StatelessWidget {
       this.onChanged,
       this.validator,
       this.maxLines,
-      this.minLines});
+      this.minLines,
+      this.initialValue});
 
   final String label;
   final FutureOr<void> Function(String)? onChanged;
   final String? Function(String?)? validator;
   final int? maxLines;
   final int? minLines;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        initialValue: initialValue,
         decoration: InputDecoration(
           label: Text(label),
         ),

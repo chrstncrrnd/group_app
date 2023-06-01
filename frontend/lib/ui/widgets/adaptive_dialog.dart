@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void showAdaptiveDialog(
-  context, {
-  required Text title,
-  required Text content,
-  required List<Widget> actions,
-}) {
+Future<void> showAdaptiveDialog(context,
+    {required Widget title,
+    Widget? content,
+    required List<Widget> actions,
+    MainAxisAlignment? actionsAlignment}) async {
   Platform.isIOS
-      ? showCupertinoDialog<String>(
+      ? await showCupertinoDialog<String>(
           context: context,
           builder: (BuildContext context) => CupertinoAlertDialog(
             title: title,
@@ -18,12 +17,13 @@ void showAdaptiveDialog(
             actions: actions,
           ),
         )
-      : showDialog(
+      : await showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: title,
             content: content,
             actions: actions,
+            actionsAlignment: actionsAlignment,
           ),
         );
 }

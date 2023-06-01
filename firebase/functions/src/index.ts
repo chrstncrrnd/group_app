@@ -6,6 +6,7 @@ export * from './services/account/username_available';
 export * from './services/account/update_profile';
 export * from './services/group/user_group_base_interactions';
 export * from './services/group/update_group';
+export * from './services/group/delete_group';
 
 admin.initializeApp();
 admin.firestore().settings({ ignoreUndefinedProperties: true });

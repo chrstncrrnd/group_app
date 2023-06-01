@@ -9,7 +9,7 @@ import { missing_auth_msg, user_not_admin_msg } from '../../utils/constants';
 const params = z.object({
   groupId: z.string(),
   groupName: groupNameShape.optional(),
-  groupDescription: groupDescriptionShape.optional(),
+  groupDescription: groupDescriptionShape.optional().nullable(),
   icon: z
     .object({
       location: z.string().regex(storagePathRegExp),
@@ -59,6 +59,10 @@ export const updateGroup = functions.https.onCall(
         'permission-denied',
         user_not_admin_msg
       );
+    }
+
+    if (d.groupDescription?.length === 0) {
+      d.groupDescription = null;
     }
 
     await groupDocRef.update({

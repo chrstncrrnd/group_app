@@ -1,13 +1,16 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group/group_update.dart';
-import 'package:group_app/ui/widgets/alert_dialog.dart';
+import 'package:group_app/ui/widgets/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/alert.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/next_button.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
+import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/constants.dart';
 import 'package:group_app/utils/max.dart';
@@ -188,6 +191,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               child: Column(
                 children: [
                   TextInputField(
+                    initialValue: widget.initialGroupState.name,
                     validator: validateGroupName,
                     label: "Group name",
                     onChanged: (val) => _newGroupName = val,
@@ -196,6 +200,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     height: 10,
                   ),
                   TextInputField(
+                    initialValue: widget.initialGroupState.description,
                     validator: validateGroupDescription,
                     label: "Group description",
                     minLines: 3,
@@ -239,6 +244,48 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 }
               },
             ),
+            const Divider(
+              height: 40,
+              indent: 40,
+              endIndent: 40,
+              color: Color.fromARGB(40, 255, 255, 255),
+            ),
+            TextButton.icon(
+                style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                        Color.fromARGB(255, 151, 17, 17))),
+                onPressed: () async {
+                  await showAdaptiveDialog(context,
+                      title: const Text(
+                          "Are you sure you want to delete this group?"),
+                      content: const Text(
+                          "You cannot recover the group after deleting it"),
+                      actionsAlignment: MainAxisAlignment.spaceBetween,
+                      actions: [
+                        TextButton(
+                            onPressed: () => context.pop(),
+                            child: const Text("Cancel")),
+                        ProgressIndicatorButton(
+                            progressIndicatorHeight: 15,
+                            progressIndicatorWidth: 15,
+                            onPressed: () async {
+                              try {
+                                await deleteGroup(
+                                    groupId: widget.initialGroupState.id);
+                              } catch (e) {
+                                await showAlert(context,
+                                    title:
+                                        "Something went wrong while deleting the group");
+                                log("Error while deleting group", error: e);
+                              }
+                              context.pop();
+                              context.go("/groups");
+                            },
+                            child: const Text("Delete"))
+                      ]);
+                },
+                icon: const Icon(Icons.delete),
+                label: const Text("Delete group"))
           ]),
         ));
   }

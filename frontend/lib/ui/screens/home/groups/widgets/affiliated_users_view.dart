@@ -66,7 +66,7 @@ class _AffiliatedUsersViewState extends State<AffiliatedUsersView> {
         : widget.group.members.length;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

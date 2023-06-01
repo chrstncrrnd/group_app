@@ -46,9 +46,6 @@ class GroupScreen extends StatelessWidget {
           StatefulBuilder(
               builder: (ctx, stateSetter) =>
                   followJoinButtons(ctx, group, stateSetter)),
-          const SizedBox(
-            height: 20,
-          ),
           description(context, group.description),
           AffiliatedUsersView(group: group),
           if (!userHasAccess(group, currentUser)) noAccess(context)
@@ -100,7 +97,7 @@ class GroupScreen extends StatelessWidget {
       return Container();
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
       child: Text(
         description,
         style: const TextStyle(color: Colors.grey),
