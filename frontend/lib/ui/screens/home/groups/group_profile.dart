@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
@@ -260,6 +261,11 @@ class GroupScreen extends StatelessWidget {
                   return InteractionButtonState.error;
                 }
               } else {
+                // you cannot leave a group you are an admin in
+                if (group.admins
+                    .contains(FirebaseAuth.instance.currentUser!.uid)) {
+                  return state;
+                }
                 try {
                   await leaveGroup(group.id);
                   privateData.joinRequests.remove(group.id);

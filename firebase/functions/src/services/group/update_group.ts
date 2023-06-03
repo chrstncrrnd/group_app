@@ -4,7 +4,11 @@ import { groupDescriptionShape, groupNameShape } from '../../utils/validators';
 import { storagePathRegExp } from '../../utils/validators';
 import * as admin from 'firebase-admin';
 import { groupModel } from '../../models/group';
-import { missing_auth_msg, user_not_admin_msg } from '../../utils/constants';
+import {
+  missing_auth_msg,
+  user_cannot_remove_self_msg,
+  user_not_admin_msg,
+} from '../../utils/constants';
 import { FieldValue } from 'firebase-admin/firestore';
 
 const updateGroupParams = z.object({
@@ -100,7 +104,17 @@ export const removeUserFromGroup = functions.https.onCall(
         missing_auth_msg
       );
     }
+    
+    
     const d = removeUserParams.parse(data);
+
+    if (ctx.auth.uid == d.userId) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        user_cannot_remove_self_msg
+      );
+    }
+
 
     const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
 

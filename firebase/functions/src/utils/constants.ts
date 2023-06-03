@@ -10,3 +10,4 @@ export const user_already_sent_request_msg =
   'User has already sent this request';
 export const request_does_not_exists_msg = 'This request does not exist';
 export const user_not_admin_msg = 'User is not an admin of this group';
+export const user_cannot_remove_self_msg = 'You cannot remove yourself';

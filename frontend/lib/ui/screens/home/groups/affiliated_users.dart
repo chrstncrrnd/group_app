@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/user.dart';
+import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/widgets/alert.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/suspense.dart';
+import 'package:provider/provider.dart';
 
 class AffiliatedUsersScreenExtra {
   AffiliatedUsersScreenExtra(
@@ -73,6 +76,9 @@ class AffiliatedUser extends StatelessWidget {
     const pfpSize = 23.0;
     const mainStyle = TextStyle(fontSize: 16, color: Colors.white);
 
+    final CurrentUser currentUser =
+        Provider.of<CurrentUserProvider>(context).currentUser!;
+
     return Suspense<User>(
         future: User.fromId(id: userId),
         placeholder: ListTile(
@@ -104,7 +110,7 @@ class AffiliatedUser extends StatelessWidget {
             titleTextStyle: mainStyle,
             subtitle: userNamed ? Text(user.username) : null,
             onTap: () => context.push("/user", extra: user),
-            trailing: isAdmin
+            trailing: isAdmin && user.id != currentUser.id
                 ? ProgressIndicatorButton(
                     progressIndicatorHeight: pfpSize,
                     progressIndicatorWidth: pfpSize,
