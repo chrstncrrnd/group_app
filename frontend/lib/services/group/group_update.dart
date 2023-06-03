@@ -29,6 +29,30 @@ Future<Map<String, dynamic>> _updateStorage(
   return out;
 }
 
+Future<String?> removeFollower(
+    {required String userId, required String groupId}) async {
+  try {
+    await FirebaseFunctions.instance
+        .httpsCallable("removeUserFromGroup")
+        .call({"userId": userId, "groupId": groupId, "as": "follower"});
+  } on FirebaseFunctionsException catch (e) {
+    return e.message;
+  }
+  return null;
+}
+
+Future<String?> removeMember(
+    {required String userId, required String groupId}) async {
+  try {
+    await FirebaseFunctions.instance
+        .httpsCallable("removeUserFromGroup")
+        .call({"userId": userId, "groupId": groupId, "as": "member"});
+  } on FirebaseFunctionsException catch (e) {
+    return e.message;
+  }
+  return null;
+}
+
 Future<String?> updateGroup(
     {File? banner,
     File? icon,

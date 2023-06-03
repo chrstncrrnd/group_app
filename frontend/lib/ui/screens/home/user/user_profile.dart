@@ -10,23 +10,21 @@ class UserProfileScreen extends StatelessWidget {
   final User initialUserState;
 
   Widget _statWidget({required String stat, required int value}) {
-    return Expanded(
-        flex: 1,
-        child: Column(
-          children: [
-            Text(
-              value.toString(),
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade100,
-                  fontSize: 18),
-            ),
-            Text(
-              stat,
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-            ),
-          ],
-        ));
+    return Column(
+      children: [
+        Text(
+          value.toString(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade100,
+              fontSize: 18),
+        ),
+        Text(
+          stat,
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+        ),
+      ],
+    );
   }
 
   @override
@@ -55,10 +53,6 @@ class UserProfileScreen extends StatelessWidget {
               fallbackText: "",
             ),
             centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () => context.pop(),
-            ),
           ),
           body: Center(
             child: Column(children: [
@@ -75,6 +69,7 @@ class UserProfileScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _statWidget(stat: "Member of", value: user.memberOf.length),
                     _statWidget(

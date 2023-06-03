@@ -7,6 +7,7 @@ import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
+import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/archived_groups.dart';
 import 'package:group_app/ui/screens/home/groups/edit_group.dart';
 import 'package:group_app/ui/screens/home/groups/group_profile.dart';
@@ -128,7 +129,20 @@ class Routes extends ChangeNotifier {
                         path: "edit",
                         builder: (context, state) => EditGroupScreen(
                             initialGroupState: state.extra! as Group),
-                      )
+
+                      ),
+                      GoRoute(
+                          path: "followers",
+                          builder: (context, state) => AffiliatedUsersScreen(
+                                extra:
+                                    state.extra as AffiliatedUsersScreenExtra,
+                              )),
+                      GoRoute(
+                          path: "members",
+                          builder: (context, state) => AffiliatedUsersScreen(
+                                extra:
+                                    state.extra as AffiliatedUsersScreenExtra,
+                              ))
                     ]
                 ),
                 GoRoute(

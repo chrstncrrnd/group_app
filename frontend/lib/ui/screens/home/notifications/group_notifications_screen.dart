@@ -37,11 +37,7 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: context.pop,
-          ),
+      appBar: AppBar(
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

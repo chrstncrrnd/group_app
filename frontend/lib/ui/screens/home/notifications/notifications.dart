@@ -19,11 +19,7 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Notifications"),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.pop(),
-        ),
+          centerTitle: true,
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

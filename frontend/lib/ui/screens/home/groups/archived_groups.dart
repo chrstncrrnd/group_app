@@ -21,10 +21,6 @@ class ArchivedGroupsScreen extends StatelessWidget {
     var privateData = currentUserProv.privateData!;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () => context.pop(),
-        ),
         title: const Text("Archived groups"),
       ),
       body: PaginatedStreamedListView(

@@ -37,12 +37,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: context.pop,
-          ),
-        ),
+        appBar: AppBar(),
         body: Form(
             key: _formKey,
             child: Container(

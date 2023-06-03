@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
@@ -7,7 +8,8 @@ import 'package:group_app/models/current_user_private_data.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
-import 'package:group_app/ui/screens/home/groups/widgets/affiliated_users_view.dart';
+import 'package:group_app/services/group/group_update.dart';
+import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
 import 'package:group_app/ui/widgets/native_context_menu.dart';
@@ -39,16 +41,24 @@ class GroupScreen extends StatelessWidget {
         var currentUser =
             Provider.of<CurrentUserProvider>(context).currentUser!;
         List<Widget> top = [
-          header(group, context, currentUser),
+          _header(group, context, currentUser),
+          const SizedBox(
+            height: 10,
+          ),
+          _affiliatedUsersCount(context, group, currentUser),
           const SizedBox(
             height: 10,
           ),
           StatefulBuilder(
               builder: (ctx, stateSetter) =>
-                  followJoinButtons(ctx, group, stateSetter)),
-          description(context, group.description),
-          AffiliatedUsersView(group: group),
-          if (!userHasAccess(group, currentUser)) noAccess(context)
+                  _followJoinButtons(ctx, group, stateSetter)),
+          _description(context, group.description),
+          const Divider(
+            indent: 30,
+            endIndent: 30,
+            color: Color.fromARGB(76, 255, 255, 255),
+          ),
+          if (!_userHasAccess(group, currentUser)) _noAccess(context)
         ];
         return SafeArea(
             child: ListView.builder(
@@ -57,7 +67,7 @@ class GroupScreen extends StatelessWidget {
             if (index < top.length) {
               return top[index];
             } else {
-              if (!userHasAccess(group, currentUser)) return null;
+              if (!_userHasAccess(group, currentUser)) return null;
             }
             index -= top.length;
             return null;
@@ -67,13 +77,68 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  bool userHasAccess(Group group, CurrentUser currentUser) {
+  Widget _affiliatedUsersCount(
+      BuildContext context, Group group, CurrentUser currentUser) {
+    Widget individual(int count, String name, Function() onPressed) {
+      return TextButton(
+          onPressed: onPressed,
+          child: Column(
+            children: [
+              Text(
+                count.toString(),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade100,
+                    fontSize: 18),
+              ),
+              Text(
+                name,
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+              ),
+            ],
+          ));
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        individual(
+            group.followers.length,
+            "Followers",
+            () => context.push("/group/followers",
+                extra: AffiliatedUsersScreenExtra(
+                  users: group.followers,
+                  title: "Followers",
+                  isAdmin: group.admins.contains(currentUser.id),
+                  onRemove: (userId) async {
+                    return await removeFollower(
+                        userId: userId, groupId: group.id);
+                  },
+                ))),
+        individual(
+            group.members.length,
+            "Members",
+            () => context.push("/group/followers",
+                extra: AffiliatedUsersScreenExtra(
+                  users: group.members,
+                  title: "Members",
+                  isAdmin: group.admins.contains(currentUser.id),
+                  onRemove: (userId) async {
+                    return await removeMember(
+                        userId: userId, groupId: group.id);
+                  },
+                )))
+      ],
+    );
+  }
+
+  bool _userHasAccess(Group group, CurrentUser currentUser) {
     return group.followers.contains(currentUser.id) ||
         group.members.contains(currentUser.id) ||
         !group.private;
   }
 
-  Widget noAccess(BuildContext context) {
+  Widget _noAccess(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 50),
       child: const Center(
@@ -92,7 +157,7 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget description(BuildContext context, String? description) {
+  Widget _description(BuildContext context, String? description) {
     if (description == null) {
       return Container();
     }
@@ -105,7 +170,7 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget followJoinButtons(
+  Widget _followJoinButtons(
       BuildContext context, Group group, StateSetter setState) {
     CurrentUserPrivateData privateData =
         Provider.of<CurrentUserProvider>(context).privateData!;
@@ -213,7 +278,7 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget header(Group group, BuildContext context, CurrentUser currentUser) {
+  Widget _header(Group group, BuildContext context, CurrentUser currentUser) {
     return SizedBox(
       height: bannerHeight.toDouble(),
       child: Stack(

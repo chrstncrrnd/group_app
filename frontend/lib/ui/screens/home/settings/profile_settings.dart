@@ -14,6 +14,8 @@ import 'package:group_app/utils/validators.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 
+import '../../../widgets/alert.dart';
+
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({super.key});
 
@@ -64,10 +66,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         appBar: AppBar(
           title: const Text("Update profile"),
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => context.pop(),
-          ),
         ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -102,6 +100,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: const Text("Remove profile picture")),
             TextInputField(
               validator: validateName,
+              initialValue: currentUser.name,
               label: "Name",
               onChanged: (val) => _newName = val,
             ),
@@ -110,6 +109,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             ),
             TextInputField(
               validator: validateUsername,
+              initialValue: currentUser.username,
               label: "Username",
               onChanged: (val) => _newUsername = val,
             ),
@@ -125,6 +125,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 if (currentUser.username == _newUsername) {
                   _newUsername = null;
                 }
+                _newName = _newName?.trim();
+                _newUsername = _newUsername?.trim();
                 return await updateProfile(
                     name: _newName,
                     username: _newUsername,
@@ -133,10 +135,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               },
               after: (res) {
                 if (res != null) {
-                  showAdaptiveDialog(context,
-                      title: const Text("An error occurred"),
-                      content: Text(res),
-                      actions: const [Text("Ok")]);
+                  showAlert(context, title: "An error occurred", content: res);
                 } else {
                   context.pop();
                 }

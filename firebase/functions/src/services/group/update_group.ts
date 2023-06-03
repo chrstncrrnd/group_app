@@ -5,8 +5,9 @@ import { storagePathRegExp } from '../../utils/validators';
 import * as admin from 'firebase-admin';
 import { groupModel } from '../../models/group';
 import { missing_auth_msg, user_not_admin_msg } from '../../utils/constants';
+import { FieldValue } from 'firebase-admin/firestore';
 
-const params = z.object({
+const updateGroupParams = z.object({
   groupId: z.string(),
   groupName: groupNameShape.optional(),
   groupDescription: groupDescriptionShape.optional().nullable(),
@@ -51,7 +52,7 @@ export const updateGroup = functions.https.onCall(
         missing_auth_msg
       );
     }
-    const d = params.parse(data);
+    const d = updateGroupParams.parse(data);
     const groupDocRef = admin.firestore().collection('groups').doc(d.groupId);
     const userId = ctx.auth?.uid;
 
@@ -75,5 +76,58 @@ export const updateGroup = functions.https.onCall(
       private: d.private,
       lastChange: new Date().toISOString(),
     });
+  }
+);
+
+const removeUserParams = z.object({
+  userId: z.string(),
+  groupId: z.string(),
+  as: z.union([z.literal('follower'), z.literal('member')]),
+});
+
+export const removeUserFromGroup = functions.https.onCall(
+  async (
+    data: {
+      userId: string;
+      groupId: string;
+      as: 'follower' | 'member';
+    },
+    ctx
+  ) => {
+    if (ctx.auth == null) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        missing_auth_msg
+      );
+    }
+    const d = removeUserParams.parse(data);
+
+    const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
+
+    const group = groupModel.parse((await groupDoc.get()).data());
+    if (!group.admins.includes(ctx.auth.uid)) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        user_not_admin_msg
+      );
+    }
+
+    const groupUpdateData: { followers?: FieldValue; members?: FieldValue } =
+      {};
+
+    const userUpdateData: { following?: FieldValue; memberOf?: FieldValue } =
+      {};
+
+    if (d.as == 'follower') {
+      groupUpdateData.followers = FieldValue.arrayRemove(d.userId);
+      userUpdateData.following = FieldValue.arrayRemove(d.groupId);
+    } else {
+      groupUpdateData.members = FieldValue.arrayRemove(d.userId);
+      userUpdateData.memberOf = FieldValue.arrayRemove(d.groupId);
+    }
+
+    await groupDoc.update(groupUpdateData);
+    const userDoc = admin.firestore().collection('users').doc(d.userId);
+    await userDoc.update(userUpdateData);
   }
 );

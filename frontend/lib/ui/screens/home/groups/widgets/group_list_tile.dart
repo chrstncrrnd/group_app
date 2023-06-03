@@ -11,36 +11,62 @@ class GroupListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconDiameter = 40.0;
+    
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => context.push("/group", extra: group),
       child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                BasicCircleAvatar(radius: 20, child: group.icon(40)),
-                const SizedBox(
-                  width: 10,
-                ),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                    group.name,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (group.description != null)
-                    Container(
-                        margin: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          group.description!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ))
-                ]),
-              ])),
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      BasicCircleAvatar(
+                          radius: iconDiameter / 2,
+                          child: group.icon(iconDiameter)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                group.name,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (group.description != null)
+                                Container(
+                                    margin: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      group.description!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.grey.shade300),
+                                    ))
+                            ]),
+                      ),
+                    ]),
+              ),
+              IconButton(
+                  onPressed: () => print("new post on group ${group.name}"),
+                  icon: const Icon(
+                    Icons.add,
+                    size: iconDiameter,
+                    color: Colors.grey,
+                  ))
+            ],
+          )),
     );
   }
 }

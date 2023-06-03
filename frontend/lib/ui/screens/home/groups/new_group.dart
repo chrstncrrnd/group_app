@@ -45,10 +45,6 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.close_rounded),
-        ),
         title: const Text("Create a new group"),
         centerTitle: true,
       ),

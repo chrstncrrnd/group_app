@@ -95,10 +95,6 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
         appBar: AppBar(
           title: const Text("Edit group"),
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => context.pop(),
-          ),
         ),
         body: SingleChildScrollView(
           child: Column(children: [
@@ -248,6 +244,9 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     _newGroupDescription) {
                   _newGroupDescription = null;
                 }
+
+                _newGroupDescription = _newGroupDescription?.trim();
+                _newGroupName = _newGroupName?.trim();
                 return await updateGroup(
                     groupId: widget.initialGroupState.id,
                     banner: _banner,
@@ -260,10 +259,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
               },
               after: (res) {
                 if (res != null) {
-                  showAdaptiveDialog(context,
-                      title: const Text("An error occurred"),
-                      content: Text(res),
-                      actions: const [Text("Ok")]);
+                  showAlert(context, title: "An error occurred", content: res);
                 } else {
                   context.pop();
                 }
