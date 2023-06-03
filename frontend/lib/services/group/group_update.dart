@@ -34,6 +34,7 @@ Future<String?> updateGroup(
     File? icon,
     String? groupName,
     String? description,
+    bool? private,
     required bool removeBanner,
     required bool removeIcon,
     required String groupId}) async {
@@ -44,6 +45,10 @@ Future<String?> updateGroup(
       return groupNameInvalid;
     }
     params["groupName"] = groupName;
+  }
+
+  if (private != null) {
+    params["private"] = private;
   }
 
   if (description != null) {

@@ -10,6 +10,7 @@ const params = z.object({
   groupId: z.string(),
   groupName: groupNameShape.optional(),
   groupDescription: groupDescriptionShape.optional().nullable(),
+  private: z.boolean().optional(),
   icon: z
     .object({
       location: z.string().regex(storagePathRegExp),
@@ -32,6 +33,7 @@ export const updateGroup = functions.https.onCall(
       groupId: string;
       groupName?: string;
       groupDescription?: string;
+      private?: boolean;
       icon?: {
         location: string;
         dlUrl: string;
@@ -70,6 +72,7 @@ export const updateGroup = functions.https.onCall(
       description: d.groupDescription,
       banner: d.banner,
       icon: d.icon,
+      private: d.private,
       lastChange: new Date().toISOString(),
     });
   }

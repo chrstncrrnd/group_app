@@ -35,6 +35,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   File? _icon;
   String? _iconDlUrl;
   bool _removeIcon = false;
+  late bool _private;
 
   File? _banner;
   String? _bannerDlUrl;
@@ -87,6 +88,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
     if (_firstTimeBuilding) {
       _iconDlUrl = widget.initialGroupState.iconDlUrl;
       _bannerDlUrl = widget.initialGroupState.bannerDlUrl;
+      _private = widget.initialGroupState.private;
       _firstTimeBuilding = false;
     }
     return Scaffold(
@@ -213,9 +215,32 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
             const SizedBox(
               height: 10,
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Private group",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Switch.adaptive(
+                      value: _private,
+                      onChanged: (_) => setState(() => _private = !_private))
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             NextButton(
               text: "Update",
               onPressed: () async {
+                bool? priv;
+                if (_private != widget.initialGroupState.private) {
+                  priv = _private;
+                }
+
                 if (widget.initialGroupState.name == _newGroupName) {
                   _newGroupName = null;
                 }
@@ -224,14 +249,14 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                   _newGroupDescription = null;
                 }
                 return await updateGroup(
-                  groupId: widget.initialGroupState.id,
-                  banner: _banner,
-                  description: _newGroupDescription,
-                  groupName: _newGroupName,
-                  icon: _icon,
-                  removeBanner: _removeBanner,
-                  removeIcon: _removeIcon,
-                );
+                    groupId: widget.initialGroupState.id,
+                    banner: _banner,
+                    description: _newGroupDescription,
+                    groupName: _newGroupName,
+                    icon: _icon,
+                    removeBanner: _removeBanner,
+                    removeIcon: _removeIcon,
+                    private: priv);
               },
               after: (res) {
                 if (res != null) {

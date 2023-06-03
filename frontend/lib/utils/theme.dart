@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color accentColor = Color.fromARGB(255, 132, 0, 255);
+const Color accentColor = Color.fromARGB(255, 126, 126, 126);
 
 final theme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: Colors.black,
