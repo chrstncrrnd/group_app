@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/home/settings/setting_directory_tile.dart';
 import 'package:group_app/utils/clear_cache.dart';
 
