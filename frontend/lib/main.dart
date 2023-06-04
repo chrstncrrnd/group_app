@@ -16,10 +16,10 @@ void main() async {
   if (kDebugMode) {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
-    await FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
-    FirebaseFunctions.instance.useFunctionsEmulator("localhost", 5001);
-    FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
-    FirebaseStorage.instance.useStorageEmulator("localhost", 9199);
+    await FirebaseAuth.instance.useAuthEmulator("192.168.0.17", 9099);
+    FirebaseFunctions.instance.useFunctionsEmulator("192.168.0.17", 5001);
+    FirebaseFirestore.instance.useFirestoreEmulator("192.168.0.17", 8080);
+    FirebaseStorage.instance.useStorageEmulator("192.168.0.17", 9199);
   }
   runApp(GroupApp());
 }

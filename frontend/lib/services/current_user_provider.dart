@@ -25,6 +25,9 @@ class CurrentUserProvider extends ChangeNotifier {
         currentUser = null;
         privateData = null;
       }
+    }, onError: (err) async {
+      log("Error with firebase auth", error: err);
+      await FirebaseAuth.instance.signOut();
     });
   }
 }
