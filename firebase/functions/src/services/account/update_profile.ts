@@ -11,8 +11,8 @@ import {
 import { missing_auth_msg, username_taken_msg } from '../../utils/constants';
 
 const profileUpdateParams = z.object({
-  name: z.optional(nameShape),
-  username: z.optional(usernameShape),
+  name: nameShape.nullable().optional(),
+  username: usernameShape.optional(),
   pfp: z
     .object({
       location: limStr.regex(storagePathRegExp),
@@ -62,15 +62,7 @@ export const updateProfile = functions.https.onCall(
       }
     }
 
-    // validate name
-    if (profileUpdateData.name != null) {
-      const newName = profileUpdateData.name.trim();
-      if (newName.length !== 0) {
-        dataToUpdate.name = newName;
-      } else {
-        dataToUpdate.name = null;
-      }
-    }
+    dataToUpdate.name = profileUpdateData.name;
 
     const doc = admin.firestore().collection('users').doc(ctx.auth.uid);
 

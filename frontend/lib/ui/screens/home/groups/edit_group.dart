@@ -8,7 +8,6 @@ import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/widgets/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/alert.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/next_button.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
 import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
@@ -42,6 +41,32 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
   bool _removeBanner = false;
 
   bool _firstTimeBuilding = true;
+
+  Future<String?> _save() async {
+    bool? priv;
+    if (_private != widget.initialGroupState.private) {
+      priv = _private;
+    }
+
+    if (widget.initialGroupState.name == _newGroupName) {
+      _newGroupName = null;
+    }
+    if (widget.initialGroupState.description == _newGroupDescription) {
+      _newGroupDescription = null;
+    }
+
+    _newGroupDescription = _newGroupDescription?.trim();
+    _newGroupName = _newGroupName?.trim();
+    return await updateGroup(
+        groupId: widget.initialGroupState.id,
+        banner: _banner,
+        description: _newGroupDescription,
+        groupName: _newGroupName,
+        icon: _icon,
+        removeBanner: _removeBanner,
+        removeIcon: _removeIcon,
+        private: priv);
+  }
 
   Widget banner() {
     if (_banner != null) {
@@ -93,9 +118,27 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Edit group"),
-          centerTitle: true,
-        ),
+            title: const Text("Edit group"),
+            centerTitle: true,
+            actions: [
+              ProgressIndicatorButton(
+                progressIndicatorHeight: 20,
+                progressIndicatorWidth: 20,
+                onPressed: _save,
+                afterPressed: (res) {
+                  if (res != null) {
+                    showAlert(context,
+                        title: "An error occurred", content: res);
+                  } else {
+                    context.pop();
+                  }
+                },
+                child: const Text(
+                  "Save",
+                  style: TextStyle(color: Colors.blue, fontSize: 16),
+                ),
+              ),
+            ]),
         body: SingleChildScrollView(
           child: Column(children: [
             Stack(
@@ -226,45 +269,6 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            NextButton(
-              text: "Update",
-              onPressed: () async {
-                bool? priv;
-                if (_private != widget.initialGroupState.private) {
-                  priv = _private;
-                }
-
-                if (widget.initialGroupState.name == _newGroupName) {
-                  _newGroupName = null;
-                }
-                if (widget.initialGroupState.description ==
-                    _newGroupDescription) {
-                  _newGroupDescription = null;
-                }
-
-                _newGroupDescription = _newGroupDescription?.trim();
-                _newGroupName = _newGroupName?.trim();
-                return await updateGroup(
-                    groupId: widget.initialGroupState.id,
-                    banner: _banner,
-                    description: _newGroupDescription,
-                    groupName: _newGroupName,
-                    icon: _icon,
-                    removeBanner: _removeBanner,
-                    removeIcon: _removeIcon,
-                    private: priv);
-              },
-              after: (res) {
-                if (res != null) {
-                  showAlert(context, title: "An error occurred", content: res);
-                } else {
-                  context.pop();
-                }
-              },
-            ),
             const Divider(
               height: 40,
               indent: 40,
@@ -299,6 +303,8 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                                         "Something went wrong while deleting the group");
                                 log("Error while deleting group", error: e);
                               }
+                            },
+                            afterPressed: (_) {
                               context.pop();
                               context.go("/groups");
                             },

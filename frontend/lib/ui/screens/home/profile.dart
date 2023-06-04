@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/current_user_provider.dart';
@@ -53,7 +54,10 @@ class ProfileScreen extends StatelessWidget {
     }
     return Scaffold(
         appBar: AppBar(
-          title: Text("@${currentUser.username}"),
+          title: AutoSizeText(
+            "@${currentUser.username}",
+            maxLines: 1,
+          ),
           actions: [
             IconButton(
                 onPressed: () => context.push("/settings"),
@@ -71,9 +75,12 @@ class ProfileScreen extends StatelessWidget {
               height: 20,
             ),
             if (currentUser.name != null)
-              Text(
-                currentUser.name!,
-                style: _nameTextStyle,
+              Expanded(
+                child: AutoSizeText(
+                  currentUser.name!,
+                  maxLines: 1,
+                  style: _nameTextStyle,
+                ),
               ),
             const SizedBox(
               height: 20,

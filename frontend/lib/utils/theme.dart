@@ -7,6 +7,9 @@ final theme = ThemeData.dark().copyWith(
     cardTheme: const CardTheme(surfaceTintColor: Colors.white),
     primaryColor: Colors.white,
     indicatorColor: Colors.white,
+    popupMenuTheme: PopupMenuThemeData(
+        surfaceTintColor: Colors.white.withOpacity(0.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
     colorScheme: const ColorScheme.dark().copyWith(
         background: Colors.black,
         primary: Colors.white,

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
@@ -57,10 +58,13 @@ class UserProfileScreen extends StatelessWidget {
             child: Column(children: [
               BasicCircleAvatar(
                   radius: avatarSize / 2, child: user.pfp(avatarSize)),
-              Text(
-                "@${user.username}",
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              Expanded(
+                child: AutoSizeText(
+                  "@${user.username}",
+                  maxLines: 1,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20),
+                ),
               ),
               const SizedBox(
                 height: 20,

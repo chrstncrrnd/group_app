@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// Both child and text cannot be null
-class ProgressIndicatorButton extends StatefulWidget {
+class ProgressIndicatorButton<T> extends StatefulWidget {
   const ProgressIndicatorButton(
       {super.key,
       required this.onPressed,
@@ -11,10 +11,12 @@ class ProgressIndicatorButton extends StatefulWidget {
       this.style,
       this.child,
       this.progressIndicatorHeight,
+      this.afterPressed,
       this.progressIndicatorWidth})
       : assert(text != null || child != null);
 
-  final FutureOr<void> Function() onPressed;
+  final FutureOr<T> Function() onPressed;
+  final Function(T value)? afterPressed;
   final String? text;
   final Widget? child;
   final ButtonStyle? style;
@@ -23,10 +25,11 @@ class ProgressIndicatorButton extends StatefulWidget {
 
   @override
   State<ProgressIndicatorButton> createState() =>
-      _ProgressIndicatorButtonState();
+      _ProgressIndicatorButtonState<T>();
 }
 
-class _ProgressIndicatorButtonState extends State<ProgressIndicatorButton> {
+class _ProgressIndicatorButtonState<T>
+    extends State<ProgressIndicatorButton<T>> {
   bool loading = false;
 
   void onPressed() async {
@@ -37,7 +40,11 @@ class _ProgressIndicatorButtonState extends State<ProgressIndicatorButton> {
       loading = true;
     });
 
-    await widget.onPressed.call();
+    T res = await widget.onPressed.call();
+
+    if (widget.afterPressed != null) {
+      widget.afterPressed!(res);
+    }
 
     setState(() {
       loading = false;

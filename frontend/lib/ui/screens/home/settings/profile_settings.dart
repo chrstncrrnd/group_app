@@ -118,6 +118,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             NextButton(
               text: "Update",
               onPressed: () async {
+                _newName = _newName?.trim();
+                _newUsername = _newUsername?.trim();
+
                 if (currentUser.name == _newName) {
                   _newName = null;
                 }

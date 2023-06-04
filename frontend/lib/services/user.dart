@@ -19,7 +19,11 @@ Future<String?> updateProfile(
     if (nameValid != null) {
       return nameValid;
     }
-    params["name"] = name;
+    if (name.isEmpty) {
+      params["name"] = null;
+    } else {
+      params["name"] = name;
+    }
   }
 
   if (username != null) {
@@ -39,6 +43,8 @@ Future<String?> updateProfile(
   String pfpLoc = "users/$userId/pfp.jpeg";
 
   var pfpRef = FirebaseStorage.instance.ref(pfpLoc);
+
+  log("params are: $params");
 
   try {
     if (removeCurrentPfp) {
@@ -60,7 +66,6 @@ Future<String?> updateProfile(
     }
     log(e.toString(), error: e);
   }
-
   try {
     await FirebaseFunctions.instance
         .httpsCallable("updateProfile")

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,7 @@ import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
-import 'package:group_app/ui/widgets/native_context_menu.dart';
+import 'package:group_app/ui/widgets/context_menu.dart';
 import 'package:group_app/utils/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -284,6 +285,7 @@ class GroupScreen extends StatelessWidget {
   }
 
   Widget _header(Group group, BuildContext context, CurrentUser currentUser) {
+    const iconRadius = 30.0;
     return SizedBox(
       height: bannerHeight.toDouble(),
       child: Stack(
@@ -318,23 +320,35 @@ class GroupScreen extends StatelessWidget {
                               Colors.white.withOpacity(0.15))),
                     ),
                     IconButton(
-                      onPressed: () => showNativeContextMenu(context, [
+                      onPressed: () => showContextMenu(
+                        context: context,
+                        items: [
                         if (group.admins.contains(currentUser.id))
                           (
                             child: const Text("Edit"),
                             onPressed: () =>
-                                context.push("/group/edit", extra: group)
+                                  context.push("/group/edit", extra: group),
+                              icon: const Icon(Icons.edit)
                           ),
                         (
                           child: const Text("Share"),
-                          onPressed: () => log("pressed share")
+                            onPressed: () => log("pressed share"),
+                            icon: const Icon(Icons.ios_share_rounded)
                         ),
                         (
                           child: const Text("Report"),
-                          onPressed: () => log("pressed report")
+                            onPressed: () => log("pressed report"),
+                            icon: const Icon(Icons.warning_amber_rounded)
                         )
-                      ]),
-                      icon: const Icon(Icons.menu),
+                        ],
+                        position: RelativeRect.fromDirectional(
+                            top: 0,
+                            end: 0,
+                            textDirection: TextDirection.ltr,
+                            start: 1,
+                            bottom: 1),
+                      ),
+                      icon: const Icon(Icons.more_horiz),
                       style: ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll(
                               Colors.white.withOpacity(0.15))),
@@ -343,19 +357,23 @@ class GroupScreen extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    BasicCircleAvatar(radius: 30, child: group.icon(60)),
+                    BasicCircleAvatar(
+                        radius: iconRadius, child: group.icon(iconRadius * 2)),
                     const SizedBox(
                       width: 20,
                     ),
-                    Text(
-                      group.name,
-                      style: const TextStyle(shadows: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 20,
-                          spreadRadius: 20,
-                        )
-                      ], fontWeight: FontWeight.bold, fontSize: 30),
+                    Expanded(
+                      child: AutoSizeText(
+                        group.name,
+                        maxLines: 1,
+                        style: const TextStyle(shadows: [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 20,
+                            spreadRadius: 20,
+                          )
+                        ], fontWeight: FontWeight.bold, fontSize: 30),
+                      ),
                     ),
                   ],
                 )

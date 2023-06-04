@@ -45,7 +45,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Create a new group"),
+        title: const Text("New group"),
         centerTitle: true,
       ),
       body: Form(
@@ -89,7 +89,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                   height: 40,
                 ),
                 NextButton(
-                  text: "Create group",
+                  text: "Create",
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
                       return "Please check all of the fields";
