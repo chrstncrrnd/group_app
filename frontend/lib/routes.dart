@@ -19,7 +19,7 @@ import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
 import 'package:group_app/ui/screens/home/notifications/notifications.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
-import 'package:group_app/ui/screens/home/search.dart';
+import 'package:group_app/ui/screens/home/search/search.dart';
 import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
 import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
 import 'package:group_app/ui/screens/home/user/user_profile.dart';
