@@ -11,6 +11,7 @@ import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
+import 'package:group_app/ui/screens/home/groups/pages/pages_grid.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/interaction_button.dart';
 import 'package:group_app/ui/widgets/context_menu.dart';
@@ -60,6 +61,10 @@ class GroupScreen extends StatelessWidget {
             color: Color.fromARGB(76, 255, 255, 255),
           ),
           if (!_userHasAccess(group, currentUser)) _noAccess(context)
+          else
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: PagesGrid()),
         ];
         return SafeArea(
             child: ListView.builder(
