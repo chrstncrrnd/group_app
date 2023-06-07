@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:group_app/models/group.dart';
+import 'package:group_app/ui/screens/home/groups/pages/new_page/new_page_sheet.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile_wrapper.dart';
+import 'package:provider/provider.dart';
 
 class NewPageTile extends StatelessWidget {
   const NewPageTile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Group group = Provider.of<Group>(context);
     return PageTileWrapper(
+        onPressed: () => Scaffold.of(context).showBottomSheet(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              (ctx) => NewPageSheet(
+                group: group,
+              ),
+            ),
         title: const Text(
           "Create a new page",
           style: TextStyle(fontWeight: FontWeight.bold),

@@ -62,9 +62,11 @@ class GroupScreen extends StatelessWidget {
           ),
           if (!_userHasAccess(group, currentUser)) _noAccess(context)
           else
-            const Padding(
+            Provider.value(
+                value: group,
+                child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: PagesGrid()),
+                    child: PagesGrid())),
         ];
         return SafeArea(
             child: ListView.builder(

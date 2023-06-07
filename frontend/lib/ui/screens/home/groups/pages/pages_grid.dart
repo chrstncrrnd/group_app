@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:group_app/ui/screens/home/groups/pages/new_page_tile.dart';
+import 'package:group_app/ui/screens/home/groups/pages/new_page/new_page_tile.dart';
 
 class PagesGrid extends StatelessWidget {
   const PagesGrid({super.key});
+
 
   @override
   Widget build(BuildContext context) {
