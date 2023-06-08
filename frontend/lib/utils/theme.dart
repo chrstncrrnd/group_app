@@ -5,7 +5,8 @@ const Color accentColor = Color.fromARGB(255, 126, 126, 126);
 final theme = ThemeData.dark().copyWith(
     scaffoldBackgroundColor: Colors.black,
     cardTheme: const CardTheme(surfaceTintColor: Colors.white),
-    bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.black),
+    bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color.fromARGB(255, 7, 7, 7)),
     primaryColor: Colors.white,
     indicatorColor: Colors.white,
     popupMenuTheme: PopupMenuThemeData(

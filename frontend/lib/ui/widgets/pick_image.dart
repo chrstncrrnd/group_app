@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,13 +15,13 @@ Future<ImageSource?> _getImageSource(BuildContext context) async {
             title: const Text("Photo library"),
             onPressed: (ctx) {
               imageSource = ImageSource.gallery;
-              Navigator.of(context).pop();
+              context.pop();
             }),
         BottomSheetAction(
             title: const Text("Camera"),
             onPressed: (ctx) {
               imageSource = ImageSource.camera;
-              Navigator.of(context).pop();
+              context.pop();
             })
       ],
       cancelAction: CancelAction(title: const Text("Cancel")));

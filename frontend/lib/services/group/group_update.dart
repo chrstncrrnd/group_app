@@ -118,3 +118,14 @@ Future<void> deleteGroup({required String groupId}) async {
       .httpsCallable("deleteGroup")
       .call({"groupId": groupId});
 }
+
+Future<String?> createPage(String pageName, String groupId) async {
+  try {
+    await FirebaseFunctions.instance
+        .httpsCallable("createPage")
+        .call({"pageName": pageName, "groupId": groupId});
+  } on FirebaseFunctionsException catch (e) {
+    return e.message;
+  }
+  return null;
+}

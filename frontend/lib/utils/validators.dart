@@ -70,3 +70,14 @@ String? validateGroupDescription(String? value) {
   }
   return null;
 }
+
+String? validatePageName(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Page name cannot be empty";
+  }
+
+  if (value.length > 50) {
+    return "Page name cannot be over 50 characters";
+  }
+  return null;
+}

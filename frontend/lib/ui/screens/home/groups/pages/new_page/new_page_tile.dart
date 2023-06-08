@@ -9,13 +9,19 @@ class NewPageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     Group group = Provider.of<Group>(context);
     return PageTileWrapper(
-        onPressed: () => Scaffold.of(context).showBottomSheet(
+        onPressed: () => showModalBottomSheet(
+              showDragHandle: true,
+              isScrollControlled: true,
+              useRootNavigator: true,
+              useSafeArea: true,
+              context: context,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              (ctx) => NewPageSheet(
+              builder: (ctx) => NewPageSheet(
                 group: group,
               ),
             ),

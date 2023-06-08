@@ -1,6 +1,10 @@
 import * as functions from 'firebase-functions';
 import { z } from 'zod';
-import { groupDescriptionShape, groupNameShape } from '../../utils/validators';
+import {
+  groupDescriptionShape,
+  groupNameShape,
+  pageNameShape,
+} from '../../utils/validators';
 import { storagePathRegExp } from '../../utils/validators';
 import * as admin from 'firebase-admin';
 import { groupModel } from '../../models/group';
@@ -145,3 +149,39 @@ export const removeUserFromGroup = functions.https.onCall(
     await userDoc.update(userUpdateData);
   }
 );
+
+
+const createPageParams = z.object({
+  pageName: pageNameShape,
+  groupId: z.string(),
+});
+
+export const createPage = functions.https.onCall(
+  async (data: { pageName: string; groupId: string }, ctx) => {
+    if (ctx.auth == null) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        missing_auth_msg
+      );
+    }
+
+    const d = createPageParams.parse(data);
+
+    const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
+
+    const group = groupModel.parse((await groupDoc.get()).data());
+    if (!group.admins.includes(ctx.auth.uid)) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        user_not_admin_msg
+      );
+    }
+
+    await groupDoc.collection('pages').doc().create({
+      creator: ctx.auth.uid,
+      createdAt: new Date().toISOString(),
+      name: d.pageName,
+    });
+  }
+);
+

@@ -32,3 +32,8 @@ export const groupDescriptionShape = z.string().max(500, 'Description is too lon
 // A string with a limit of 1024 characters because
 // you don't want people to use this string to upload blobs
 export const limStr = z.string().max(4096);
+
+export const pageNameShape = z
+  .string()
+  .min(1, 'Page name is too short')
+  .max(50, 'Page name is too long');
