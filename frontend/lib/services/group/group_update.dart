@@ -115,9 +115,9 @@ Future<String?> updateGroup(
 
 Future<void> deleteGroup({required String groupId}) async {
   try {
-  await FirebaseFunctions.instance
-      .httpsCallable("deleteGroup")
-      .call({"groupId": groupId});
+    await FirebaseFunctions.instance
+        .httpsCallable("deleteGroup")
+        .call({"groupId": groupId});
   } catch (e) {
     log("FirebaseFunctions exception @ deleteGroup", error: e);
   }
@@ -129,7 +129,6 @@ Future<String?> createPage(String pageName, String groupId) async {
         .httpsCallable("createPage")
         .call({"pageName": pageName, "groupId": groupId});
   } on FirebaseFunctionsException catch (e) {
-
     log("FirebaseFunctions exception @ createPage", error: e);
     return e.message;
   }
@@ -148,4 +147,10 @@ Future<String?> updatePage(
     log("FirebaseFunctions exception @ updatePage", error: e);
     return e.message;
   }
+  return null;
+}
+
+Future<String?> deletePage(
+    {required String pageId, required String groupId}) async {
+  throw UnimplementedError("Need to delete posts too");
 }
