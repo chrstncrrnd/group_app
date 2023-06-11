@@ -122,12 +122,13 @@ class _EditPageSheetState extends State<EditPageSheet> {
                     },
                     afterPressed: (_) {
                       context.pop();
-                      context.go("/groups");
+                      context.pop();
+                      context.pop();
                     },
                     child: const Text("Delete"))
               ]);
         },
         icon: const Icon(Icons.delete),
-        label: const Text("Delete group"));
+        label: const Text("Delete page"));
   }
 }

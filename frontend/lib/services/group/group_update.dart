@@ -152,5 +152,6 @@ Future<String?> updatePage(
 
 Future<String?> deletePage(
     {required String pageId, required String groupId}) async {
-  throw UnimplementedError("Need to delete posts too");
+  // return null;
+  throw UnimplementedError();
 }
