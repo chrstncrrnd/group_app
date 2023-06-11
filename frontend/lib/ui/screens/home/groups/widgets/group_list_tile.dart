@@ -60,13 +60,11 @@ class GroupListTile extends StatelessWidget {
                       ),
                     ]),
               ),
-              IconButton(
-                  onPressed: () => print("new post on group ${group.name}"),
-                  icon: const Icon(
-                    Icons.add,
-                    size: iconDiameter,
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: iconDiameter / 2,
                     color: Colors.grey,
-                  ))
+              )
             ],
           )),
     );

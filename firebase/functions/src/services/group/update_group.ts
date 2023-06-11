@@ -177,10 +177,14 @@ export const createPage = functions.https.onCall(
       );
     }
 
+    const now = new Date().toISOString();
+
     await groupDoc.collection('pages').doc().create({
-      creator: ctx.auth.uid,
-      createdAt: new Date().toISOString(),
+      creatorId: ctx.auth.uid,
+      groupId: d.groupId,
+      createdAt: now,
       name: d.pageName,
+      lastChange: now,
     });
   }
 );

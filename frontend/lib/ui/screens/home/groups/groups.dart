@@ -7,7 +7,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
-import 'package:group_app/ui/widgets/paginated_streamed_list_view.dart';
+import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
 import 'package:provider/provider.dart';
 
 class GroupsScreen extends StatelessWidget {
