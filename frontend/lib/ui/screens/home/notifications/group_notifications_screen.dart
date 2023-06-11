@@ -54,7 +54,7 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
           centerTitle: true,
         ),
       body: PaginatedStreamedListView(
-          pageSize: 1,
+          pageSize: 10,
           query: FirebaseFirestore.instance
               .collection("groups")
               .doc(widget.group.id)

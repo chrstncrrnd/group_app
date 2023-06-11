@@ -10,7 +10,7 @@ class PageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("loading page: ${page.name}");
+    print("[GROUP] loading page: ${page.name}");
     return PageTileWrapper(
       onPressed: () => context.push("/group/page", extra: page),
       title: Text(page.name, maxLines: 1, overflow: TextOverflow.ellipsis),

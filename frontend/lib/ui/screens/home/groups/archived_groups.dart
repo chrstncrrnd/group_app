@@ -27,7 +27,7 @@ class ArchivedGroupsScreen extends StatelessWidget {
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
             .where(FieldPath.documentId, whereIn: privateData.archivedGroups),
-        pageSize: 1,
+        pageSize: 10,
         ifEmpty: const Center(
           child: Text("Swipe left on a group to archive it"),
         ),

@@ -20,6 +20,7 @@ class PagesGrid extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
+        pageSize: 10,
         query: FirebaseFirestore.instance
             .collection("groups")
             .doc(group.id)
