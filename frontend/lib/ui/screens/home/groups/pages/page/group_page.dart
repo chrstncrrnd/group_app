@@ -3,6 +3,7 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
 import 'package:provider/provider.dart';
 
 class GroupPageExtra {
@@ -33,12 +34,35 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
     super.initState();
   }
 
+  Future<void> _editPage() async {
+    await showModalBottomSheet(
+      showDragHandle: true,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      useSafeArea: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => EditPageSheet(
+        group: _group,
+        page: _page,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
     return Scaffold(
       appBar: AppBar(
         title: Text(_page.name),
         centerTitle: true,
+        actions: [
+          if (_group.admins.contains(currentUser.id))
+            IconButton(
+                onPressed: _editPage, icon: const Icon(Icons.edit_outlined))
+        ],
       ),
       body: Column(
         children: [
