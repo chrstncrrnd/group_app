@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
 import 'package:group_app/ui/animations/route_animations.dart';
 import 'package:group_app/ui/screens/auth/create_account.dart';
 import 'package:group_app/ui/screens/auth/intro.dart';
@@ -148,7 +147,7 @@ class Routes extends ChangeNotifier {
                       GoRoute(
                         path: "page",
                         builder: (context, state) => GroupPageScreen(
-                          page: state.extra as GroupPage,
+                          extra: state.extra as GroupPageExtra,
                         ),
                       )
                     ]
