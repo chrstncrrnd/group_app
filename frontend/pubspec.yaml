@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^3.2.3
   image_picker: ^0.8.7+3
   image_cropper: ^4.0.1
+  camera: ^0.10.5+2
   adaptive_action_sheet: ^2.0.2
   auto_size_text: ^3.0.0
 

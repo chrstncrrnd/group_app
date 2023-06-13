@@ -1,9 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
+import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
+import 'package:group_app/ui/widgets/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/alert.dart';
+import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:provider/provider.dart';
 
 class GroupPageExtra {
@@ -60,8 +67,11 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
         centerTitle: true,
         actions: [
           if (_group.admins.contains(currentUser.id))
+            ...[
             IconButton(
-                onPressed: _editPage, icon: const Icon(Icons.edit_outlined))
+                onPressed: _editPage, icon: const Icon(Icons.edit_outlined)),
+            _deleteButton(context, _page)
+          ]
         ],
       ),
       body: Column(
@@ -77,6 +87,44 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
         ],
       ),
       floatingActionButton: _newPostButton(),
+    );
+  }
+
+  Widget _deleteButton(BuildContext context, GroupPage page) {
+    return IconButton(
+      style: const ButtonStyle(
+          backgroundColor:
+              MaterialStatePropertyAll(Color.fromARGB(255, 151, 17, 17))),
+      onPressed: () async {
+        await showAdaptiveDialog(context,
+            title: const Text("Are you sure you want to delete this page?"),
+            content: const Text(
+                "You won't be able to recover any posts made in this page"),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: [
+              TextButton(
+                  onPressed: () => context.pop(), child: const Text("Cancel")),
+              ProgressIndicatorButton(
+                  progressIndicatorHeight: 15,
+                  progressIndicatorWidth: 15,
+                  onPressed: () async {
+                    try {
+                      await deletePage(groupId: page.groupId, pageId: page.id);
+                    } catch (e) {
+                      await showAlert(context,
+                          title:
+                              "Something went wrong while deleting this page");
+                      log("Error while deleting page", error: e);
+                    }
+                  },
+                  afterPressed: (_) {
+                    context.pop();
+                    context.pop();
+                  },
+                  child: const Text("Delete"))
+            ]);
+      },
+      icon: const Icon(Icons.delete),
     );
   }
 

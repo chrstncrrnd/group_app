@@ -58,6 +58,7 @@ class _EditPageSheetState extends State<EditPageSheet> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
             "Edit page",
@@ -78,57 +79,8 @@ class _EditPageSheetState extends State<EditPageSheet> {
             onPressed: _saveChanges,
             after: _after,
           ),
-          const Divider(
-            indent: 20,
-            endIndent: 20,
-            color: Color.fromARGB(52, 255, 255, 255),
-            height: 100,
-          ),
-          _deleteButton(context)
         ],
       ),
     );
-  }
-
-  Widget _deleteButton(BuildContext context) {
-    return TextButton.icon(
-        style: const ButtonStyle(
-            backgroundColor:
-                MaterialStatePropertyAll(Color.fromARGB(255, 151, 17, 17))),
-        onPressed: () async {
-          await showAdaptiveDialog(context,
-              title: const Text("Are you sure you want to delete this page?"),
-              content: const Text(
-                  "You won't be able to recover any posts made in this page"),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: [
-                TextButton(
-                    onPressed: () => context.pop(),
-                    child: const Text("Cancel")),
-                ProgressIndicatorButton(
-                    progressIndicatorHeight: 15,
-                    progressIndicatorWidth: 15,
-                    onPressed: () async {
-                      try {
-                        await deletePage(
-                            groupId: widget.page.groupId,
-                            pageId: widget.page.id);
-                      } catch (e) {
-                        await showAlert(context,
-                            title:
-                                "Something went wrong while deleting this page");
-                        log("Error while deleting page", error: e);
-                      }
-                    },
-                    afterPressed: (_) {
-                      context.pop();
-                      context.pop();
-                      context.pop();
-                    },
-                    child: const Text("Delete"))
-              ]);
-        },
-        icon: const Icon(Icons.delete),
-        label: const Text("Delete page"));
   }
 }

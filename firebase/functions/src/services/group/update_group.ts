@@ -227,3 +227,30 @@ export const updatePage = functions.https.onCall(
   }
 );
 
+
+export const deletePage = functions.https.onCall(
+  async (data: { pageId: string; groupId: string }, ctx) => {
+    if (ctx.auth == null) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        missing_auth_msg
+      );
+    }
+
+    const userId = ctx.auth.uid;
+    const groupDoc = admin.firestore().collection('groups').doc(data.groupId);
+
+    const groupData = groupModel.parse((await groupDoc.get()).data());
+
+    if (!groupData.admins.includes(userId)) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        user_not_admin_msg
+      );
+    }
+
+    const pageDoc = groupDoc.collection('pages').doc(data.pageId);
+
+    await admin.firestore().recursiveDelete(pageDoc);
+  }
+);

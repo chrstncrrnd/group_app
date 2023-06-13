@@ -150,8 +150,9 @@ Future<String?> updatePage(
   return null;
 }
 
-Future<String?> deletePage(
+Future<void> deletePage(
     {required String pageId, required String groupId}) async {
-  // return null;
-  throw UnimplementedError();
+  await FirebaseFunctions.instance
+      .httpsCallable("deletePage")
+      .call({"pageId": pageId, "groupId": groupId});
 }
