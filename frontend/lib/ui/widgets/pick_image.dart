@@ -73,6 +73,24 @@ Future<File?> pickImage(
     return null;
   }
 
-  var icon = await _cropImage(file, aspectRatio, maxWidth, maxHeight);
-  return icon;
+  file = await _cropImage(file, aspectRatio, maxWidth, maxHeight);
+  return file;
+}
+
+Future<File?> pickImageFromSource(
+    {required ImageSource imageSource,
+    required BuildContext context,
+    bool shouldCrop = true,
+    CropAspectRatio aspectRatio = const CropAspectRatio(ratioX: 1, ratioY: 1),
+    int maxHeight = 400,
+    int maxWidth = 400}) async {
+  var file = await _chooseImage(imageSource);
+  if (file == null) {
+    return null;
+  }
+  if (shouldCrop) {
+    file = await _cropImage(file, aspectRatio, maxWidth, maxHeight);
+  }
+
+  return file;
 }

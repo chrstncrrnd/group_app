@@ -10,6 +10,7 @@ import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
 import 'package:group_app/ui/widgets/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/alert.dart';
+import 'package:group_app/ui/widgets/context_menu.dart';
 import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:provider/provider.dart';
 
@@ -56,6 +57,37 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
         page: _page,
       ),
     );
+
+  }
+
+  Future<void> _deletePage(BuildContext context) async {
+    await showAdaptiveDialog(context,
+            title: const Text("Are you sure you want to delete this page?"),
+            content: const Text(
+                "You won't be able to recover any posts made in this page"),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: [
+              TextButton(
+                  onPressed: () => context.pop(), child: const Text("Cancel")),
+              ProgressIndicatorButton(
+                  progressIndicatorHeight: 15,
+                  progressIndicatorWidth: 15,
+                  onPressed: () async {
+                    try {
+                  await deletePage(groupId: _page.groupId, pageId: _page.id);
+                    } catch (e) {
+                      await showAlert(context,
+                          title:
+                              "Something went wrong while deleting this page");
+                      log("Error while deleting page", error: e);
+                    }
+                  },
+                  afterPressed: (_) {
+                    context.pop();
+                    context.pop();
+                  },
+                  child: const Text("Delete"))
+            ]);
   }
 
   @override
@@ -66,12 +98,7 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
         title: Text(_page.name),
         centerTitle: true,
         actions: [
-          if (_group.admins.contains(currentUser.id))
-            ...[
-            IconButton(
-                onPressed: _editPage, icon: const Icon(Icons.edit_outlined)),
-            _deleteButton(context, _page)
-          ]
+          if (_group.admins.contains(currentUser.id)) _adminButtons(context)
         ],
       ),
       body: Column(
@@ -90,43 +117,33 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
     );
   }
 
-  Widget _deleteButton(BuildContext context, GroupPage page) {
+  Widget _adminButtons(BuildContext context) {
     return IconButton(
-      style: const ButtonStyle(
-          backgroundColor:
-              MaterialStatePropertyAll(Color.fromARGB(255, 151, 17, 17))),
-      onPressed: () async {
-        await showAdaptiveDialog(context,
-            title: const Text("Are you sure you want to delete this page?"),
-            content: const Text(
-                "You won't be able to recover any posts made in this page"),
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-            actions: [
-              TextButton(
-                  onPressed: () => context.pop(), child: const Text("Cancel")),
-              ProgressIndicatorButton(
-                  progressIndicatorHeight: 15,
-                  progressIndicatorWidth: 15,
-                  onPressed: () async {
-                    try {
-                      await deletePage(groupId: page.groupId, pageId: page.id);
-                    } catch (e) {
-                      await showAlert(context,
-                          title:
-                              "Something went wrong while deleting this page");
-                      log("Error while deleting page", error: e);
-                    }
-                  },
-                  afterPressed: (_) {
-                    context.pop();
-                    context.pop();
-                  },
-                  child: const Text("Delete"))
-            ]);
-      },
-      icon: const Icon(Icons.delete),
-    );
+        onPressed: () => showContextMenu(
+            context: context,
+            items: [
+              (
+                child: const Text("Edit page"),
+                onPressed: _editPage,
+                icon: const Icon(Icons.edit_outlined)
+              ),
+              (
+                child: const Text("Delete page"),
+                onPressed: () => _deletePage(
+                      context,
+                    ),
+                icon: const Icon(Icons.delete_outline)
+              )
+            ],
+            position: RelativeRect.fromDirectional(
+                top: 0,
+                end: 0,
+                textDirection: TextDirection.ltr,
+                start: 1,
+                bottom: 1)),
+        icon: const Icon(Icons.more_horiz));
   }
+
 
   Widget? _newPostButton() {
     final CurrentUser currentUser =
