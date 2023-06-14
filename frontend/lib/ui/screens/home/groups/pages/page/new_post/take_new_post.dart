@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/ui/screens/camera/custom_camera.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
 
 class TakeNewPostScreen extends StatefulWidget {
   const TakeNewPostScreen({super.key, required this.inPage});
@@ -20,16 +21,21 @@ class _TakeNewPostScreenState extends State<TakeNewPostScreen> {
 
   void _onTakePicture(File file) {
     _post = file;
+    log("picture taken");
+    context.push("/new_post/submit",
+        extra: SubmitNewPostExtra(page: widget.inPage, post: _post!));
   }
 
   @override
   Widget build(BuildContext context) {
-    log("balls");
-    return Stack(
-      children: [
-        CustomCamera(onTakePicture: _onTakePicture),
-        Positioned(left: 0, top: 0, child: _topControls()),
-      ],
+    return SafeArea(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomCamera(onTakePicture: _onTakePicture),
+          Positioned(left: 0, top: 0, child: _topControls()),
+        ],
+      ),
     );
   }
 

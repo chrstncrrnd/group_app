@@ -96,7 +96,7 @@ class Routes extends ChangeNotifier {
                       noTransition(context, state, const GroupsScreen()),
                 ),
                 GoRoute(
-                  path: "/new_post",
+                  path: "/new",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const NewPostScreen()),
                 ),
@@ -184,7 +184,9 @@ class Routes extends ChangeNotifier {
               routes: [
                 GoRoute(
                   path: "submit",
-                  builder: (context, state) => const SubmitNewPost(),
+                  builder: (context, state) => SubmitNewPost(
+                    extra: state.extra! as SubmitNewPostExtra,
+                  ),
                 )
               ]
           )
