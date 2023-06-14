@@ -150,7 +150,7 @@ class _GroupPageScreenState extends State<GroupPageScreen> {
         Provider.of<CurrentUserProvider>(context).currentUser!;
     if (_group.members.contains(currentUser.id)) {
       return TextButton.icon(
-          onPressed: () => print("new post"),
+          onPressed: () => context.push("/new_post", extra: _page),
           icon: const Icon(Icons.add),
           label: const Text("New post"));
     } else {
