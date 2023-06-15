@@ -12,29 +12,24 @@ class TakeNewPostScreen extends StatelessWidget {
   final GroupPage inPage;
 
   void _onTakePicture(File file, BuildContext context) {
-    GoRouter.of(context).go("/submit_new_post",
-        extra: SubmitNewPostExtra(page: inPage, post: file));
+    context.replace(
+      "/submit_new_post",
+      extra: SubmitNewPostExtra(page: inPage, post: file),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomCamera(onTakePicture: (file) => _onTakePicture(file, context)),
-          Positioned(left: 0, top: 0, child: _topControls(context)),
-        ],
-      ),
-    );
-  }
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+              onPressed: context.pop, icon: const Icon(Icons.close_rounded))),
+      body: Center(
+          child: CustomCamera(
+              onTakePicture: (file) => _onTakePicture(file, context))),
 
-  Widget _topControls(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-            onPressed: context.pop, icon: const Icon(Icons.close_rounded))
-      ],
+      extendBodyBehindAppBar: true,
     );
   }
 }

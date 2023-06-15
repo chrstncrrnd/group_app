@@ -29,7 +29,9 @@ class PagesGrid extends StatelessWidget {
         before: const [NewPageTile()],
         itemBuilder: (context, item) => PageTile(
             page: GroupPage.fromJson(
-                json: item.data() as Map<String, dynamic>, id: item.id)));
+                json: item.data() as Map<String, dynamic>,
+                id: item.id,
+                cachedGroupData: group)));
 
   }
 }
