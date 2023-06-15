@@ -10,8 +10,8 @@ class SubmitNewPostExtra {
   final File post;
 }
 
-class SubmitNewPost extends StatelessWidget {
-  const SubmitNewPost({super.key, required this.extra});
+class SubmitNewPostScreen extends StatelessWidget {
+  const SubmitNewPostScreen({super.key, required this.extra});
 
   final SubmitNewPostExtra extra;
 

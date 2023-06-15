@@ -178,18 +178,18 @@ class Routes extends ChangeNotifier {
           ),
           GoRoute(
               parentNavigatorKey: _mainRootNavigatorKey,
-              path: "/new_post",
+            path: "/take_new_post",
               builder: (context, state) =>
-                  TakeNewPostScreen(inPage: state.extra as GroupPage),
-              routes: [
-                GoRoute(
-                  path: "submit",
-                  builder: (context, state) => SubmitNewPost(
-                    extra: state.extra! as SubmitNewPostExtra,
-                  ),
-                )
-              ]
-          )
+                TakeNewPostScreen(inPage: state.extra as GroupPage),
+          ),
+          GoRoute(
+            parentNavigatorKey: _mainRootNavigatorKey,
+            path: "/submit_new_post",
+            builder: (context, state) =>
+                SubmitNewPostScreen(extra: state.extra as SubmitNewPostExtra),
+          ),
+              
+          
         ]);
   }
 

@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go("/groups");
         break;
       case 2:
-        context.go("/new_post");
+        context.go("/create");
         break;
       case 3:
         context.go("/search");

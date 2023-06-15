@@ -99,7 +99,9 @@ class _CustomCameraState extends State<CustomCamera>
   Future<void> _takePicture() async {
     try {
       var file = await _cameraController!.takePicture();
-      widget.onTakePicture(File(file.path));
+      // _cameraInitialized = false;
+      // await _cameraController!.dispose();
+      await widget.onTakePicture(File(file.path));
     } on CameraException catch (e) {
       log("An error occurred while taking a picture", error: e);
     }
@@ -108,21 +110,16 @@ class _CustomCameraState extends State<CustomCamera>
   Widget _gallerySelectButton() {
     return IconButton(
         onPressed: () async {
-          _cameraController?.dispose().then((value) {
-            log("camera disposed");
-            _cameraInitialized = false;
-          });
+          _cameraController?.pausePreview();
           var file = await pickImageFromSource(
               imageSource: ImageSource.gallery,
               context: context,
               shouldCrop: false);
-          if (file == null) {
-            log("An error occurred while picking an image from image gallery in custom camera");
-            return;
+          _cameraController?.resumePreview();
+
+          if (file != null) {
+            widget.onTakePicture(file);
           }
-          onNewCameraSelected(cameras.first)
-              .then((value) => _cameraInitialized = true);
-          widget.onTakePicture(file);
         },
         icon: Icon(
           Icons.photo,
@@ -165,40 +162,50 @@ class _CustomCameraState extends State<CustomCamera>
   }
 
   Widget _cameraView(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        GestureDetector(
-          onScaleUpdate: (details) async {
-            // just calling it dragIntensity for now, you can call it whatever you like.
-            var dragIntensity = details.scale;
-            if (dragIntensity < _minZoom) {
-              _cameraController!.setZoomLevel(_minZoom);
-            } else if (dragIntensity > 1 && dragIntensity < _maxZoom) {
-              // self-explanatory, that if the maxZoomLevel exceeds, you will get an error (greater than one is given to details when you zoom-in/pinch-out).
-              _cameraController!.setZoomLevel(dragIntensity);
-            } else {
-              // if it does exceed, you can provide the maxZoomLevel instead of dragIntensity (this block is executed whenever you zoom-in/pinch-out more than the max zoom level).
-              _cameraController!.setZoomLevel(_maxZoom);
-            }
-          },
-          child: AspectRatio(
-            aspectRatio: 1 / _cameraController!.value.aspectRatio,
-            child: _cameraController!.buildPreview(),
+    return SizedBox(
+      // Take up the whole screen
+      height: Max.height(context),
+      width: Max.width(context),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            onScaleUpdate: (details) async {
+              // just calling it dragIntensity for now, you can call it whatever you like.
+              var dragIntensity = details.scale;
+              if (dragIntensity < _minZoom) {
+                _cameraController!.setZoomLevel(_minZoom);
+              } else if (dragIntensity > _minZoom && dragIntensity < _maxZoom) {
+                // self-explanatory, that if the maxZoomLevel exceeds, you will get an error (greater than one is given to details when you zoom-in/pinch-out).
+                _cameraController!.setZoomLevel(dragIntensity);
+              } else {
+                // if it does exceed, you can provide the maxZoomLevel instead of dragIntensity (this block is executed whenever you zoom-in/pinch-out more than the max zoom level).
+                _cameraController!.setZoomLevel(_maxZoom);
+              }
+            },
+            child: AspectRatio(
+              aspectRatio: 1 / _cameraController!.value.aspectRatio,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: _cameraController!.buildPreview()),
+              ),
+            ),
           ),
-        ),
-        Positioned(
-            bottom: 10,
-            width: Max.width(context),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _gallerySelectButton(),
-                _takePictureButton(),
-                _switchCameraButton()
-              ],
-            )),
-      ],
+          Positioned(
+              bottom: 10,
+              width: Max.width(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _gallerySelectButton(),
+                  _takePictureButton(),
+                  _switchCameraButton()
+                ],
+              )),
+        ],
+      ),
     );
   }
 

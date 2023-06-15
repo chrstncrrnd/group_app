@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,23 +6,14 @@ import 'package:group_app/ui/screens/camera/custom_camera.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
 
-class TakeNewPostScreen extends StatefulWidget {
+class TakeNewPostScreen extends StatelessWidget {
   const TakeNewPostScreen({super.key, required this.inPage});
 
   final GroupPage inPage;
 
-  @override
-  State<TakeNewPostScreen> createState() => _TakeNewPostScreenState();
-}
-
-class _TakeNewPostScreenState extends State<TakeNewPostScreen> {
-  File? _post;
-
-  void _onTakePicture(File file) {
-    _post = file;
-    log("picture taken");
-    context.push("/new_post/submit",
-        extra: SubmitNewPostExtra(page: widget.inPage, post: _post!));
+  void _onTakePicture(File file, BuildContext context) {
+    GoRouter.of(context).go("/submit_new_post",
+        extra: SubmitNewPostExtra(page: inPage, post: file));
   }
 
   @override
@@ -32,14 +22,14 @@ class _TakeNewPostScreenState extends State<TakeNewPostScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomCamera(onTakePicture: _onTakePicture),
-          Positioned(left: 0, top: 0, child: _topControls()),
+          CustomCamera(onTakePicture: (file) => _onTakePicture(file, context)),
+          Positioned(left: 0, top: 0, child: _topControls(context)),
         ],
       ),
     );
   }
 
-  Widget _topControls() {
+  Widget _topControls(BuildContext context) {
     return Row(
       children: [
         IconButton(
