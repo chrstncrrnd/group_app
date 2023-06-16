@@ -1,4 +1,5 @@
 import 'package:group_app/models/group.dart';
+import 'package:group_app/utils/to_list_string.dart';
 
 class GroupPage {
   String id;
@@ -9,6 +10,8 @@ class GroupPage {
   DateTime createdAt;
   DateTime lastChange;
 
+  List<String> contributors;
+
   // when it is instantiated, this can be supplied so you don't
   // need to re-fetch the group data, however it should not be used
   // after a long period of time
@@ -18,7 +21,7 @@ class GroupPage {
     if (cachedGroupData != null && useCache) {
       return cachedGroupData!;
     }
-    var g = await Group.fromId(id: id);
+    var g = await Group.fromId(id: groupId);
     cachedGroupData = g;
     return g;
   }
@@ -31,5 +34,6 @@ class GroupPage {
         creatorId = json["creatorId"],
         groupId = json["groupId"],
         createdAt = DateTime.parse(json["createdAt"]),
-        lastChange = DateTime.parse(json["lastChange"]);
+        lastChange = DateTime.parse(json["lastChange"]),
+        contributors = toListString(json["contributors"]);
 }

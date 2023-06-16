@@ -11,13 +11,13 @@ Future<String?> createPost(
     {required GroupPage page, required File file}) async {
   var params = {};
 
-  Image? image = await decodeJpgFile(file.path);
+  Image? image = await decodeImageFile(file.path);
   if (image == null) {
     return "Unable to decode image";
   }
 
   // Max size of 1080 x 1920
-  Image resized = copyResize(image, width: 1080, height: 1920);
+  Image resized = copyResize(image, width: 1080);
 
   // If for some reason the file is over 20mb, don't post it
   if (resized.length > 20000000) {
@@ -28,7 +28,7 @@ Future<String?> createPost(
 
   String id = getRandomString(20);
 
-  String postLoc = "/groups/${page.groupId}/posts/$id";
+  String postLoc = "/groups/${page.groupId}/posts/$id.jpeg";
 
   var ref = FirebaseStorage.instance.ref(postLoc);
 

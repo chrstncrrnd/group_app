@@ -115,10 +115,11 @@ class _CustomCameraState extends State<CustomCamera>
               imageSource: ImageSource.gallery,
               context: context,
               shouldCrop: false);
-          _cameraController?.resumePreview();
 
           if (file != null) {
             widget.onTakePicture(file);
+          } else {
+            _cameraController?.resumePreview();
           }
         },
         icon: Icon(

@@ -13,7 +13,7 @@ class Suspense<T> extends StatelessWidget {
 
   final Future<T>? future;
   final Widget? placeholder;
-  final Widget Function(BuildContext, T?) builder;
+  final Widget Function(BuildContext context, T? data) builder;
   final Widget? error;
 
   @override

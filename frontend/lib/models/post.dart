@@ -11,5 +11,5 @@ class Post {
   String dlUrl;
   String groupId;
   String pageId;
-  String id;
+  String id; 
 }
