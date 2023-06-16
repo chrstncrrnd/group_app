@@ -9,7 +9,6 @@ class NewPostScreen extends StatelessWidget {
     return Center(
       child: CustomCamera(
         onTakePicture: (p0) {
-          print(p0);
         },
       ),
     );

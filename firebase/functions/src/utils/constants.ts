@@ -11,3 +11,5 @@ export const user_already_sent_request_msg =
 export const request_does_not_exists_msg = 'This request does not exist';
 export const user_not_admin_msg = 'User is not an admin of this group';
 export const user_cannot_remove_self_msg = 'You cannot remove yourself';
+export const user_cannot_post_in_group_msg =
+  'You cannot post in this group due to insufficient permissions';

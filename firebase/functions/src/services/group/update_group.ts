@@ -170,7 +170,8 @@ export const createPage = functions.https.onCall(
     const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
 
     const group = groupModel.parse((await groupDoc.get()).data());
-    if (!group.admins.includes(ctx.auth.uid)) {
+    // members can create a page too
+    if (!group.members.includes(ctx.auth.uid)) {
       throw new functions.https.HttpsError(
         'permission-denied',
         user_not_admin_msg
@@ -179,13 +180,17 @@ export const createPage = functions.https.onCall(
 
     const now = new Date().toISOString();
 
-    await groupDoc.collection('pages').doc().create({
-      creatorId: ctx.auth.uid,
-      groupId: d.groupId,
-      createdAt: now,
-      name: d.pageName,
-      lastChange: now,
-    });
+    await groupDoc
+      .collection('pages')
+      .doc()
+      .create({
+        creatorId: ctx.auth.uid,
+        groupId: d.groupId,
+        createdAt: now,
+        name: d.pageName,
+        lastChange: now,
+        contributors: [ctx.auth.uid],
+      });
   }
 );
 
@@ -223,6 +228,7 @@ export const updatePage = functions.https.onCall(
     await pageDoc.update({
       name: d.pageName,
       lastChange: new Date().toISOString(),
+      contributors: FieldValue.arrayUnion(userId),
     });
   }
 );
