@@ -3,29 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/fallback_text.dart';
+import 'package:group_app/ui/widgets/stat.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key, required this.initialUserState});
 
   final User initialUserState;
 
-  Widget _statWidget({required String stat, required int value}) {
-    return Column(
-      children: [
-        Text(
-          value.toString(),
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade100,
-              fontSize: 18),
-        ),
-        Text(
-          stat,
-          style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-        ),
-      ],
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,13 +43,11 @@ class UserProfileScreen extends StatelessWidget {
             child: Column(children: [
               BasicCircleAvatar(
                   radius: avatarSize / 2, child: user.pfp(avatarSize)),
-              Expanded(
-                child: AutoSizeText(
-                  "@${user.username}",
-                  maxLines: 1,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20),
-                ),
+              AutoSizeText(
+                "@${user.username}",
+                maxLines: 1,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(
                 height: 20,
@@ -74,9 +57,8 @@ class UserProfileScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _statWidget(stat: "Member of", value: user.memberOf.length),
-                    _statWidget(
-                        stat: "Following", value: user.following.length),
+                    StatWidget(name: "Member of", value: user.memberOf.length),
+                    StatWidget(name: "Following", value: user.following.length),
                   ],
                 ),
               )

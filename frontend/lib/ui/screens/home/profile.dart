@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/shimmer_loading_indicator.dart';
+import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:provider/provider.dart';
+
+import '../../widgets/stat.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -61,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
           actions: [
             IconButton(
                 onPressed: () => context.push("/settings"),
-                icon: const Icon(Icons.menu_rounded))
+                icon: const Icon(Icons.settings_outlined))
           ],
         ),
         body: Center(
@@ -75,16 +77,23 @@ class ProfileScreen extends StatelessWidget {
               height: 20,
             ),
             if (currentUser.name != null)
-              Expanded(
-                child: AutoSizeText(
-                  currentUser.name!,
-                  maxLines: 1,
-                  style: _nameTextStyle,
-                ),
+              AutoSizeText(
+                currentUser.name!,
+                maxLines: 1,
+                style: _nameTextStyle,
               ),
-            const SizedBox(
-              height: 20,
-            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  StatWidget(
+                      name: "Member of", value: currentUser.memberOf.length),
+                  StatWidget(
+                      name: "Following", value: currentUser.following.length),
+                ],
+              ),
+            )
           ],
         )));
   }

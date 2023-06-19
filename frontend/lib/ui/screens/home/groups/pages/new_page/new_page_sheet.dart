@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group/group_update.dart';
-import 'package:group_app/ui/widgets/alert.dart';
-import 'package:group_app/ui/widgets/next_button.dart';
+import 'package:group_app/ui/widgets/buttons/next_button.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
 

@@ -13,12 +13,6 @@ class PageTileWrapper extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title != null) ...[
-          title!,
-          const SizedBox(
-            height: 10,
-          )
-        ],
         GestureDetector(
           onTap: onPressed,
           child: AspectRatio(
@@ -31,6 +25,12 @@ class PageTileWrapper extends StatelessWidget {
                 child: child),
           ),
         ),
+        if (title != null) ...[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: title!,
+          ),
+        ],
       ],
     );
   }

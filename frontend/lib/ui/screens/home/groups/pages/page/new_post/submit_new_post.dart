@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -7,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/posts.dart';
-import 'package:group_app/ui/widgets/alert.dart';
+import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/progress_indicator_button.dart';
-import 'package:group_app/ui/widgets/suspense.dart';
+import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 
 class SubmitNewPostExtra {
   SubmitNewPostExtra({required this.page, required this.post});

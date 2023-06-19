@@ -28,7 +28,7 @@ Future<String?> createPost(
 
   String id = getRandomString(20);
 
-  String postLoc = "/groups/${page.groupId}/posts/$id.jpeg";
+  String postLoc = "/groups/${page.groupId}/pages/${page.id}/$id.jpeg";
 
   var ref = FirebaseStorage.instance.ref(postLoc);
 

@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/utils/to_list_string.dart';
 
-import '../ui/widgets/shimmer_loading_indicator.dart';
+import '../ui/widgets/async/shimmer_loading_indicator.dart';
+
 
 class User {
   User(

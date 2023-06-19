@@ -6,7 +6,7 @@ import 'package:group_app/models/page.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile_wrapper.dart';
-import 'package:group_app/ui/widgets/suspense.dart';
+import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:provider/provider.dart';
 
 class PageTile extends StatelessWidget {

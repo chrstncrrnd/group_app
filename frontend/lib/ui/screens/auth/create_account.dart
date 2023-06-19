@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:group_app/services/auth.dart';
+import 'package:group_app/ui/widgets/buttons/next_button.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/utils/validators.dart';
-import 'package:group_app/ui/widgets/next_button.dart';
-
-import '../../widgets/adaptive_dialog.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen(
@@ -75,10 +74,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     },
                     after: (error) {
                       if (error != null) {
-                        showAdaptiveDialog(context,
-                            title: const Text("An error occurred"),
-                            content: Text(error),
-                            actions: const [Text("Ok")]);
+                        showAlert(context,
+                            title: "An error occurred", content: error);
                       }
                     },
                   )

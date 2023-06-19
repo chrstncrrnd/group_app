@@ -10,11 +10,11 @@ import 'package:group_app/models/post.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
-import 'package:group_app/ui/widgets/adaptive_dialog.dart';
-import 'package:group_app/ui/widgets/alert.dart';
-import 'package:group_app/ui/widgets/context_menu.dart';
+import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
 import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
-import 'package:group_app/ui/widgets/progress_indicator_button.dart';
 import 'package:provider/provider.dart';
 
 class GroupPageExtra {
@@ -121,15 +121,15 @@ class GroupPageScreen extends StatelessWidget {
                         .doc(page.groupId)
                         .collection("pages")
                         .doc(page.id)
-                        .collection("posts"),
+                        .collection("posts")
+                        .orderBy("createdAt", descending: true),
                     pageSize: 10,
                     itemBuilder: (context, item) {
                       var post = Post.fromJson(
                           json: item.data() as Map<String, dynamic>,
                           id: item.id);
-
                       return Column(children: [
-                        Text(post.createdAt.toIso8601String()),
+                        Text(post.dlUrl),
                         Image.network(post.dlUrl)
                       ]);
                     },
@@ -154,9 +154,7 @@ class GroupPageScreen extends StatelessWidget {
               ),
               (
                 child: const Text("Delete page"),
-                onPressed: () => _deletePage(
-                      context, page
-                    ),
+                onPressed: () => _deletePage(context, page),
                 icon: const Icon(Icons.delete_outline)
               )
             ],

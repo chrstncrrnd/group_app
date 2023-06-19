@@ -258,5 +258,15 @@ export const deletePage = functions.https.onCall(
     const pageDoc = groupDoc.collection('pages').doc(data.pageId);
 
     await admin.firestore().recursiveDelete(pageDoc);
+
+    const bucket = admin.storage().bucket();
+    // directory
+    const directoryPath = `groups/${data.groupId}/pages/${data.pageId}`;
+    // List all files in the directory
+    const [files] = await bucket.getFiles({ prefix: directoryPath });
+    // Delete each file
+    const deletePromises = files.map((file) => file.delete());
+    // Wait for all files to be deleted
+    await Promise.all(deletePromises);
   }
 );

@@ -26,7 +26,10 @@ class ArchivedGroupsScreen extends StatelessWidget {
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
-            .where(FieldPath.documentId, whereIn: privateData.archivedGroups),
+            .where(FieldPath.documentId, whereIn: [
+          "this is a fake id because where in cannot take an empty array",
+          ...privateData.archivedGroups
+        ]),
         pageSize: 10,
         ifEmpty: const Center(
           child: Text("Swipe left on a group to archive it"),

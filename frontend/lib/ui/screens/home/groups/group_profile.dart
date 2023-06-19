@@ -13,8 +13,9 @@ import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/pages/pages_grid.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/interaction_button.dart';
-import 'package:group_app/ui/widgets/context_menu.dart';
+import 'package:group_app/ui/widgets/buttons/interaction_button.dart';
+import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
+import 'package:group_app/ui/widgets/stat.dart';
 import 'package:group_app/utils/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -87,33 +88,13 @@ class GroupScreen extends StatelessWidget {
 
   Widget _affiliatedUsersCount(
       BuildContext context, Group group, CurrentUser currentUser) {
-    Widget individual(int count, String name, Function() onPressed) {
-      return TextButton(
-          onPressed: onPressed,
-          child: Column(
-            children: [
-              Text(
-                count.toString(),
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade100,
-                    fontSize: 18),
-              ),
-              Text(
-                name,
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-              ),
-            ],
-          ));
-    }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        individual(
-            group.followers.length,
-            "Followers",
-            () => context.push("/group/followers",
+        StatWidget(
+            value: group.followers.length,
+            name: "Followers",
+            onPressed: () => context.push("/group/followers",
                 extra: AffiliatedUsersScreenExtra(
                   users: group.followers,
                   title: "Followers",
@@ -123,10 +104,10 @@ class GroupScreen extends StatelessWidget {
                         userId: userId, groupId: group.id);
                   },
                 ))),
-        individual(
-            group.members.length,
-            "Members",
-            () => context.push("/group/followers",
+        StatWidget(
+            value: group.members.length,
+            name: "Members",
+            onPressed: () => context.push("/group/followers",
                 extra: AffiliatedUsersScreenExtra(
                   users: group.members,
                   title: "Members",
@@ -341,11 +322,6 @@ class GroupScreen extends StatelessWidget {
                           child: const Text("Share"),
                             onPressed: () => log("pressed share"),
                             icon: const Icon(Icons.ios_share_rounded)
-                        ),
-                        (
-                          child: const Text("Report"),
-                            onPressed: () => log("pressed report"),
-                            icon: const Icon(Icons.warning_amber_rounded)
                         )
                         ],
                         position: RelativeRect.fromDirectional(
