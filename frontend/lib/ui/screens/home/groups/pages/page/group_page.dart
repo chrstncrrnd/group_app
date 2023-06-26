@@ -15,6 +15,7 @@ import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
 import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
+import 'package:group_app/ui/widgets/post.dart';
 import 'package:provider/provider.dart';
 
 class GroupPageExtra {
@@ -103,39 +104,20 @@ class GroupPageScreen extends StatelessWidget {
                   _adminButtons(context, page)
               ],
             ),
-            body: Column(
-              children: [
-                Text(
-                    "${page.contributors.length} contributor${page.contributors.length == 1 ? '' : 's'}"),
-                const Divider(
-                  thickness: 1,
-                  height: 30,
-                  indent: 20,
-                  endIndent: 20,
-                  color: Color.fromARGB(50, 255, 255, 255),
-                ),
-                Expanded(
-                  child: PaginatedStreamedListView(
-                    query: FirebaseFirestore.instance
-                        .collection("groups")
-                        .doc(page.groupId)
-                        .collection("pages")
-                        .doc(page.id)
-                        .collection("posts")
-                        .orderBy("createdAt", descending: true),
-                    pageSize: 10,
-                    itemBuilder: (context, item) {
-                      var post = Post.fromJson(
-                          json: item.data() as Map<String, dynamic>,
-                          id: item.id);
-                      return Column(children: [
-                        Text(post.dlUrl),
-                        Image.network(post.dlUrl)
-                      ]);
-                    },
-                  ),
-                )
-              ],
+            body: PaginatedStreamedListView(
+              query: FirebaseFirestore.instance
+                  .collection("groups")
+                  .doc(page.groupId)
+                  .collection("pages")
+                  .doc(page.id)
+                  .collection("posts")
+                  .orderBy("createdAt", descending: true),
+              pageSize: 10,
+              itemBuilder: (context, item) {
+                var post = Post.fromJson(
+                    json: item.data() as Map<String, dynamic>, id: item.id);
+                return PostWidget(post: post);
+              },
             ),
             floatingActionButton: _newPostButton(context, page),
           );

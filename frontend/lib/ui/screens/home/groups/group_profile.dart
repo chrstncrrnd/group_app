@@ -274,7 +274,8 @@ class GroupScreen extends StatelessWidget {
 
   Widget _header(Group group, BuildContext context, CurrentUser currentUser) {
     const iconRadius = 30.0;
-    return SizedBox(
+    return Container(
+      decoration: const BoxDecoration(color: Colors.black),
       height: bannerHeight.toDouble(),
       child: Stack(
         fit: StackFit.expand,
@@ -318,11 +319,12 @@ class GroupScreen extends StatelessWidget {
                                   context.push("/group/edit", extra: group),
                               icon: const Icon(Icons.edit)
                           ),
-                        (
-                          child: const Text("Share"),
-                            onPressed: () => log("pressed share"),
-                            icon: const Icon(Icons.ios_share_rounded)
-                        )
+                          // this still needs to be done with deep linking
+                          // (
+                          //   child: const Text("Share"),
+                          //     onPressed: () => log("pressed share"),
+                          //     icon: const Icon(Icons.ios_share_rounded)
+                          // )
                         ],
                         position: RelativeRect.fromDirectional(
                             top: 0,

@@ -96,11 +96,6 @@ class Routes extends ChangeNotifier {
                       noTransition(context, state, const GroupsScreen()),
                 ),
                 GoRoute(
-                  path: "/new",
-                  pageBuilder: (context, state) =>
-                      noTransition(context, state, const NewPostScreen()),
-                ),
-                GoRoute(
                   path: "/search",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const SearchScreen()),

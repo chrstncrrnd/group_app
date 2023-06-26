@@ -17,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: Icon(Icons.home_rounded), label: "Home"),
     const BottomNavigationBarItem(
         icon: Icon(Icons.groups_2_rounded), label: "Groups"),
-    const BottomNavigationBarItem(icon: Icon(Icons.add), label: "New Post"),
     const BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
     const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
   ];
@@ -34,12 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go("/groups");
         break;
       case 2:
-        context.go("/create");
-        break;
-      case 3:
         context.go("/search");
         break;
-      case 4:
+      case 3:
         context.go("/profile");
         break;
     }
