@@ -6,16 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
-import 'package:group_app/models/post.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page/grid_post_view.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
-import 'package:group_app/ui/widgets/post.dart';
 import 'package:provider/provider.dart';
 
 class GroupPageExtra {
@@ -28,6 +26,41 @@ class GroupPageScreen extends StatelessWidget {
   const GroupPageScreen({super.key, required this.extra});
 
   final GroupPageExtra extra;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
+    return StreamBuilder<GroupPage>(
+        initialData: extra.page,
+        stream: FirebaseFirestore.instance
+            .collection("groups")
+            .doc(extra.page.groupId)
+            .collection("pages")
+            .doc(extra.page.id)
+            .snapshots()
+            .map((event) => GroupPage.fromJson(
+                json: event.data() as Map<String, dynamic>, id: event.id)),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.hasError) {
+            return const Center(
+              child: Text("Something went wrong"),
+            );
+          }
+          final page = snapshot.data!;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(page.name),
+              centerTitle: true,
+              actions: [
+                if (extra.group.admins.contains(currentUser.id))
+                  _adminButtons(context, page)
+              ],
+            ),
+            body: const GridPostView(),
+            floatingActionButton: _newPostButton(context, page),
+          );
+        });
+  }
 
   Future<void> _editPage(BuildContext context, GroupPage page) async {
     await showModalBottomSheet(
@@ -73,55 +106,6 @@ class GroupPageScreen extends StatelessWidget {
               },
               child: const Text("Delete"))
         ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
-    return StreamBuilder<GroupPage>(
-        initialData: extra.page,
-        stream: FirebaseFirestore.instance
-            .collection("groups")
-            .doc(extra.page.groupId)
-            .collection("pages")
-            .doc(extra.page.id)
-            .snapshots()
-            .map((event) => GroupPage.fromJson(
-                json: event.data() as Map<String, dynamic>, id: event.id)),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.hasError) {
-            return const Center(
-              child: Text("Something went wrong"),
-            );
-          }
-          final page = snapshot.data!;
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(page.name),
-              centerTitle: true,
-              actions: [
-                if (extra.group.admins.contains(currentUser.id))
-                  _adminButtons(context, page)
-              ],
-            ),
-            body: PaginatedStreamedListView(
-              query: FirebaseFirestore.instance
-                  .collection("groups")
-                  .doc(page.groupId)
-                  .collection("pages")
-                  .doc(page.id)
-                  .collection("posts")
-                  .orderBy("createdAt", descending: true),
-              pageSize: 10,
-              itemBuilder: (context, item) {
-                var post = Post.fromJson(
-                    json: item.data() as Map<String, dynamic>, id: item.id);
-                return PostWidget(post: post);
-              },
-            ),
-            floatingActionButton: _newPostButton(context, page),
-          );
-        });
   }
 
   Widget _adminButtons(BuildContext context, GroupPage page) {
