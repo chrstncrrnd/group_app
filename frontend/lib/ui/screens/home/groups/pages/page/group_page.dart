@@ -9,7 +9,7 @@ import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/grid_post_view.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page/posts/grid_post_view.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
@@ -56,7 +56,9 @@ class GroupPageScreen extends StatelessWidget {
                   _adminButtons(context, page)
               ],
             ),
-            body: const GridPostView(),
+            body: GridPostView(
+              page: page,
+            ),
             floatingActionButton: _newPostButton(context, page),
           );
         });

@@ -19,7 +19,6 @@ import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
 import 'package:group_app/ui/screens/home/home.dart';
-import 'package:group_app/ui/screens/home/new_post.dart';
 import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
 import 'package:group_app/ui/screens/home/notifications/notifications.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
