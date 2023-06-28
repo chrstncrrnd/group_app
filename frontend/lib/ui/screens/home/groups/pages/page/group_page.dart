@@ -56,8 +56,11 @@ class GroupPageScreen extends StatelessWidget {
                   _adminButtons(context, page)
               ],
             ),
-            body: GridPostView(
-              page: page,
+            body: Provider.value(
+              value: extra.group,
+              child: GridPostView(
+                page: page,
+              ),
             ),
             floatingActionButton: _newPostButton(context, page),
           );
