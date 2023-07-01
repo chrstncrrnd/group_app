@@ -15,6 +15,9 @@ class GridPostView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: PaginatedStreamedGridView(
+        ifEmpty: const Center(
+          child: Text("No posts yet"),
+        ),
         query: FirebaseFirestore.instance
             .collection("groups")
             .doc(page.groupId)

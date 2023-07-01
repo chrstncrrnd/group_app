@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/models/user.dart';
+import 'package:group_app/services/current_user_provider.dart';
+import 'package:group_app/services/posts.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
+import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +34,10 @@ class PostTile extends StatelessWidget {
           if (user == null) {
             return const Center(child: Text("Something went wrong"));
           }
+
+          CurrentUser currentUser =
+              Provider.of<CurrentUserProvider>(context).currentUser!;
+
           return Stack(
             alignment: Alignment.bottomLeft,
             children: [
@@ -54,6 +63,39 @@ class PostTile extends StatelessWidget {
                   ),
                 ),
               ),
+              if (post.creatorId == currentUser.id ||
+                  group.admins.contains(currentUser.id))
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () {
+                      showAdaptiveDialog(
+                        context,
+                        title: const Text("Delete post?"),
+                        content: const Text(
+                            "This action cannot be undone. Are you sure you want to delete this post?"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: const Text("Cancel")),
+                          ProgressIndicatorButton(
+                              onPressed: () async {
+                                await deletePost(
+                                    post.groupId, post.pageId, post.id);
+                              },
+                              afterPressed: (value) {
+                                context.pop();
+                              },
+                              child: const Text("Delete")),
+                        ],
+                      );
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: FittedBox(

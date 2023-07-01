@@ -54,7 +54,10 @@ class PageTile extends StatelessWidget {
             );
           }
           if (data.isEmpty) {
-            return const Text("No posts yet...");
+            return const Center(
+              child: Text("No posts yet",
+                  style: TextStyle(color: Colors.grey, fontSize: 10)),
+            );
           }
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

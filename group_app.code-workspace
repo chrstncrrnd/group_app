@@ -1,13 +1,14 @@
 {
-    "folders": [
-      {
-        "path": "frontend"
-      },
-      {
-        "path": "firebase"
-      },
-      {
-        "path": "firebase/functions"
-      }
-    ]
-  }
+  "folders": [
+    {
+      "path": "frontend"
+    },
+    {
+      "path": "firebase"
+    },
+    {
+      "path": "firebase/functions"
+    }
+  ],
+  "settings": {}
+}

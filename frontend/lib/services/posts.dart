@@ -51,3 +51,18 @@ Future<String?> createPost(
 
   return null;
 }
+
+Future<String?> deletePost(String groupId, String pageId, String postId) async {
+  try {
+    FirebaseFunctions.instance.httpsCallable("deletePost").call({
+      "groupId": groupId,
+      "pageId": pageId,
+      "postId": postId,
+    });
+  } on FirebaseFunctionsException catch (e) {
+    log("An error occurred while deleting post", error: e);
+    return e.message;
+  }
+
+  return null;
+}

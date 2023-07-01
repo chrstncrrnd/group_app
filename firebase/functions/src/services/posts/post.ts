@@ -4,10 +4,12 @@ import { z } from 'zod';
 import { storagePathRegExp } from '../../utils/validators';
 import {
   missing_auth_msg,
+  user_cannot_delete_post_msg,
   user_cannot_post_in_group_msg,
 } from '../../utils/constants';
 import { groupModel } from '../../models/group';
 import { FieldValue } from 'firebase-admin/firestore';
+import { postModel } from '../../models/post';
 
 const createPostParams = z.object({
   dlUrl: z.string(),
@@ -73,3 +75,39 @@ export const createPost = functions.https.onCall(
     });
   }
 );
+
+const deletePostParams = z.object({
+  groupId: z.string(),
+  pageId: z.string(),
+  postId: z.string(),
+});
+
+export const deletePost = functions.https.onCall(async (data, ctx) => {
+  if (ctx.auth == null) {
+    throw new functions.https.HttpsError('permission-denied', missing_auth_msg);
+  }
+
+  const d = deletePostParams.parse(data);
+
+  const groupRef = admin.firestore().collection('groups').doc(d.groupId);
+  const groupData = groupModel.parse((await groupRef.get()).data());
+  const postRef = groupRef
+    .collection('pages')
+    .doc(d.pageId)
+    .collection('posts')
+    .doc(d.postId);
+  const postData = postModel.parse((await postRef.get()).data());
+  // check that the user can delete the post
+  if (
+    postData.creatorId !== ctx.auth.uid ||
+    !groupData.admins.includes(ctx.auth.uid)
+  ) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      user_cannot_delete_post_msg
+    );
+  }
+  // delete the post
+  await postRef.delete();
+  await admin.storage().bucket().file(postData.storageLocation).delete();
+});

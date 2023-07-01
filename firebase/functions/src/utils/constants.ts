@@ -13,3 +13,4 @@ export const user_not_admin_msg = 'User is not an admin of this group';
 export const user_cannot_remove_self_msg = 'You cannot remove yourself';
 export const user_cannot_post_in_group_msg =
   'You cannot post in this group due to insufficient permissions';
+export const user_cannot_delete_post_msg = 'You cannot delete this post';
