@@ -10,7 +10,9 @@ import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/utils/max.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 
 class PostTile extends StatelessWidget {
@@ -50,7 +52,7 @@ class PostTile extends StatelessWidget {
                       useRootNavigator: true,
                       context: context,
                       pageBuilder: (context, _, __) {
-                        return _modalView(context, group, user);
+                        return _modalView(context, group, user, currentUser);
                       },
                     );
                   },
@@ -63,39 +65,6 @@ class PostTile extends StatelessWidget {
                   ),
                 ),
               ),
-              if (post.creatorId == currentUser.id ||
-                  group.admins.contains(currentUser.id))
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    onPressed: () {
-                      showAdaptiveDialog(
-                        context,
-                        title: const Text("Delete post?"),
-                        content: const Text(
-                            "This action cannot be undone. Are you sure you want to delete this post?"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                context.pop();
-                              },
-                              child: const Text("Cancel")),
-                          ProgressIndicatorButton(
-                              onPressed: () async {
-                                await deletePost(
-                                    post.groupId, post.pageId, post.id);
-                              },
-                              afterPressed: (value) {
-                                context.pop();
-                              },
-                              child: const Text("Delete")),
-                        ],
-                      );
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                ),
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: FittedBox(
@@ -128,7 +97,8 @@ class PostTile extends StatelessWidget {
         });
   }
 
-  Widget _modalView(BuildContext context, Group group, User creator) {
+  Widget _modalView(BuildContext context, Group group, User creator,
+      CurrentUser currentUser) {
     Widget icons(double iconSize) {
       return Row(
         children: [
@@ -172,12 +142,63 @@ class PostTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("@${creator.username}"),
-                      Text("in ${group.name}"),
+                      GestureDetector(
+                          onTap: () {
+                            context.pop();
+                            context.push("/user", extra: creator);
+                          },
+                          child: Text("@${creator.username}")),
+                      GestureDetector(
+                          onTap: () {
+                            context.pop();
+                            context.push("/group", extra: group);
+                          },
+                          child: Text("in ${group.name}")),
                     ],
-                  )
+                  ),
                 ],
               ),
+              if (post.creatorId == currentUser.id ||
+                  group.admins.contains(currentUser.id))
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () {
+                      showAdaptiveDialog(
+                        context,
+                        title: const Text("Delete post?"),
+                        content: const Text(
+                            "This action cannot be undone. Are you sure you want to delete this post?"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                context.pop();
+                              },
+                              child: const Text("Cancel")),
+                          ProgressIndicatorButton(
+                              onPressed: () async {
+                                return await deletePost(
+                                    post.groupId, post.pageId, post.id);
+                              },
+                              afterPressed: (value) {
+                                if (value == null) {
+                                  context.pop();
+                                  context.pop();
+                                } else {
+                                  context.pop();
+                                  showAlert(context,
+                                      title: "Something went wrong",
+                                      content: value);
+                                }
+                              },
+                              child: const Text("Delete")),
+                        ],
+                      );
+                    },
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+                ),
             ],
           ),
         ),
