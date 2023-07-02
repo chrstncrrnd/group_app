@@ -18,6 +18,7 @@ import 'package:group_app/ui/screens/home/groups/groups.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_modal.dart';
 import 'package:group_app/ui/screens/home/home.dart';
 import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
 import 'package:group_app/ui/screens/home/notifications/notifications.dart';
@@ -182,8 +183,15 @@ class Routes extends ChangeNotifier {
             builder: (context, state) =>
                 SubmitNewPostScreen(extra: state.extra as SubmitNewPostExtra),
           ),
+
+          GoRoute(
+              path: "/post_modal",
+              parentNavigatorKey: _mainRootNavigatorKey,
+              builder: ((context, state) => PostModalScreen(
+                    extra: state.extra as PostModalScreenExtra,
+                  ))
               
-          
+          )
         ]);
   }
 

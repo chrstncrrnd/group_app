@@ -8,7 +8,6 @@ import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_grid_view.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -17,7 +16,7 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CurrentUser currentUser =
-        Provider.of<CurrentUserProvider>(context, listen: true).currentUser!;
+        Provider.of<CurrentUserProvider>(context).currentUser!;
     return Scaffold(
         appBar: AppBar(
           title: const Text(
