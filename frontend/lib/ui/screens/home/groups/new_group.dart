@@ -6,6 +6,7 @@ import 'package:group_app/services/group/group_creation.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
@@ -92,7 +93,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                   text: "Create",
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) {
-                      return "Please check all of the fields";
+                      return "Please double check the fields";
                     }
                     var res = await createGroup(
                         name: _groupName,
@@ -102,10 +103,11 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                   },
                   after: (res) {
                     if (res != null) {
-                      showAdaptiveDialog(context,
-                          title: const Text("An error occurred"),
-                          content: Text(res),
-                          actions: const [Text("Ok")]);
+                      showAlert(
+                        context,
+                        title: "An error occurred",
+                        content: res,
+                      );
                     } else {
                       context.pop();
                     }

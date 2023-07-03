@@ -40,7 +40,10 @@ class FeedScreen extends StatelessWidget {
                 mainAxisSpacing: 10),
             query: FirebaseFirestore.instance
                 .collectionGroup("posts")
-                .where("groupId", whereIn: currentUser.following)
+                .where("groupId", whereIn: [
+              "",
+              ...currentUser.following
+            ])
                 .orderBy("createdAt", descending: true),
             itemBuilder: (context, item) {
               var post = Post.fromJson(
