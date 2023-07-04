@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
+import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/utils/validators.dart';
 
 // Initial profile creation steps
@@ -106,10 +107,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             },
             after: (res) {
               if (res != null) {
-                showAdaptiveDialog(context,
-                    title: const Text("An error occurred"),
-                    content: Text(res),
-                    actions: const [Text("Ok")]);
+                showAlert(context, title: "An error occurred", content: res);
               } else {
                 context.pushNamed("create_account", pathParameters: {
                   "username": username
