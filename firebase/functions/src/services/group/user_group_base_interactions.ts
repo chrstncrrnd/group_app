@@ -145,8 +145,10 @@ export const followGroup = functions.https.onCall(
     const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
     const groupData = groupModel.parse((await groupDoc.get()).data());
 
+    
     const userId = ctx.auth.uid;
 
+    const userDoc = admin.firestore().collection('users').doc(userId);
     // if the group followers already has this user, return
     if (groupData.followers.includes(userId)) {
       return;
@@ -161,6 +163,9 @@ export const followGroup = functions.https.onCall(
       await groupDoc.update({
         followers: FieldValue.arrayUnion(userId),
         lastChange: new Date().toISOString(),
+      });
+      await userDoc.update({
+        following: FieldValue.arrayUnion(d.groupId),
       });
     }
   }
