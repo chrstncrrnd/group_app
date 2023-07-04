@@ -44,7 +44,11 @@ class PageTile extends StatelessWidget {
       onPressed: () => context.push("/group/page",
           extra: GroupPageExtra(
               page: page, group: Provider.of<Group>(context, listen: false))),
-      title: Text(page.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+      title: Text(
+        page.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       child: Suspense(
         future: getRecents(),
         builder: (context, data) {

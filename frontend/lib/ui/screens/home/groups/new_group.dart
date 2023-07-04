@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/services/group/group_creation.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
-import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
 import 'package:group_app/ui/widgets/text_input_field.dart';
@@ -77,12 +76,12 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 ),
                 TextInputField(
                   label: "Name",
-                  onChanged: (val) => _groupName = val,
+                  onChanged: (val) => _groupName = val.trim(),
                   validator: validateGroupName,
                 ),
                 TextInputField(
                   label: "Description",
-                  onChanged: (val) => _groupDescription = val,
+                  onChanged: (val) => _groupDescription = val.trim(),
                   minLines: 3,
                   validator: validateGroupDescription,
                 ),

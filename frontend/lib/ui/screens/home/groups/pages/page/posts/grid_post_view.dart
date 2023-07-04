@@ -30,7 +30,7 @@ class GridPostView extends StatelessWidget {
             childAspectRatio: 1 / 1.4,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
-        pageSize: 15,
+        pageSize: 30,
         itemBuilder: (context, item) {
           return PostTile(
             post: Post.fromJson(

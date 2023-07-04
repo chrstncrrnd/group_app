@@ -33,6 +33,9 @@ class FeedScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: PaginatedStreamedGridView(
+            ifEmpty: const Center(
+              child: Text("Follow or join a group to see posts here"),
+            ),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1 / 1.4,

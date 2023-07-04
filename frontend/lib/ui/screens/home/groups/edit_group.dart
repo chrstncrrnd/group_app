@@ -235,7 +235,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     initialValue: widget.initialGroupState.name,
                     validator: validateGroupName,
                     label: "Group name",
-                    onChanged: (val) => _newGroupName = val,
+                    onChanged: (val) => _newGroupName = val.trim(),
                   ),
                   const SizedBox(
                     height: 10,
@@ -246,7 +246,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     label: "Group description",
                     minLines: 3,
                     maxLines: 5,
-                    onChanged: (val) => _newGroupDescription = val,
+                    onChanged: (val) => _newGroupDescription = val.trim(),
                   ),
                 ],
               ),

@@ -20,7 +20,7 @@ class PagesGrid extends StatelessWidget {
     return PaginatedStreamedGridView(
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 1 / 1.2,
+            childAspectRatio: 1 / 1.23,
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),

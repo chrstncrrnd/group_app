@@ -40,7 +40,7 @@ class _NewPageSheetState extends State<NewPageSheet> {
   }
 
   void _onChange(String newVal) {
-    _pageName = newVal;
+    _pageName = newVal.trim();
   }
 
   @override

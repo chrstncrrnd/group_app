@@ -142,12 +142,15 @@ class GroupPageScreen extends StatelessWidget {
     final CurrentUser currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser!;
     if (extra.group.members.contains(currentUser.id)) {
-      return TextButton.icon(
+      return IconButton(
           style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.black)),
+              backgroundColor: MaterialStatePropertyAll(Colors.white)),
           onPressed: () => context.push("/take_new_post", extra: page),
-          icon: const Icon(Icons.add),
-          label: const Text("New post"));
+          icon: const Icon(
+            Icons.add,
+            color: Colors.black,
+            size: 40,
+          ));
     } else {
       return null;
     }

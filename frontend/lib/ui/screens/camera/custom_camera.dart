@@ -172,16 +172,9 @@ class _CustomCameraState extends State<CustomCamera>
         children: [
           GestureDetector(
             onScaleUpdate: (details) async {
-              // just calling it dragIntensity for now, you can call it whatever you like.
               var dragIntensity = details.scale;
-              if (dragIntensity < _minZoom) {
-                _cameraController!.setZoomLevel(_minZoom);
-              } else if (dragIntensity > _minZoom && dragIntensity < _maxZoom) {
-                // self-explanatory, that if the maxZoomLevel exceeds, you will get an error (greater than one is given to details when you zoom-in/pinch-out).
+              if (dragIntensity > _minZoom && dragIntensity < _maxZoom) {
                 _cameraController!.setZoomLevel(dragIntensity);
-              } else {
-                // if it does exceed, you can provide the maxZoomLevel instead of dragIntensity (this block is executed whenever you zoom-in/pinch-out more than the max zoom level).
-                _cameraController!.setZoomLevel(_maxZoom);
               }
             },
             child: AspectRatio(
@@ -195,7 +188,7 @@ class _CustomCameraState extends State<CustomCamera>
             ),
           ),
           Positioned(
-              bottom: 10,
+              bottom: 30,
               width: Max.width(context),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

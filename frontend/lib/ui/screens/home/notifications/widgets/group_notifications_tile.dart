@@ -13,6 +13,7 @@ class GroupNotificationsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     const double groupIconSize = 40;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         context.push("/notifications/group", extra: group);
       },
@@ -39,10 +40,13 @@ class GroupNotificationsTile extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              Text(
-                group.name,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Expanded(
+                child: Text(
+                  group.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
+                ),
               )
             ]),
             const Icon(

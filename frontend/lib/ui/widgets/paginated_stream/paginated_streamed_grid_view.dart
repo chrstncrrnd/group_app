@@ -124,7 +124,7 @@ class _PaginatedStreamedGridViewState extends State<PaginatedStreamedGridView> {
     return const Padding(
       padding: EdgeInsets.all(16.0),
       child: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator.adaptive(),
       ),
     );
   }

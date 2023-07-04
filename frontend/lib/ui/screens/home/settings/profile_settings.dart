@@ -101,7 +101,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               validator: validateName,
               initialValue: currentUser.name,
               label: "Name",
-              onChanged: (val) => _newName = val,
+              onChanged: (val) => _newName = val.trim(),
             ),
             const SizedBox(
               height: 10,
@@ -110,7 +110,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               validator: validateUsername,
               initialValue: currentUser.username,
               label: "Username",
-              onChanged: (val) => _newUsername = val,
+              onChanged: (val) => _newUsername = val.trim(),
             ),
             const SizedBox(
               height: 10,

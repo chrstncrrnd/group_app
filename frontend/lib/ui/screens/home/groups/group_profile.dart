@@ -308,7 +308,8 @@ class GroupScreen extends StatelessWidget {
                           backgroundColor: MaterialStatePropertyAll(
                               Colors.white.withOpacity(0.15))),
                     ),
-                    IconButton(
+                    if (group.admins.contains(currentUser.id))
+                      IconButton(
                       onPressed: () => showContextMenu(
                         context: context,
                         items: [

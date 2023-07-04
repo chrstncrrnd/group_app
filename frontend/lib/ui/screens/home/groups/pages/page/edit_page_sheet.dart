@@ -67,7 +67,7 @@ class _EditPageSheetState extends State<EditPageSheet> {
           TextInputField(
             label: "Page name",
             initialValue: widget.page.name,
-            onChanged: (val) => _newPageName = val,
+            onChanged: (val) => _newPageName = val.trim(),
           ),
           const SizedBox(
             height: 20,
