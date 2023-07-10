@@ -7,7 +7,7 @@ import 'package:group_app/models/post.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/refresh_paginated/grid_view.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -15,8 +15,12 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CurrentUser currentUser =
-        Provider.of<CurrentUserProvider>(context).currentUser!;
+    final CurrentUser? currentUser =
+        Provider.of<CurrentUserProvider>(context).currentUser;
+
+    if (currentUser == null) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -32,10 +36,7 @@ class FeedScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: PaginatedStreamedGridView(
-            ifEmpty: const Center(
-              child: Text("Follow or join a group to see posts here"),
-            ),
+          child: RefreshPaginatedGridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1 / 1.4,
@@ -46,8 +47,7 @@ class FeedScreen extends StatelessWidget {
                 .where("groupId", whereIn: [
               "",
               ...currentUser.following
-            ])
-                .orderBy("createdAt", descending: true),
+            ]).orderBy("createdAt", descending: true),
             itemBuilder: (context, item) {
               var post = Post.fromJson(
                   json: item.data() as Map<String, dynamic>, id: item.id);
