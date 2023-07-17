@@ -5,7 +5,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
 import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_blocks/streamed_block_list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/streamed_block_list/streamed_block_list_view.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
   const GroupNotificationScreen({super.key, required this.group});

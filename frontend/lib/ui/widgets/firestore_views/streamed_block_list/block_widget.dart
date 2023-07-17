@@ -41,6 +41,7 @@ class _BlockWidgetState extends State<BlockWidget> {
     return StreamBuilder<QuerySnapshot>(
       stream: _query.snapshots(),
       builder: (context, snapshot) {
+        
         if (snapshot.hasError) {
           return const Text("Something went wrong");
         }

@@ -1,27 +1,33 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_blocks/block_widget.dart';
+import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/block_widget.dart';
 
-class StreamedBlockListView extends StatefulWidget {
-  const StreamedBlockListView(
+// todo: implement before, ifEmpty and physics but also do this for the
+// todo: streamed_list_view
+class StreamedBlockGridView extends StatefulWidget {
+  const StreamedBlockGridView(
       {super.key,
       required this.query,
-      this.blockSize = 20,
+      this.blockSize = 21,
       required this.itemBuilder,
-      this.ifEmpty});
+      this.ifEmpty,
+      this.gridDelegate = const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+      )});
 
+  final SliverGridDelegate gridDelegate;
   final Widget? ifEmpty;
   final Query query;
+  // block size should be a multiple of gridDelegate.crossAxisCount
   final int blockSize;
   final Function(BuildContext context, DocumentSnapshot item) itemBuilder;
 
   @override
-  State<StreamedBlockListView> createState() => _StreamedBlockListViewState();
+  State<StreamedBlockGridView> createState() => _StreamedBlockGridViewState();
 }
 
-class _StreamedBlockListViewState extends State<StreamedBlockListView> {
+class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
   final List<BlockWidget> _blocks = [];
   DocumentSnapshot? lastDoc;
   int _totalBlocks = 0;
@@ -29,7 +35,6 @@ class _StreamedBlockListViewState extends State<StreamedBlockListView> {
 
   @override
   void initState() {
-    log("init state");
     widget.query.count().get().then((value) {
       _totalBlocks = (value.count / widget.blockSize).ceil();
       if (_totalBlocks > 0) {
@@ -58,6 +63,7 @@ class _StreamedBlockListViewState extends State<StreamedBlockListView> {
       size: widget.blockSize,
       baseQuery: widget.query,
       itemBuilder: widget.itemBuilder,
+      gridDelegate: widget.gridDelegate,
       startAfter: lastDoc,
       lastItemCallback: _updateLastDoc,
     ));
@@ -77,7 +83,7 @@ class _StreamedBlockListViewState extends State<StreamedBlockListView> {
           if (index < _blocks.length) {
             return _blocks[index];
           }
-          return const Text("Cum");
+          return const Text("Loading...");
         });
   }
 }

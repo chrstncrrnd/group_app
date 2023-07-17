@@ -6,7 +6,7 @@ import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/new_page/new_page_tile.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/streamed_block_grid_view.dart';
 import 'package:provider/provider.dart';
 
 class PagesGrid extends StatelessWidget {
@@ -17,8 +17,7 @@ class PagesGrid extends StatelessWidget {
     final Group group = Provider.of<Group>(context);
     final CurrentUser currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser!;
-    return StreamedGridView(
-        physics: const NeverScrollableScrollPhysics(),
+    return StreamedBlockGridView(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 1 / 1.23,
             crossAxisCount: 2,
@@ -29,10 +28,10 @@ class PagesGrid extends StatelessWidget {
             .doc(group.id)
             .collection("pages")
             .orderBy("lastChange", descending: true),
-        before: currentUser.adminOf.contains(group.id) ||
-                currentUser.memberOf.contains(group.id)
-            ? const [NewPageTile()]
-            : null,
+        // before: currentUser.adminOf.contains(group.id) ||
+        //         currentUser.memberOf.contains(group.id)
+        //     ? const [NewPageTile()]
+        //     : null,
         itemBuilder: (context, item) => PageTile(
             page: GroupPage.fromJson(
                 json: item.data() as Map<String, dynamic>,
