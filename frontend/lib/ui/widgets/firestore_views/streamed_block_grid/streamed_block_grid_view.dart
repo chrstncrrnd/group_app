@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/block_widget.dart';
 
-// todo: implement before, ifEmpty and physics but also do this for the
-// todo: streamed_list_view
 class StreamedBlockGridView extends StatefulWidget {
   const StreamedBlockGridView(
       {super.key,
@@ -11,14 +9,18 @@ class StreamedBlockGridView extends StatefulWidget {
       this.blockSize = 21,
       required this.itemBuilder,
       this.ifEmpty,
+      this.physics,
+      this.before,
       this.gridDelegate = const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         childAspectRatio: 1,
       )});
 
   final SliverGridDelegate gridDelegate;
+  final List<Widget>? before;
   final Widget? ifEmpty;
   final Query query;
+  final ScrollPhysics? physics;
   // block size should be a multiple of gridDelegate.crossAxisCount
   final int blockSize;
   final Function(BuildContext context, DocumentSnapshot item) itemBuilder;
@@ -76,10 +78,16 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
       return widget.ifEmpty ?? Container();
     }
     return ListView.builder(
+        physics: widget.physics,
         shrinkWrap: true,
-        itemCount: _totalBlocks,
+        itemCount: _totalBlocks + (widget.before?.length ?? 0),
         controller: _scrollController,
         itemBuilder: (context, index) {
+          if (widget.before != null && index < widget.before!.length) {
+            return widget.before![index];
+          }
+          index += widget.before?.length ?? 0;
+
           if (index < _blocks.length) {
             return _blocks[index];
           }

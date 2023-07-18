@@ -4,7 +4,6 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/screens/home/groups/pages/new_page/new_page_tile.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
 import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/streamed_block_grid_view.dart';
 import 'package:provider/provider.dart';
