@@ -8,6 +8,8 @@ import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
 import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/streamed_block_grid_view.dart';
 import 'package:provider/provider.dart';
 
+import 'new_page/new_page_tile.dart';
+
 class PagesGrid extends StatelessWidget {
   const PagesGrid({super.key});
 
@@ -27,10 +29,10 @@ class PagesGrid extends StatelessWidget {
             .doc(group.id)
             .collection("pages")
             .orderBy("lastChange", descending: true),
-        // before: currentUser.adminOf.contains(group.id) ||
-        //         currentUser.memberOf.contains(group.id)
-        //     ? const [NewPageTile()]
-        //     : null,
+        before: currentUser.adminOf.contains(group.id) ||
+                currentUser.memberOf.contains(group.id)
+            ? const [NewPageTile()]
+            : null,
         itemBuilder: (context, item) => PageTile(
             page: GroupPage.fromJson(
                 json: item.data() as Map<String, dynamic>,

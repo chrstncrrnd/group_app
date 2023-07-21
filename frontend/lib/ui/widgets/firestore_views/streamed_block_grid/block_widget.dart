@@ -11,10 +11,12 @@ class BlockWidget extends StatefulWidget {
       required this.baseQuery,
       required this.itemBuilder,
       required this.lastItemCallback,
-      required this.gridDelegate});
+      required this.gridDelegate,
+      this.before});
 
   final SliverGridDelegate gridDelegate;
 
+  final List<Widget>? before;
   final int size;
   final DocumentSnapshot? startAfter;
   final Query baseQuery;
@@ -41,12 +43,12 @@ class _BlockWidgetState extends State<BlockWidget> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: _query.snapshots(),
       builder: (context, snapshot) {
-        log("going for rebuild fr");
         if (snapshot.hasError) {
           return const Text("Something went wrong");
         }
@@ -60,12 +62,18 @@ class _BlockWidgetState extends State<BlockWidget> {
         final data = snapshot.data!;
         widget.lastItemCallback(data.docs.last);
 
+        var beforeLen = widget.before?.length ?? 0;
+
         return GridView.builder(
           gridDelegate: widget.gridDelegate,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: data.docs.length,
+          itemCount: data.docs.length + beforeLen,
           itemBuilder: (context, index) {
+            if (index < beforeLen) {
+              return widget.before![index];
+            }
+            index -= beforeLen;
             final item = data.docs[index];
             return widget.itemBuilder(context, item);
           },

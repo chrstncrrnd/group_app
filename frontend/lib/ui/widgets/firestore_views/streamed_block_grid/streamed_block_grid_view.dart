@@ -62,6 +62,7 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
 
   void _loadNewBlock() {
     _blocks.add(BlockWidget(
+      before: lastDoc == null ? widget.before : null,
       size: widget.blockSize,
       baseQuery: widget.query,
       itemBuilder: widget.itemBuilder,
@@ -80,14 +81,9 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
     return ListView.builder(
         physics: widget.physics,
         shrinkWrap: true,
-        itemCount: _totalBlocks + (widget.before?.length ?? 0),
+        itemCount: _totalBlocks,
         controller: _scrollController,
         itemBuilder: (context, index) {
-          if (widget.before != null && index < widget.before!.length) {
-            return widget.before![index];
-          }
-          index += widget.before?.length ?? 0;
-
           if (index < _blocks.length) {
             return _blocks[index];
           }
