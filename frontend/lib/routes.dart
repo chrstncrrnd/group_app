@@ -26,6 +26,7 @@ import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search/search.dart';
 import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
 import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
+import 'package:group_app/ui/screens/home/user/user_affiliated_groups.dart';
 import 'package:group_app/ui/screens/home/user/user_profile.dart';
 import 'package:group_app/models/user.dart' as group_app_user;
 
@@ -153,7 +154,22 @@ class Routes extends ChangeNotifier {
                 GoRoute(
                     path: "/user",
                     builder: (context, state) => UserProfileScreen(
-                        initialUserState: state.extra! as group_app_user.User)),
+                        initialUserState: state.extra! as group_app_user.User),
+                    routes: [
+                      GoRoute(
+                        path: "following",
+                        builder: (context, state) => UserAffiliatedGroups(
+                          type: UserAffiliatedGroupsType.following,
+                          user: state.extra! as group_app_user.User,
+                        ),
+                      ),
+                      GoRoute(
+                          path: "member_of",
+                          builder: (context, state) => UserAffiliatedGroups(
+                                type: UserAffiliatedGroupsType.memberOf,
+                                user: state.extra! as group_app_user.User,
+                              ))
+                    ]),
                 GoRoute(
                   path: "/notifications",
                   builder: (context, state) => const NotificationsScreen(),
