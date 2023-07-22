@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
@@ -88,9 +89,17 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   StatWidget(
-                      name: "Member of", value: currentUser.memberOf.length),
+                      name: "Member of",
+                      value: currentUser.memberOf.length,
+                      onPressed: () => User.fromId(id: currentUser.id).then(
+                          (user) =>
+                              context.push("/user/member_of", extra: user))),
                   StatWidget(
-                      name: "Following", value: currentUser.following.length),
+                      name: "Following",
+                      value: currentUser.following.length,
+                      onPressed: () => User.fromId(id: currentUser.id).then(
+                          (user) =>
+                              context.push("/user/following", extra: user))),
                 ],
               ),
             )

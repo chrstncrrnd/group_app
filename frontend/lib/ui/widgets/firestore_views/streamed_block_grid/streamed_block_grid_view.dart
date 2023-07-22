@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/block_widget.dart';
@@ -33,35 +35,24 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
   final List<BlockWidget> _blocks = [];
   DocumentSnapshot? lastDoc;
   int _totalBlocks = 0;
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     widget.query.count().get().then((value) {
       _totalBlocks = (value.count / widget.blockSize).ceil();
-      if (_totalBlocks > 0) {
-        _loadNewBlock();
-      }
-    });
-    _scrollController.addListener(_scrollListener);
-    super.initState();
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
-        _blocks.length < _totalBlocks) {
-      _loadNewBlock();
       setState(() {});
-    }
+    });
+    super.initState();
   }
 
   void _updateLastDoc(DocumentSnapshot doc) {
     lastDoc = doc;
+    log("updated last doc fr to $doc");
   }
 
-  void _loadNewBlock() {
-    _blocks.add(BlockWidget(
+  void _loadNewBlock() async {
+    log("the last doc now is $lastDoc");
+    final block = BlockWidget(
       before: lastDoc == null ? widget.before : null,
       size: widget.blockSize,
       baseQuery: widget.query,
@@ -69,7 +60,9 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
       gridDelegate: widget.gridDelegate,
       startAfter: lastDoc,
       lastItemCallback: _updateLastDoc,
-    ));
+    );
+    _blocks.add(block);
+    await Future.delayed(const Duration(milliseconds: 1000));
     setState(() {});
   }
 
@@ -78,15 +71,22 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
     if (_totalBlocks == 0) {
       return widget.ifEmpty ?? Container();
     }
-    return ListView.builder(
+    return ListView.separated(
         physics: widget.physics,
         shrinkWrap: true,
         itemCount: _totalBlocks,
-        controller: _scrollController,
+        separatorBuilder: (context, _) =>
+            widget.gridDelegate is SliverGridDelegateWithFixedCrossAxisCount
+                ? SizedBox(
+                    height: (widget.gridDelegate
+                            as SliverGridDelegateWithFixedCrossAxisCount)
+                        .mainAxisSpacing)
+                : Container(),
         itemBuilder: (context, index) {
           if (index < _blocks.length) {
             return _blocks[index];
           }
+          _loadNewBlock();
           return const Text("Loading...");
         });
   }

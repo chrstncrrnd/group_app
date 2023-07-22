@@ -37,7 +37,7 @@ class FeedScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: StreamedBlockGridView(
-            blockSize: 36,
+            blockSize: 3,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1 / 1.4,
