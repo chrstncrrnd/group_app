@@ -50,7 +50,7 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
     log("updated last doc fr to $doc");
   }
 
-  void _loadNewBlock() async {
+  void _loadNewBlock() {
     log("the last doc now is $lastDoc");
     final block = BlockWidget(
       before: lastDoc == null ? widget.before : null,
@@ -62,7 +62,6 @@ class _StreamedBlockGridViewState extends State<StreamedBlockGridView> {
       lastItemCallback: _updateLastDoc,
     );
     _blocks.add(block);
-    await Future.delayed(const Duration(milliseconds: 1000));
     setState(() {});
   }
 

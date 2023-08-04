@@ -7,7 +7,7 @@ import 'package:group_app/models/post.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/streamed_block_grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/grid_view.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -36,8 +36,7 @@ class FeedScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: StreamedBlockGridView(
-            blockSize: 3,
+          child: PullToRefreshPaginatedGridView(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1 / 1.4,

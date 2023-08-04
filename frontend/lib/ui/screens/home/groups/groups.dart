@@ -7,7 +7,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_block_list/streamed_block_list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
 import 'package:provider/provider.dart';
 
 class GroupsScreen extends StatelessWidget {
@@ -40,8 +40,7 @@ class GroupsScreen extends StatelessWidget {
               ))
         ],
       ),
-      body: StreamedBlockListView(
-        blockSize: 30,
+      body: PullToRefreshPaginatedListView(
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_block_grid/streamed_block_grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/grid_view.dart';
 
 class GridPostView extends StatelessWidget {
   const GridPostView({super.key, required this.page});
@@ -14,7 +14,7 @@ class GridPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: StreamedBlockGridView(
+      child: PullToRefreshPaginatedGridView(
         ifEmpty: const Center(
           child: Text("No posts yet"),
         ),

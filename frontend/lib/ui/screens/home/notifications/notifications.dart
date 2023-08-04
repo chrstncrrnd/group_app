@@ -4,7 +4,7 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/group_notifications_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/streamed_block_list/streamed_block_list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -22,7 +22,7 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: StreamedBlockListView(
+          child: PullToRefreshPaginatedListView(
             query: FirebaseFirestore.instance
                 .collection("groups")
                 .where("admins", arrayContains: currentUser.id)
