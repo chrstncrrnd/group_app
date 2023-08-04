@@ -40,7 +40,7 @@ class Routes extends ChangeNotifier {
 
     _authRouter = GoRouter(
         redirect: (context, state) {
-          if (state.location == "/") {
+          if (state.path == "/") {
             return "/intro";
           }
           return null;
@@ -64,14 +64,14 @@ class Routes extends ChangeNotifier {
             path: "/create_account/:username",
             builder: (context, state) => CreateAccountScreen(
               username: state.pathParameters["username"]!,
-              name: state.queryParameters["name"],
+              name: state.pathParameters["name"],
             ),
           )
         ]);
 
     _mainRouter = GoRouter(
         redirect: (context, state) {
-          if (state.location == "/") {
+          if (state.path == "/") {
             return "/feed";
           }
           return null;
