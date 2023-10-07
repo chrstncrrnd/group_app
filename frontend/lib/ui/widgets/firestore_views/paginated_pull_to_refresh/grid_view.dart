@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -31,9 +33,9 @@ class PullToRefreshPaginatedGridView extends StatefulWidget {
 
 class _PullToRefreshPaginatedGridViewState
     extends State<PullToRefreshPaginatedGridView> {
-  int? _numGrids;
   int? _itemCount;
   DocumentSnapshot? _lastDoc;
+  int? _beforeCount;
   List<DocumentSnapshot> _items = [];
 
   Future<void> _loadMore() async {
@@ -54,7 +56,7 @@ class _PullToRefreshPaginatedGridViewState
 
   Future<void> _fetchItemCount() async {
     _itemCount = (await widget.query.count().get()).count;
-    _numGrids = (_itemCount! / widget.pageSize).ceil();
+    _beforeCount = widget.before?.length ?? 0;
     if (mounted) {
       setState(() {});
     }
@@ -76,57 +78,37 @@ class _PullToRefreshPaginatedGridViewState
 
   @override
   Widget build(BuildContext context) {
-    if (_itemCount == 0) {
+    int? totalCount = ((_itemCount ?? 0) + (_beforeCount ?? 0));
+
+    if (totalCount == 0) {
       return widget.ifEmpty ?? const SizedBox();
     }
-    return RefreshIndicator.adaptive(
-      onRefresh: onRefresh,
-      child: ListView.separated(
-          physics: widget.physics,
-          shrinkWrap: true,
-          itemCount: _numGrids ?? 0,
-          separatorBuilder: (context, _) =>
-              widget.gridDelegate is SliverGridDelegateWithFixedCrossAxisCount
-                  ? SizedBox(
-                      height: (widget.gridDelegate
-                              as SliverGridDelegateWithFixedCrossAxisCount)
-                          .mainAxisSpacing)
-                  : Container(),
-          itemBuilder: (BuildContext context, int index) {
-            int gridItemCount = widget.pageSize;
-            if (_numGrids == index + 1) {
-              gridItemCount = _itemCount! - (widget.pageSize * index);
-            }
-            bool hasBefore = widget.before != null && index == 0;
-            if (hasBefore) {
-              gridItemCount += widget.before!.length;
-            }
 
-            return GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: widget.gridDelegate,
-                itemCount: gridItemCount,
-                itemBuilder: (BuildContext context, int index) {
-                  if (hasBefore) {
-                    if (widget.before!.length > index) {
-                      return widget.before![index];
-                    } else {
-                      index -= widget.before!.length;
-                    }
-                  }
-                  if (_items.length > index) {
-                    return widget.itemBuilder(context, _items[index]);
-                  } else {
-                    _loadMore();
-                    if (widget.loaderBuilder == null) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
-                    }
-                    return widget.loaderBuilder!(context);
-                  }
-                });
-          }),
-    );
+    return RefreshIndicator.adaptive(
+        onRefresh: onRefresh,
+        child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: widget.gridDelegate,
+            itemCount: totalCount,
+            itemBuilder: (BuildContext context, int index) {
+              if (widget.before != null) {
+                if (widget.before!.length > index) {
+                  return widget.before![index];
+                } else {
+                  index -= widget.before!.length;
+                }
+              }
+              if (_items.length > index) {
+                return widget.itemBuilder(context, _items[index]);
+              } else {
+                _loadMore();
+                if (widget.loaderBuilder == null) {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                }
+                return widget.loaderBuilder!(context);
+              }
+            }));
   }
 }

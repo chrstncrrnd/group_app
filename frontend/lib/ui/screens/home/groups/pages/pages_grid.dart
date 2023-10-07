@@ -19,7 +19,8 @@ class PagesGrid extends StatelessWidget {
     final CurrentUser currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser!;
     return PullToRefreshPaginatedGridView(
-        // physics: const NeverScrollableScrollPhysics(),
+
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 1 / 1.23,
             crossAxisCount: 2,
