@@ -33,6 +33,9 @@ class _PullToRefreshPaginatedListViewState
   List<DocumentSnapshot> _items = [];
 
   Future<void> _loadMore() async {
+    if (_itemCount == 0) {
+      return;
+    }
     Query q = widget.query;
     if (_lastDoc != null) {
       q = q.startAfterDocument(_lastDoc!);
@@ -54,8 +57,7 @@ class _PullToRefreshPaginatedListViewState
 
   @override
   void initState() {
-    _loadMore();
-    _fetchItemCount();
+    _fetchItemCount().then((_) => _loadMore());
     super.initState();
   }
 

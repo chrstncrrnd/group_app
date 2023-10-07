@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide showAdaptiveDialog;
+import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
@@ -7,6 +8,7 @@ import 'package:group_app/models/post.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
+import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/grid_view.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,12 @@ class FeedScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: PullToRefreshPaginatedGridView(
+            ifEmpty: const Center(
+              child: Text(
+                "Create or follow a group to see stuff here!",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 1 / 1.4,

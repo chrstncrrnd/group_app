@@ -41,6 +41,12 @@ class GroupsScreen extends StatelessWidget {
         ],
       ),
       body: PullToRefreshPaginatedListView(
+        ifEmpty: const Center(
+          child: Text(
+            "Create or join a group",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)

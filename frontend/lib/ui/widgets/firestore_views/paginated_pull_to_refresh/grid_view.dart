@@ -62,8 +62,7 @@ class _PullToRefreshPaginatedGridViewState
 
   @override
   void initState() {
-    _loadMore();
-    _fetchItemCount();
+    _fetchItemCount().then((value) => _loadMore());
     super.initState();
   }
 
