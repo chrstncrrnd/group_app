@@ -1,13 +1,16 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart' hide showAdaptiveDialog;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
-import 'package:group_app/models/post.dart';
+import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/grid_view.dart';
+import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
+import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -24,8 +27,8 @@ class FeedScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            "group_app",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            "Groopo",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
           ),
           actions: [
             IconButton(
@@ -34,37 +37,57 @@ class FeedScreen extends StatelessWidget {
           ],
           centerTitle: true,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PullToRefreshPaginatedGridView(
-            ifEmpty: const Center(
-              child: Text(
-                "Create or follow a group to see stuff here!",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1 / 1.4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10),
-            query: FirebaseFirestore.instance
-                .collectionGroup("posts")
-                .where("groupId", whereIn: [
-              "",
-              ...currentUser.following
-            ]).orderBy("createdAt", descending: true),
-            itemBuilder: (context, item) {
-              var post = Post.fromJson(
-                  json: item.data() as Map<String, dynamic>, id: item.id);
-              return Suspense<Group>(
-                  future: Group.fromId(id: post.groupId),
-                  builder: (context, group) {
-                    return Provider.value(
-                        value: group, child: PostTile(post: post));
-                  });
-            },
-          ),
+        body: PullToRefreshPaginatedListView(
+          query: FirebaseFirestore.instance
+              .collection("groups")
+              .where("followers", arrayContains: currentUser.id)
+              .orderBy("lastChange", descending: true),
+          itemBuilder: (context, item) {
+            const double groupIconSizeRadius = 16;
+            Group group = Group.fromJson(
+                json: item.data() as Map<String, dynamic>, id: item.id);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      BasicCircleAvatar(
+                          radius: groupIconSizeRadius,
+                          child: group.icon(groupIconSizeRadius * 2)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        group.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 300,
+                  child: PaginatedListView(
+                    scrollDirection: Axis.horizontal,
+                    query: FirebaseFirestore.instance
+                        .collection("groups")
+                        .doc(group.id)
+                        .collection("pages")
+                        .orderBy("lastChange"),
+                    itemBuilder: (context, item) {
+                      GroupPage page = GroupPage.fromJson(
+                          json: item.data() as Map<String, dynamic>,
+                          id: item.id);
+                      return SizedBox(height: 250, child: PageTile(page: page));
+                    },
+                  ),
+                )
+              ],
+            );
+          },
         ));
   }
 }
