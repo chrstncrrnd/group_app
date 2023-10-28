@@ -5,7 +5,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
 import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
   const GroupNotificationScreen({super.key, required this.group});
@@ -53,7 +53,8 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
           ),
           centerTitle: true,
         ),
-      body: PullToRefreshPaginatedListView(
+      body: PaginatedListView(
+          pullToRefresh: true,
           query: FirebaseFirestore.instance
               .collection("groups")
               .doc(widget.group.id)

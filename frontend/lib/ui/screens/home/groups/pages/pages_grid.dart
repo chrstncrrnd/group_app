@@ -5,7 +5,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/grid_view.dart';
 import 'package:provider/provider.dart';
 
 import 'new_page/new_page_tile.dart';
@@ -18,8 +18,7 @@ class PagesGrid extends StatelessWidget {
     final Group group = Provider.of<Group>(context);
     final CurrentUser currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser!;
-    return PullToRefreshPaginatedGridView(
-
+    return PaginatedGridView(
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 1 / 1.23,

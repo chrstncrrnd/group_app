@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +8,6 @@ import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
 import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
@@ -37,7 +34,8 @@ class FeedScreen extends StatelessWidget {
           ],
           centerTitle: true,
         ),
-        body: PullToRefreshPaginatedListView(
+        body: PaginatedListView(
+          pullToRefresh: true,
           query: FirebaseFirestore.instance
               .collection("groups")
               .where("followers", arrayContains: currentUser.id)
@@ -47,6 +45,7 @@ class FeedScreen extends StatelessWidget {
             Group group = Group.fromJson(
                 json: item.data() as Map<String, dynamic>, id: item.id);
             return Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -68,23 +67,24 @@ class FeedScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 300,
-                  child: PaginatedListView(
-                    scrollDirection: Axis.horizontal,
-                    query: FirebaseFirestore.instance
-                        .collection("groups")
-                        .doc(group.id)
-                        .collection("pages")
-                        .orderBy("lastChange"),
-                    itemBuilder: (context, item) {
-                      GroupPage page = GroupPage.fromJson(
-                          json: item.data() as Map<String, dynamic>,
-                          id: item.id);
-                      return SizedBox(height: 250, child: PageTile(page: page));
-                    },
-                  ),
-                )
+
+                // Provider.value(
+                //   value: group,
+                //   child: PaginatedListView(
+                //     scrollDirection: Axis.horizontal,
+                //     query: FirebaseFirestore.instance
+                //         .collection("groups")
+                //         .doc(group.id)
+                //         .collection("pages")
+                //         .orderBy("lastChange"),
+                //     itemBuilder: (context, item) {
+                //       GroupPage page = GroupPage.fromJson(
+                //           json: item.data() as Map<String, dynamic>,
+                //           id: item.id);
+                //       return PageTile(page: page);
+                //     },
+                //   ),
+                // )
               ],
             );
           },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +17,8 @@ class PageTile extends StatelessWidget {
   final GroupPage page;
 
   Future<List<Widget>> getRecents() async {
+    await Future.delayed(const Duration(seconds: 10));
+
     var postsRef = FirebaseFirestore.instance
         .collection("groups")
         .doc(page.groupId)
@@ -28,12 +32,9 @@ class PageTile extends StatelessWidget {
             .map((e) => Post.fromJson(json: e.data(), id: e.id));
 
     return posts
-        .map((e) => ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                e.dlUrl,
-                fit: BoxFit.cover,
-              ),
+        .map((e) => Image.network(
+              e.dlUrl,
+              fit: BoxFit.cover,
             ))
         .toList();
   }
@@ -57,21 +58,24 @@ class PageTile extends StatelessWidget {
               child: Text("Something went wrong"),
             );
           }
-          if (data.isEmpty) {
-            return const Center(
-              child: Text("No posts yet",
-                  style: TextStyle(color: Colors.grey, fontSize: 10)),
-            );
-          }
           return GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 1,
                 mainAxisSpacing: 6,
                 crossAxisSpacing: 6),
-            itemCount: data.length,
+            itemCount: 4,
             itemBuilder: (context, index) {
-              return data[index];
+              var child = index < data.length
+                  ? data[index]
+                  : Container(
+                      color: Colors.grey.shade900,
+                    );
+
+              return ClipRRect(
+                  borderRadius: BorderRadius.circular(10), child: child);
             },
           );
         },

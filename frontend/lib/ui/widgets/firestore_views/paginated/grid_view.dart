@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class PullToRefreshPaginatedGridView extends StatefulWidget {
-  const PullToRefreshPaginatedGridView(
+class PaginatedGridView extends StatefulWidget {
+  const PaginatedGridView(
       {super.key,
       required this.query,
       this.pageSize = 21,
@@ -11,6 +11,7 @@ class PullToRefreshPaginatedGridView extends StatefulWidget {
       required this.gridDelegate,
       this.ifEmpty,
       this.before,
+      this.pullToRefresh = false,
       this.physics});
 
   final Query query;
@@ -20,17 +21,16 @@ class PullToRefreshPaginatedGridView extends StatefulWidget {
   final Function(BuildContext context, DocumentSnapshot item) itemBuilder;
   final Function(BuildContext context)? loaderBuilder;
   final ScrollPhysics? physics;
+  final bool pullToRefresh;
 
   final Widget? ifEmpty;
   final List<Widget>? before;
 
   @override
-  State<PullToRefreshPaginatedGridView> createState() =>
-      _PullToRefreshPaginatedGridViewState();
+  State<PaginatedGridView> createState() => _PaginatedGridViewState();
 }
 
-class _PullToRefreshPaginatedGridViewState
-    extends State<PullToRefreshPaginatedGridView> {
+class _PaginatedGridViewState extends State<PaginatedGridView> {
   int? _itemCount;
   DocumentSnapshot? _lastDoc;
   int? _beforeCount;
@@ -82,31 +82,33 @@ class _PullToRefreshPaginatedGridViewState
       return widget.ifEmpty ?? const SizedBox();
     }
 
-    return RefreshIndicator.adaptive(
-        onRefresh: onRefresh,
-        child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: widget.gridDelegate,
-            itemCount: totalCount,
-            itemBuilder: (BuildContext context, int index) {
-              if (widget.before != null) {
-                if (widget.before!.length > index) {
-                  return widget.before![index];
-                } else {
-                  index -= widget.before!.length;
-                }
-              }
-              if (_items.length > index) {
-                return widget.itemBuilder(context, _items[index]);
-              } else {
-                _loadMore();
-                if (widget.loaderBuilder == null) {
-                  return const Center(
-                      child: CircularProgressIndicator.adaptive());
-                }
-                return widget.loaderBuilder!(context);
-              }
-            }));
+    var child = GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: widget.gridDelegate,
+        itemCount: totalCount,
+        itemBuilder: (BuildContext context, int index) {
+          if (widget.before != null) {
+            if (widget.before!.length > index) {
+              return widget.before![index];
+            } else {
+              index -= widget.before!.length;
+            }
+          }
+          if (_items.length > index) {
+            return widget.itemBuilder(context, _items[index]);
+          } else {
+            _loadMore();
+            if (widget.loaderBuilder == null) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            }
+            return widget.loaderBuilder!(context);
+          }
+        });
+
+    if (widget.pullToRefresh) {
+      return RefreshIndicator(onRefresh: onRefresh, child: child);
+    }
+    return child;
   }
 }

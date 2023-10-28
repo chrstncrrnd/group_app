@@ -6,7 +6,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated_pull_to_refresh/list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 import 'package:provider/provider.dart';
 
 class ArchivedGroupsScreen extends StatelessWidget {
@@ -22,7 +22,8 @@ class ArchivedGroupsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Archived groups"),
       ),
-      body: PullToRefreshPaginatedListView(
+      body: PaginatedListView(
+        pullToRefresh: true,
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)

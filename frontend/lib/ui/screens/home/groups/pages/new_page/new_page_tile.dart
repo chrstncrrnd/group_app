@@ -35,7 +35,7 @@ class NewPageTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10)),
             child: const Icon(
               Icons.add_rounded,
-              size: 100,
+              size: 500,
             )));
   }
 }

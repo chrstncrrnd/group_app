@@ -12,7 +12,8 @@ class PaginatedListView extends StatefulWidget {
       this.scrollDirection,
       this.ifEmpty,
       this.before,
-      this.physics});
+      this.physics,
+      this.pullToRefresh = false});
 
   final Query query;
   final int pageSize;
@@ -22,6 +23,7 @@ class PaginatedListView extends StatefulWidget {
   final List<Widget>? before;
   final ScrollPhysics? physics;
   final Axis? scrollDirection;
+  final bool pullToRefresh;
 
   @override
   State<PaginatedListView> createState() => _PaginatedListViewState();
@@ -74,7 +76,8 @@ class _PaginatedListViewState extends State<PaginatedListView> {
     if (_itemCount == 0) {
       return widget.ifEmpty ?? const SizedBox();
     }
-    return ListView.builder(
+    var child = ListView.builder(
+        shrinkWrap: true,
         scrollDirection: widget.scrollDirection ?? Axis.vertical,
         physics: widget.physics,
         itemCount: (_itemCount ?? 0) + (widget.before?.length ?? 0),
@@ -96,5 +99,10 @@ class _PaginatedListViewState extends State<PaginatedListView> {
             return widget.loaderBuilder!(context);
           }
         });
+
+    if (widget.pullToRefresh) {
+      return RefreshIndicator(onRefresh: onRefresh, child: child);
+    }
+    return child;
   }
 }
