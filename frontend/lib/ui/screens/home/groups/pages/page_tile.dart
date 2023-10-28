@@ -17,7 +17,7 @@ class PageTile extends StatelessWidget {
   final GroupPage page;
 
   Future<List<Widget>> getRecents() async {
-    await Future.delayed(const Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 5));
 
     var postsRef = FirebaseFirestore.instance
         .collection("groups")
@@ -37,6 +37,8 @@ class PageTile extends StatelessWidget {
               fit: BoxFit.cover,
             ))
         .toList();
+
+    
   }
 
   @override
@@ -50,35 +52,35 @@ class PageTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      child: Suspense(
-        future: getRecents(),
-        builder: (context, data) {
-          if (data == null) {
-            return const Center(
-              child: Text("Something went wrong"),
-            );
-          }
-          return GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
-                mainAxisSpacing: 6,
-                crossAxisSpacing: 6),
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              var child = index < data.length
-                  ? data[index]
-                  : Container(
-                      color: Colors.grey.shade900,
-                    );
+      child: Center(
+        child: Suspense(
+          future: getRecents(),
+          builder: (context, data) {
+            if (data == null) {
+              return const Text("Something went wrong");
+            }
+            return GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1,
+                  mainAxisSpacing: 6,
+                  crossAxisSpacing: 6),
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                var child = index < data.length
+                    ? data[index]
+                    : Container(
+                        color: Colors.grey.shade900,
+                      );
 
-              return ClipRRect(
-                  borderRadius: BorderRadius.circular(10), child: child);
-            },
-          );
-        },
+                return ClipRRect(
+                    borderRadius: BorderRadius.circular(10), child: child);
+              },
+            );
+          },
+        ),
       ),
     );
   }
