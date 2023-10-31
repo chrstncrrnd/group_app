@@ -46,6 +46,7 @@ dependencies:
   adaptive_action_sheet: ^2.0.2
   auto_size_text: ^3.0.0
   visibility_detector: ^0.4.0+2
+  shared_preferences: ^2.2.2
 
   go_router: ^11.1.2
   provider: ^6.0.5

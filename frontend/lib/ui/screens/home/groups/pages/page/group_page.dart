@@ -15,6 +15,7 @@ import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupPageExtra {
   GroupPage page;
@@ -27,8 +28,14 @@ class GroupPageScreen extends StatelessWidget {
 
   final GroupPageExtra extra;
 
+  void setSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(extra.page.lastSeenKey, DateTime.now().toIso8601String());
+  }
+
   @override
   Widget build(BuildContext context) {
+    setSeen();
     final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
     return StreamBuilder<GroupPage>(
         initialData: extra.page,

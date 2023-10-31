@@ -1,5 +1,6 @@
 // a convenient wrapper around future builder
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,7 @@ class Suspense<T> extends StatelessWidget {
           return placeholder ??
               const Center(child: CircularProgressIndicator.adaptive());
         } else if (snapshot.hasError) {
+          log("Error with suspense: ${snapshot.error}");
           return Center(child: error ?? const Text("Something went wrong..."));
         }
         return builder(context, snapshot.data);
