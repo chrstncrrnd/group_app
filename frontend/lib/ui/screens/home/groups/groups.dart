@@ -41,6 +41,7 @@ class GroupsScreen extends StatelessWidget {
         ],
       ),
       body: PaginatedListView(
+        shrinkWrap: false,
         pullToRefresh: true,
         ifEmpty: const Center(
           child: Text(
