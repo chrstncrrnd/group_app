@@ -29,13 +29,16 @@ class NewPageTile extends StatelessWidget {
           "Create a new page",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        child: Container(
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 37, 37, 37),
-                borderRadius: BorderRadius.circular(10)),
-            child: const Icon(
-              Icons.add_rounded,
-              size: 100,
-            )));
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+              decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 37, 37, 37),
+                  borderRadius: BorderRadius.circular(10)),
+              child: const Icon(
+                Icons.add_rounded,
+                size: 100,
+              )),
+        ));
   }
 }

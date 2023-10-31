@@ -17,8 +17,6 @@ class PageTile extends StatelessWidget {
   final GroupPage page;
 
   Future<List<Widget>> getRecents() async {
-    await Future.delayed(const Duration(seconds: 5));
-
     var postsRef = FirebaseFirestore.instance
         .collection("groups")
         .doc(page.groupId)
@@ -37,8 +35,6 @@ class PageTile extends StatelessWidget {
               fit: BoxFit.cover,
             ))
         .toList();
-
-    
   }
 
   @override

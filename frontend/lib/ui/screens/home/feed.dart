@@ -68,23 +68,31 @@ class FeedScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Provider.value(
-                //   value: group,
-                //   child: PaginatedListView(
-                //     scrollDirection: Axis.horizontal,
-                //     query: FirebaseFirestore.instance
-                //         .collection("groups")
-                //         .doc(group.id)
-                //         .collection("pages")
-                //         .orderBy("lastChange"),
-                //     itemBuilder: (context, item) {
-                //       GroupPage page = GroupPage.fromJson(
-                //           json: item.data() as Map<String, dynamic>,
-                //           id: item.id);
-                //       return PageTile(page: page);
-                //     },
-                //   ),
-                // )
+                // TODO: this doesnt work
+                Provider.value(
+                  value: group,
+                  child: SizedBox(
+                    height: 232,
+                    child: PaginatedListView(
+                      scrollDirection: Axis.horizontal,
+                      query: FirebaseFirestore.instance
+                          .collection("groups")
+                          .doc(group.id)
+                          .collection("pages")
+                          .orderBy("lastChange", descending: true),
+                      itemBuilder: (context, item) {
+                        GroupPage page = GroupPage.fromJson(
+                            json: item.data() as Map<String, dynamic>,
+                            id: item.id);
+                        return SizedBox.square(
+                            dimension: 200,
+                            child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: PageTile(page: page)));
+                      },
+                    ),
+                  ),
+                )
               ],
             );
           },

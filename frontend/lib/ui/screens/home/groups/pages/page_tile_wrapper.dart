@@ -13,17 +13,14 @@ class PageTileWrapper extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: GestureDetector(
-            onTap: onPressed,
-            child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(25)),
-                child: child),
-          ),
+        GestureDetector(
+          onTap: onPressed,
+          child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(25)),
+              child: child),
         ),
         if (title != null) 
           Padding(
