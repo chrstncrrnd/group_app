@@ -60,7 +60,7 @@ class FeedScreen extends StatelessWidget {
                       Provider.value(
                         value: group,
                         child: SizedBox(
-                          height: 232,
+                          height: 222,
                           child: PaginatedListView(
                             ifEmpty: const Center(
                               child: Text(
@@ -87,7 +87,7 @@ class FeedScreen extends StatelessWidget {
                               bool seen = lastSeen.isAfter(page.lastChange);
 
                               return SizedBox.square(
-                                  dimension: 200,
+                                  dimension: 190,
                                   child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Stack(
