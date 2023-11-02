@@ -82,8 +82,8 @@ class FeedScreen extends StatelessWidget {
                                   prefs?.getString(page.lastSeenKey) ??
                                       "2012-02-27");
                               // 2012-02-27 is an arbitrary date,
-                              // just something guaranteed to be in the past
-                              // and be parsable
+                              // just something guaranteed to be in the past and
+                              // a valid date string
                               bool seen = lastSeen.isAfter(page.lastChange);
 
                               return SizedBox.square(

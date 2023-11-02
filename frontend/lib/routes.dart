@@ -20,6 +20,7 @@ import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_modal.dart';
 import 'package:group_app/ui/screens/home/home.dart';
+import 'package:group_app/ui/screens/home/new_post/new_post.dart';
 import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
 import 'package:group_app/ui/screens/home/notifications/notifications.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
@@ -96,6 +97,10 @@ class Routes extends ChangeNotifier {
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const GroupsScreen()),
                 ),
+                GoRoute(
+                    path: "/new_post",
+                    pageBuilder: (context, state) =>
+                        noTransition(context, state, const NewPostScreen())),
                 GoRoute(
                   path: "/search",
                   pageBuilder: (context, state) =>

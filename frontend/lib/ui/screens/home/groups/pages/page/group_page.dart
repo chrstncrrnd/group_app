@@ -158,8 +158,8 @@ class GroupPageScreen extends StatelessWidget {
             color: Colors.black,
             size: 40,
           ));
-    } else {
+    }  
       return null;
-    }
+    
   }
 }
