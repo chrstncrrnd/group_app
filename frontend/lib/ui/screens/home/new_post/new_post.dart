@@ -104,6 +104,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     CurrentUser? currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser;
 
@@ -123,6 +124,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
       ),
       floatingActionButton: nextButton(context),
       body: PaginatedListView(
+        ifEmpty: const Center(
+          child: Text("Join a group to post"),
+        ),
         shrinkWrap: false,
         pullToRefresh: true,
         query: FirebaseFirestore.instance
