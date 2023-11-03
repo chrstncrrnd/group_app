@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>$(EXECUTABLE_NAME) needs access to the camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give $(EXECUTABLE_NAME) access to the photo library</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(EXECUTABLE_NAME) needs access to the microphone</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
