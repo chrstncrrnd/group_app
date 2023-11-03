@@ -19,12 +19,12 @@ class IntroScreen extends StatelessWidget {
               body: "group_app is an app where you can post with friends"),
           PageViewModel(
               decoration: pageDecoration,
-              title: "You can create or join a group with all of your friends",
-              body: "Your friends can also follow your groups"),
+              title: "You can create a group with all of your friends",
+              body: "Your friends can also join or follow your groups"),
           PageViewModel(
               decoration: pageDecoration,
-              title: "Everyone in your group can add pictures",
-              body: "You can then comment or reply with a photo")
+              title: "Create pages inside your groups to add posts",
+              body: "You can create pages for anything!")
         ],
         showNextButton: false,
         overrideDone: NextButton(onPressed: () {

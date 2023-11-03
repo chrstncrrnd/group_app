@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,12 +30,9 @@ class PageTile extends StatelessWidget {
             .map((e) => Post.fromJson(json: e.data(), id: e.id));
 
     return posts
-        .map((e) => ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                e.dlUrl,
-                fit: BoxFit.cover,
-              ),
+        .map((e) => Image.network(
+              e.dlUrl,
+              fit: BoxFit.cover,
             ))
         .toList();
   }
@@ -44,33 +43,40 @@ class PageTile extends StatelessWidget {
       onPressed: () => context.push("/group/page",
           extra: GroupPageExtra(
               page: page, group: Provider.of<Group>(context, listen: false))),
-      title: Text(page.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      child: Suspense(
-        future: getRecents(),
-        builder: (context, data) {
-          if (data == null) {
-            return const Center(
-              child: Text("Something went wrong"),
+      title: Text(
+        page.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      child: Center(
+        child: Suspense(
+          future: getRecents(),
+          builder: (context, data) {
+            if (data == null) {
+              return const Text("Something went wrong");
+            }
+            return GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1,
+                  mainAxisSpacing: 6,
+                  crossAxisSpacing: 6),
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                var child = index < data.length
+                    ? data[index]
+                    : Container(
+                        color: Colors.grey.shade900,
+                      );
+
+                return ClipRRect(
+                    borderRadius: BorderRadius.circular(10), child: child);
+              },
             );
-          }
-          if (data.isEmpty) {
-            return const Center(
-              child: Text("No posts yet",
-                  style: TextStyle(color: Colors.grey, fontSize: 10)),
-            );
-          }
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
-                mainAxisSpacing: 6,
-                crossAxisSpacing: 6),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return data[index];
-            },
-          );
-        },
+          },
+        ),
       ),
     );
   }

@@ -77,6 +77,7 @@ class RequestNotificationTile extends StatelessWidget {
                             ),
                             Text(
                               user.username,
+                              overflow: TextOverflow.ellipsis,
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),

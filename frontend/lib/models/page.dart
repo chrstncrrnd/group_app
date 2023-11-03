@@ -26,6 +26,10 @@ class GroupPage {
     return g;
   }
 
+  String get lastSeenKey {
+    return "$id:lastChange";
+  }
+
   GroupPage.fromJson(
       {required Map<String, dynamic> json,
       required this.id,

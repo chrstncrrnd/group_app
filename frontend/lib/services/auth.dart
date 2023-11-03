@@ -49,6 +49,7 @@ Future<String?> usernameAvailable(String username) async {
 
 Future<String?> createUser(
     String email, String password, String username, String? name) async {
+  log("Username: $username, name: $name");
   var emailValid = validateEmail(email);
   if (emailValid != null) {
     return emailValid;

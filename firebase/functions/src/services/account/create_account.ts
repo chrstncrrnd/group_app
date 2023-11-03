@@ -7,7 +7,7 @@ import { missing_auth_msg, username_taken_msg } from '../../utils/constants';
 
 const createAccountParams = z.object({
   username: usernameShape,
-  name: z.optional(nameShape),
+  name: nameShape.optional().nullable(),
 });
 
 export const createAccount = functions.https.onCall(
@@ -19,9 +19,9 @@ export const createAccount = functions.https.onCall(
       );
     }
 
-    const d = createAccountParams.parse(data);
+    data.username = data.username.trim();
 
-    const username = d.username.trim();
+    const d = createAccountParams.parse(data);
 
     if (await usernameTaken(d.username)) {
       throw new functions.https.HttpsError(
@@ -35,7 +35,7 @@ export const createAccount = functions.https.onCall(
 
     await doc.create({
       name: d.name ?? null,
-      username: username,
+      username: d.username,
       createdAt: new Date().toISOString(),
       pfp: null,
       following: [],

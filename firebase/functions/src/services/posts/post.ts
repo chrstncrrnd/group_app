@@ -69,6 +69,10 @@ export const createPost = functions.https.onCall(
       createdAt: now,
     });
 
+    await groupRef.update({
+      lastChange: now,
+    });
+
     await pageRef.update({
       contributors: FieldValue.arrayUnion(userId),
       lastChange: now,

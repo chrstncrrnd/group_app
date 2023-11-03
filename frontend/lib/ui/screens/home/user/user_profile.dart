@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/fallback_text.dart';
@@ -57,8 +58,18 @@ class UserProfileScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    StatWidget(name: "Member of", value: user.memberOf.length),
-                    StatWidget(name: "Following", value: user.following.length),
+                    StatWidget(
+                      name: "Member of",
+                      value: user.memberOf.length,
+                      onPressed: () =>
+                          context.push("/user/member_of", extra: user),
+                    ),
+                    StatWidget(
+                      name: "Following",
+                      value: user.following.length,
+                      onPressed: () =>
+                          context.push("/user/following", extra: user),
+                    ),
                   ],
                 ),
               )

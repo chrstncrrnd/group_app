@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_tile.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_grid_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/grid_view.dart';
 
 class GridPostView extends StatelessWidget {
   const GridPostView({super.key, required this.page});
@@ -14,7 +14,8 @@ class GridPostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: PaginatedStreamedGridView(
+      child: PaginatedGridView(
+        pullToRefresh: true,
         ifEmpty: const Center(
           child: Text("No posts yet"),
         ),
@@ -30,7 +31,6 @@ class GridPostView extends StatelessWidget {
             childAspectRatio: 1 / 1.4,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
-        pageSize: 15,
         itemBuilder: (context, item) {
           return PostTile(
             post: Post.fromJson(

@@ -7,7 +7,7 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 import 'package:provider/provider.dart';
 
 class GroupsScreen extends StatelessWidget {
@@ -40,15 +40,20 @@ class GroupsScreen extends StatelessWidget {
               ))
         ],
       ),
-      body: PaginatedStreamedListView(
+      body: PaginatedListView(
+        shrinkWrap: false,
+        pullToRefresh: true,
+        ifEmpty: const Center(
+          child: Text(
+            "Create or join a group",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
         query: FirebaseFirestore.instance
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
-            .orderBy("lastChange"),
-        pageSize: 10,
-        ifEmpty: const Center(
-          child: Text("Create or join a group"),
-        ),
+            .orderBy("lastChange", descending: true),
+
         itemBuilder: (context, item) {
           if (privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(

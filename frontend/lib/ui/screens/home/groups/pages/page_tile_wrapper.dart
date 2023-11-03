@@ -15,22 +15,19 @@ class PageTileWrapper extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: onPressed,
-          child: AspectRatio(
-            aspectRatio: 1 / 1,
-            child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(25)),
-                child: child),
-          ),
+          child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(25)),
+              child: child),
         ),
-        if (title != null) ...[
+        if (title != null) 
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: title!,
           ),
-        ],
+        
       ],
     );
   }

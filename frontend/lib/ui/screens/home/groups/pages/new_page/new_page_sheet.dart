@@ -40,7 +40,7 @@ class _NewPageSheetState extends State<NewPageSheet> {
   }
 
   void _onChange(String newVal) {
-    _pageName = newVal;
+    _pageName = newVal.trim();
   }
 
   @override
@@ -59,6 +59,7 @@ class _NewPageSheetState extends State<NewPageSheet> {
           TextInputField(
             label: "Page name",
             onChanged: _onChange,
+            maxLines: 1,
           ),
           const SizedBox(
             height: 20,

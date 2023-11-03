@@ -180,6 +180,10 @@ export const createPage = functions.https.onCall(
 
     const now = new Date().toISOString();
 
+    await groupDoc.update({
+      lastChange: now,
+    });
+
     await groupDoc
       .collection('pages')
       .doc()

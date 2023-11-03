@@ -4,7 +4,7 @@ import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/group_notifications_tile.dart';
-import 'package:group_app/ui/widgets/paginated_stream/paginated_streamed_list_view.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -22,14 +22,15 @@ class NotificationsScreen extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: PaginatedStreamedListView(
+          child: PaginatedListView(
+            pullToRefresh: true,
+            shrinkWrap: false,
             query: FirebaseFirestore.instance
                 .collection("groups")
                 .where("admins", arrayContains: currentUser.id)
                 .where("requestCount", isGreaterThanOrEqualTo: 1)
                 .orderBy("requestCount")
                 .orderBy("lastChange"),
-            pageSize: 10,
             ifEmpty: const Center(
               child:
                   Text("Groups with follow or join requests will appear here"),

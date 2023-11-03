@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide showAdaptiveDialog;
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group/group_update.dart';
@@ -235,7 +235,8 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     initialValue: widget.initialGroupState.name,
                     validator: validateGroupName,
                     label: "Group name",
-                    onChanged: (val) => _newGroupName = val,
+                    maxLines: 1,
+                    onChanged: (val) => _newGroupName = val.trim(),
                   ),
                   const SizedBox(
                     height: 10,
@@ -246,7 +247,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     label: "Group description",
                     minLines: 3,
                     maxLines: 5,
-                    onChanged: (val) => _newGroupDescription = val,
+                    onChanged: (val) => _newGroupDescription = val.trim(),
                   ),
                 ],
               ),

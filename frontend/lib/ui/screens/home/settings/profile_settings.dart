@@ -98,19 +98,21 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   },
                   child: const Text("Remove profile picture")),
             TextInputField(
+              maxLines: 1,
               validator: validateName,
               initialValue: currentUser.name,
               label: "Name",
-              onChanged: (val) => _newName = val,
+              onChanged: (val) => _newName = val.trim(),
             ),
             const SizedBox(
               height: 10,
             ),
             TextInputField(
+              maxLines: 1,
               validator: validateUsername,
               initialValue: currentUser.username,
               label: "Username",
-              onChanged: (val) => _newUsername = val,
+              onChanged: (val) => _newUsername = val.trim(),
             ),
             const SizedBox(
               height: 10,

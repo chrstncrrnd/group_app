@@ -20,12 +20,14 @@ import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_
 import 'package:group_app/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_modal.dart';
 import 'package:group_app/ui/screens/home/home.dart';
+import 'package:group_app/ui/screens/home/new_post/new_post.dart';
 import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
 import 'package:group_app/ui/screens/home/notifications/notifications.dart';
 import 'package:group_app/ui/screens/home/profile.dart';
 import 'package:group_app/ui/screens/home/search/search.dart';
 import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
 import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
+import 'package:group_app/ui/screens/home/user/user_affiliated_groups.dart';
 import 'package:group_app/ui/screens/home/user/user_profile.dart';
 import 'package:group_app/models/user.dart' as group_app_user;
 
@@ -39,7 +41,7 @@ class Routes extends ChangeNotifier {
 
     _authRouter = GoRouter(
         redirect: (context, state) {
-          if (state.location == "/") {
+          if (state.path == "/") {
             return "/intro";
           }
           return null;
@@ -63,14 +65,14 @@ class Routes extends ChangeNotifier {
             path: "/create_account/:username",
             builder: (context, state) => CreateAccountScreen(
               username: state.pathParameters["username"]!,
-              name: state.queryParameters["name"],
+              name: state.uri.queryParameters["name"],
             ),
           )
         ]);
 
     _mainRouter = GoRouter(
         redirect: (context, state) {
-          if (state.location == "/") {
+          if (state.path == "/") {
             return "/feed";
           }
           return null;
@@ -89,12 +91,17 @@ class Routes extends ChangeNotifier {
                   path: "/feed",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const FeedScreen()),
+                  
                 ),
                 GoRoute(
                   path: "/groups",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const GroupsScreen()),
                 ),
+                GoRoute(
+                    path: "/new_post",
+                    pageBuilder: (context, state) =>
+                        noTransition(context, state, const NewPostScreen())),
                 GoRoute(
                   path: "/search",
                   pageBuilder: (context, state) =>
@@ -153,7 +160,22 @@ class Routes extends ChangeNotifier {
                 GoRoute(
                     path: "/user",
                     builder: (context, state) => UserProfileScreen(
-                        initialUserState: state.extra! as group_app_user.User)),
+                        initialUserState: state.extra! as group_app_user.User),
+                    routes: [
+                      GoRoute(
+                        path: "following",
+                        builder: (context, state) => UserAffiliatedGroups(
+                          type: UserAffiliatedGroupsType.following,
+                          user: state.extra! as group_app_user.User,
+                        ),
+                      ),
+                      GoRoute(
+                          path: "member_of",
+                          builder: (context, state) => UserAffiliatedGroups(
+                                type: UserAffiliatedGroupsType.memberOf,
+                                user: state.extra! as group_app_user.User,
+                              ))
+                    ]),
                 GoRoute(
                   path: "/notifications",
                   builder: (context, state) => const NotificationsScreen(),

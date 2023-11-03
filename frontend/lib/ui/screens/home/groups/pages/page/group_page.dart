@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide showAdaptiveDialog;
 import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
@@ -15,6 +15,7 @@ import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GroupPageExtra {
   GroupPage page;
@@ -27,8 +28,14 @@ class GroupPageScreen extends StatelessWidget {
 
   final GroupPageExtra extra;
 
+  void setSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(extra.page.lastSeenKey, DateTime.now().toIso8601String());
+  }
+
   @override
   Widget build(BuildContext context) {
+    setSeen();
     final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
     return StreamBuilder<GroupPage>(
         initialData: extra.page,
@@ -142,14 +149,17 @@ class GroupPageScreen extends StatelessWidget {
     final CurrentUser currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser!;
     if (extra.group.members.contains(currentUser.id)) {
-      return TextButton.icon(
+      return IconButton(
           style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.black)),
+              backgroundColor: MaterialStatePropertyAll(Colors.white)),
           onPressed: () => context.push("/take_new_post", extra: page),
-          icon: const Icon(Icons.add),
-          label: const Text("New post"));
-    } else {
+          icon: const Icon(
+            Icons.add,
+            color: Colors.black,
+            size: 40,
+          ));
+    }  
       return null;
-    }
+    
   }
 }
