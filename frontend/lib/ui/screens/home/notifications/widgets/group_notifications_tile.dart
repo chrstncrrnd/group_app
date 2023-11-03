@@ -40,13 +40,11 @@ class GroupNotificationsTile extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              Expanded(
-                child: Text(
-                  group.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18),
-                ),
+              Text(
+                group.name,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               )
             ]),
             const Icon(

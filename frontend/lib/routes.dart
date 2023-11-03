@@ -65,7 +65,7 @@ class Routes extends ChangeNotifier {
             path: "/create_account/:username",
             builder: (context, state) => CreateAccountScreen(
               username: state.pathParameters["username"]!,
-              name: state.pathParameters["name"],
+              name: state.uri.queryParameters["name"],
             ),
           )
         ]);
@@ -91,6 +91,7 @@ class Routes extends ChangeNotifier {
                   path: "/feed",
                   pageBuilder: (context, state) =>
                       noTransition(context, state, const FeedScreen()),
+                  
                 ),
                 GoRoute(
                   path: "/groups",

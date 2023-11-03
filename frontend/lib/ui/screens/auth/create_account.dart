@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
 
 class CreateAccountScreen extends StatefulWidget {
@@ -19,18 +20,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
-
-  Widget formField(String? Function(String?) validator, String label,
-      Function(String?) onChanged) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-      ),
-      validator: validator,
-      onChanged: onChanged,
-      obscureText: label == "Password",
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +39,27 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  formField(validateEmail, "Email", (value) {
-                    if (value != null) _email = value.trim();
-                  }),
+                  TextInputField(
+                    label: "Email",
+                    onChanged: (value) {
+                      _email = value.trim();
+                    },
+                    maxLines: 1,
+                    validator: validateEmail,
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  formField(validatePassword, "Password", (value) {
-                    if (value != null) _password = value;
-                  }),
+                  TextInputField(
+                    label: "Password",
+                    onChanged: (value) {
+                      _password = value;
+                    },
+                    maxLines: 1,
+                    validator: validatePassword,
+                    obscureText: true,
+                  ),
+
                   const SizedBox(
                     height: 20,
                   ),

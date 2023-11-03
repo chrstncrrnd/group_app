@@ -107,7 +107,7 @@ class _PaginatedGridViewState extends State<PaginatedGridView> {
         });
 
     if (widget.pullToRefresh) {
-      return RefreshIndicator(onRefresh: onRefresh, child: child);
+      return RefreshIndicator.adaptive(onRefresh: onRefresh, child: child);
     }
     return child;
   }

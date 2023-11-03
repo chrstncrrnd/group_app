@@ -75,13 +75,11 @@ class RequestNotificationTile extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Expanded(
-                              child: Text(
-                                user.username,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              user.username,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),

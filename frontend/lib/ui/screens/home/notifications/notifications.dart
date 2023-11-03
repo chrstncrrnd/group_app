@@ -24,6 +24,7 @@ class NotificationsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: PaginatedListView(
             pullToRefresh: true,
+            shrinkWrap: false,
             query: FirebaseFirestore.instance
                 .collection("groups")
                 .where("admins", arrayContains: currentUser.id)

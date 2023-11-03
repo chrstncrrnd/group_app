@@ -77,6 +77,7 @@ class _NewGroupScreenState extends State<NewGroupScreen> {
                 TextInputField(
                   label: "Name",
                   onChanged: (val) => _groupName = val.trim(),
+                  maxLines: 1,
                   validator: validateGroupName,
                 ),
                 TextInputField(

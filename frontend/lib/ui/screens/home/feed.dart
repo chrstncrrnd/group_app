@@ -41,6 +41,9 @@ class FeedScreen extends StatelessWidget {
                 centerTitle: true,
               ),
               body: PaginatedListView(
+                ifEmpty: const Center(
+                  child: Text("Follow a group to see their posts here..."),
+                ),
                 shrinkWrap: false,
                 pullToRefresh: true,
                 query: FirebaseFirestore.instance
@@ -60,7 +63,7 @@ class FeedScreen extends StatelessWidget {
                       Provider.value(
                         value: group,
                         child: SizedBox(
-                          height: 222,
+                          height: 230,
                           child: PaginatedListView(
                             ifEmpty: const Center(
                               child: Text(

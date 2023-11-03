@@ -98,6 +98,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   },
                   child: const Text("Remove profile picture")),
             TextInputField(
+              maxLines: 1,
               validator: validateName,
               initialValue: currentUser.name,
               label: "Name",
@@ -107,6 +108,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               height: 10,
             ),
             TextInputField(
+              maxLines: 1,
               validator: validateUsername,
               initialValue: currentUser.username,
               label: "Username",

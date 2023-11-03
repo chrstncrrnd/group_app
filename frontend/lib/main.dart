@@ -24,9 +24,8 @@ void main() async {
     log("An error occurred fetching available cameras", error: e);
   }
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
     await FirebaseAuth.instance.useAuthEmulator("192.168.0.17", 9099);
     FirebaseFunctions.instance.useFunctionsEmulator("192.168.0.17", 5001);
     FirebaseFirestore.instance.useFirestoreEmulator("192.168.0.17", 8080);

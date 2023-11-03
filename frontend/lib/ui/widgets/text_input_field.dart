@@ -10,7 +10,9 @@ class TextInputField extends StatelessWidget {
       this.validator,
       this.maxLines,
       this.minLines,
-      this.initialValue});
+      this.initialValue,
+      this.obscureText = false,
+      this.textCapitalization = TextCapitalization.none});
 
   final String label;
   final FutureOr<void> Function(String)? onChanged;
@@ -18,6 +20,8 @@ class TextInputField extends StatelessWidget {
   final int? maxLines;
   final int? minLines;
   final String? initialValue;
+  final bool obscureText;
+  final TextCapitalization textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +30,12 @@ class TextInputField extends StatelessWidget {
         decoration: InputDecoration(
           label: Text(label),
         ),
+      obscureText: obscureText,
         maxLines: maxLines,
         minLines: minLines,
         onChanged: onChanged,
-        validator: validator);
+      validator: validator,
+      textCapitalization: textCapitalization,
+    );
   }
 }

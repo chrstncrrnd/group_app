@@ -25,6 +25,7 @@ class GroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
     return StreamBuilder<Group>(
       initialData: initialGroupState,
       stream: Group.asStream(id: initialGroupState.id),
@@ -41,47 +42,36 @@ class GroupScreen extends StatelessWidget {
         }
 
         var group = snapshot.data!;
-        var currentUser =
-            Provider.of<CurrentUserProvider>(context).currentUser!;
-        List<Widget> top = [
-          _header(group, context, currentUser),
-          const SizedBox(
-            height: 10,
-          ),
-          _affiliatedUsersCount(context, group, currentUser),
-          const SizedBox(
-            height: 10,
-          ),
-          StatefulBuilder(
-              builder: (ctx, stateSetter) =>
-                  _followJoinButtons(ctx, group, stateSetter)),
-          _description(context, group.description),
-          const Divider(
-            indent: 30,
-            endIndent: 30,
-            color: Color.fromARGB(76, 255, 255, 255),
-          ),
-          if (!_userHasAccess(group, currentUser)) _noAccess(context)
-          else
-            Provider.value(
-                value: group,
-                child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: PagesGrid())),
-        ];
         return SafeArea(
-            child: ListView.builder(
-          itemCount: top.length,
-          itemBuilder: (context, index) {
-            if (index < top.length) {
-              return top[index];
-            } else {
-              if (!_userHasAccess(group, currentUser)) return null;
-            }
-            index -= top.length;
-            return null;
-          },
-        ));
+          child: Container(
+            color: Colors.black,
+            child: SingleChildScrollView(
+              child: Column(children: [
+                _header(group, context, currentUser),
+                const SizedBox(
+                  height: 10,
+                ),
+                _affiliatedUsersCount(context, group, currentUser),
+                const SizedBox(
+                  height: 10,
+                ),
+                StatefulBuilder(
+                    builder: (ctx, stateSetter) =>
+                        _followJoinButtons(ctx, group, stateSetter)),
+                _description(context, group.description),
+                if (!_userHasAccess(group, currentUser))
+                  _noAccess(context)
+                else
+                  Provider.value(
+                      value: group,
+                      child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 20),
+                          child: PagesGrid())),
+              ]),
+            ),
+          ),
+        );
       },
     );
   }
@@ -310,35 +300,35 @@ class GroupScreen extends StatelessWidget {
                     ),
                     if (group.admins.contains(currentUser.id))
                       IconButton(
-                      onPressed: () => showContextMenu(
-                        context: context,
-                        items: [
-                        if (group.admins.contains(currentUser.id))
-                          (
-                            child: const Text("Edit"),
-                            onPressed: () =>
-                                  context.push("/group/edit", extra: group),
-                              icon: const Icon(Icons.edit)
-                          ),
-                          // this still needs to be done with deep linking
-                          // (
-                          //   child: const Text("Share"),
-                          //     onPressed: () => log("pressed share"),
-                          //     icon: const Icon(Icons.ios_share_rounded)
-                          // )
-                        ],
-                        position: RelativeRect.fromDirectional(
-                            top: 0,
-                            end: 0,
-                            textDirection: TextDirection.ltr,
-                            start: 1,
-                            bottom: 1),
+                        onPressed: () => showContextMenu(
+                          context: context,
+                          items: [
+                            if (group.admins.contains(currentUser.id))
+                              (
+                                child: const Text("Edit"),
+                                onPressed: () =>
+                                    context.push("/group/edit", extra: group),
+                                icon: const Icon(Icons.edit)
+                              ),
+                            // this still needs to be done with deep linking
+                            // (
+                            //   child: const Text("Share"),
+                            //     onPressed: () => log("pressed share"),
+                            //     icon: const Icon(Icons.ios_share_rounded)
+                            // )
+                          ],
+                          position: RelativeRect.fromDirectional(
+                              top: 0,
+                              end: 0,
+                              textDirection: TextDirection.ltr,
+                              start: 1,
+                              bottom: 1),
+                        ),
+                        icon: const Icon(Icons.more_horiz),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(
+                                Colors.white.withOpacity(0.15))),
                       ),
-                      icon: const Icon(Icons.more_horiz),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Colors.white.withOpacity(0.15))),
-                    ),
                   ],
                 ),
                 Row(

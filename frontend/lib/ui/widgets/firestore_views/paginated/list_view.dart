@@ -103,7 +103,7 @@ class _PaginatedListViewState extends State<PaginatedListView> {
         });
 
     if (widget.pullToRefresh) {
-      return RefreshIndicator(onRefresh: onRefresh, child: child);
+      return RefreshIndicator.adaptive(onRefresh: onRefresh, child: child);
     }
     return child;
   }

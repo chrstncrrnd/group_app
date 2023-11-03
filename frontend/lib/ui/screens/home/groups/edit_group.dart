@@ -235,6 +235,7 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                     initialValue: widget.initialGroupState.name,
                     validator: validateGroupName,
                     label: "Group name",
+                    maxLines: 1,
                     onChanged: (val) => _newGroupName = val.trim(),
                   ),
                   const SizedBox(

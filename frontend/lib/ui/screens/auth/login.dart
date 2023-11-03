@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -34,23 +36,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 "Log in",
                 style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                ),
+              TextInputField(
+                label: 'Email',
+                maxLines: 1,
                 validator: validateEmail,
                 onChanged: (value) {
                   _email = value.trim();
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                ),
+              TextInputField(
+                maxLines: 1,
+                label: 'Password',
                 obscureText: true,
                 onChanged: (value) {
                   _password = value;
                 },
+                validator: validatePassword,
               ),
               const SizedBox(
                 height: 5,

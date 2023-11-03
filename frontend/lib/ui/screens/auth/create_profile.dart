@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/services/auth.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/validators.dart';
 
 // Initial profile creation steps
@@ -39,13 +40,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           const SizedBox(
             height: 20,
           ),
-          TextFormField(
-            decoration: const InputDecoration(
-              label: Text("Name"),
-            ),
+          TextInputField(
+            label: "Name",
             onChanged: (value) {
               name = value.trim();
             },
+            maxLines: 1,
             validator: validateName,
           ),
           const SizedBox(
@@ -83,14 +83,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           const SizedBox(
             height: 20,
           ),
-          TextFormField(
-            textCapitalization: TextCapitalization.none,
-            decoration: const InputDecoration(
-              label: Text("Username"),
-            ),
+          TextInputField(
+            label: "Username",
             onChanged: (value) {
               username = value.trim();
             },
+            maxLines: 1,
             validator: validateUsername,
           ),
           const SizedBox(

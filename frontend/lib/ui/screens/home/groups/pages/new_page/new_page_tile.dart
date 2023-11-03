@@ -13,6 +13,7 @@ class NewPageTile extends StatelessWidget {
     Group group = Provider.of<Group>(context);
     return PageTileWrapper(
         onPressed: () => showModalBottomSheet(
+              backgroundColor: Colors.black,
               showDragHandle: true,
               isScrollControlled: true,
               useRootNavigator: true,
