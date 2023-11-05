@@ -29,91 +29,103 @@ class SubmitNewPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double iconSize = 27;
-    return Suspense<Group>(
-        future: extra.page.getGroup(),
-        builder: (context, group) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              leading: IconButton(
-                icon: const Icon(Icons.close_rounded),
-                onPressed: () =>
-                    context.replace("/take_new_post", extra: extra.page),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          onPressed: () => context.replace("/take_new_post", extra: extra.page),
+        ),
+        title: const Text("New post"),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 7,
+            child: Container(
+              // Idk why this works, but it does
+              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.file(extra.post)),
+            ),
+          ),
+          Expanded(flex: 1, child: _publishPostButton(context))
+        ],
+      ),
+    );
+  }
+
+  Widget _publishPostButton(BuildContext context) {
+    return ProgressIndicatorButton(
+      onPressed: postIt,
+      afterPressed: (value) {
+        if (value != null) {
+          showAlert(context,
+              title: "An error occurred while creating the post",
+              content: value);
+        } else {
+          context.pop();
+        }
+      },
+      child: Column(
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 40,
               ),
-              title: const Text("New post"),
-            ),
-            body: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(extra.post)),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: ProgressIndicatorButton(
-                      style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.white),
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.black)),
-                      onPressed: postIt,
-                      afterPressed: (value) {
-                        if (value != null) {
-                          showAlert(context,
-                              title:
-                                  "An error occurred while creating the post",
-                              content: value);
-                        } else {
-                          context.pop();
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                BasicCircleAvatar(
-                                    radius: iconSize / 2,
-                                    child: group!.icon(iconSize)),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Text(
-                                  "Post",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: iconSize,
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 3,
-                            ),
-                            AutoSizeText(
-                              extra.page.name,
-                              maxLines: 1,
-                              style: TextStyle(color: Colors.grey.shade700),
-                            ),
-                          ],
-                        ),
-                      )),
-                )
-              ],
-            ),
-          );
-        });
+              AutoSizeText(
+                "Publish",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          Suspense<Group?>(
+            future: extra.page.getGroup(useCache: true),
+            builder: (context, data) {
+              if (data == null) {
+                return const Text(
+                  "Something went wrong...",
+                  style: TextStyle(color: Colors.grey),
+                );
+              }
+              const TextStyle textStyle = TextStyle(color: Colors.grey);
+
+              Group group = data;
+              const double iconRadius = 11;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BasicCircleAvatar(
+                      radius: iconRadius, child: group.icon(iconRadius * 2)),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    group.name,
+                    style: textStyle,
+                  ),
+                  const Text(
+                    "/",
+                    style: textStyle,
+                  ),
+                  Text(
+                    extra.page.name,
+                    style: textStyle,
+                  )
+                ],
+              );
+            },
+          )
+        ],
+      ),
+    );
   }
 }

@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/main.dart';
 import 'package:group_app/ui/widgets/pick_image.dart';
-import 'package:group_app/utils/max.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CustomCamera extends StatefulWidget {
@@ -62,7 +61,7 @@ class _CustomCameraState extends State<CustomCamera>
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
     final prev = _cameraController;
     final CameraController newController = CameraController(
-        cameraDescription, ResolutionPreset.max,
+        cameraDescription, ResolutionPreset.high,
         enableAudio: false, imageFormatGroup: ImageFormatGroup.jpeg);
 
     await prev?.dispose();
@@ -163,12 +162,9 @@ class _CustomCameraState extends State<CustomCamera>
   }
 
   Widget _cameraView(BuildContext context) {
-    return SizedBox(
-      // Take up the whole screen
-      height: Max.height(context),
-      width: Max.width(context),
-      child: Stack(
-        alignment: Alignment.center,
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           GestureDetector(
             onScaleUpdate: (details) async {
@@ -178,7 +174,7 @@ class _CustomCameraState extends State<CustomCamera>
               }
             },
             child: AspectRatio(
-              aspectRatio: 1 / _cameraController!.value.aspectRatio,
+              aspectRatio: 10 / 16,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ClipRRect(
@@ -187,17 +183,16 @@ class _CustomCameraState extends State<CustomCamera>
               ),
             ),
           ),
-          Positioned(
-              bottom: 30,
-              width: Max.width(context),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _gallerySelectButton(),
-                  _takePictureButton(),
-                  _switchCameraButton()
-                ],
-              )),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _gallerySelectButton(),
+                _takePictureButton(),
+                _switchCameraButton()
+              ],
+            ),
+          ),
         ],
       ),
     );
