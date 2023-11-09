@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' hide showAdaptiveDialog;
@@ -6,10 +7,14 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
+import 'package:group_app/models/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_update.dart';
+import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/grid_post_view.dart';
+import 'package:group_app/ui/widgets/async/suspense.dart';
+import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
@@ -56,20 +61,107 @@ class GroupPageScreen extends StatelessWidget {
           final page = snapshot.data!;
           return Scaffold(
             appBar: AppBar(
-              title: Text(page.name),
-              centerTitle: true,
               actions: [
                 if (extra.group.admins.contains(currentUser.id))
                   _adminButtons(context, page)
               ],
             ),
-            body: Provider.value(
-              value: extra.group,
-              child: GridPostView(
-                page: page,
-              ),
+            body: Column(
+              children: [
+                Divider(
+                  color: Colors.white.withOpacity(0.2),
+                  indent: 10,
+                  endIndent: 10,
+                  height: 2,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BasicCircleAvatar(radius: 20, child: extra.group.icon(40)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      page.name,
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                contributors(context),
+                const SizedBox(
+                  height: 30,
+                ),
+                Provider.value(
+                  value: extra.group,
+                  child: GridPostView(
+                    page: page,
+                  ),
+                ),
+              ],
             ),
             floatingActionButton: _newPostButton(context, page),
+          );
+        });
+  }
+
+  Widget contributors(BuildContext context) {
+    const TextStyle textStyle = TextStyle(color: Colors.grey);
+    List<String> contributorIds = extra.page.contributors;
+    void navigateToContributors() {
+      context.push("/group/page/contributors",
+          extra: AffiliatedUsersScreenExtra(
+            users: contributorIds,
+            title: "Contributors",
+            isAdmin: false,
+          ));
+    }
+
+    Future<List<User>> contributorsFuture = Future.wait(contributorIds
+        .sublist(0, min(contributorIds.length, 4))
+        .map((id) => User.fromId(id: id)));
+    return Suspense(
+        future: contributorsFuture,
+        builder: (context, contributors) {
+          if (contributors == null) {
+            return const Text(
+              "Something went wrong...",
+              style: textStyle,
+            );
+          }
+          return GestureDetector(
+            onTap: navigateToContributors,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "By",
+                  style: textStyle,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ...contributors.map((u) => BasicCircleAvatar(
+                      radius: 10,
+                      child: u.pfp(20),
+                    )),
+                if (contributorIds.length > 3) ...[
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "+ ${contributorIds.length - 3}",
+                    style: textStyle,
+                  )
+                ]
+              ],
+            ),
           );
         });
   }
@@ -158,8 +250,7 @@ class GroupPageScreen extends StatelessWidget {
             color: Colors.black,
             size: 40,
           ));
-    }  
-      return null;
-    
+    }
+    return null;
   }
 }

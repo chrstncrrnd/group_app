@@ -15,11 +15,11 @@ class AffiliatedUsersScreenExtra {
       {required this.users,
       required this.title,
       required this.isAdmin,
-      required this.onRemove});
+      this.onRemove});
   final String title;
   final List<String> users;
   final bool isAdmin;
-  final Future<String?> Function(String userId) onRemove;
+  final Future<String?> Function(String userId)? onRemove;
 }
 
 class AffiliatedUsersScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class AffiliatedUsersScreen extends StatefulWidget {
 
 class _AffiliatedUsersScreenState extends State<AffiliatedUsersScreen> {
   Future<String?> onRemove(String userId) async {
-    var res = await widget.extra.onRemove(userId);
+    var res = await widget.extra.onRemove?.call(userId);
     if (res != null) {
       return res;
     }

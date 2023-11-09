@@ -154,6 +154,15 @@ class Routes extends ChangeNotifier {
                         builder: (context, state) => GroupPageScreen(
                           extra: state.extra as GroupPageExtra,
                         ),
+                          routes: [
+                            GoRoute(
+                              path: "contributors",
+                              builder: (context, state) =>
+                                  AffiliatedUsersScreen(
+                                      extra: state.extra
+                                          as AffiliatedUsersScreenExtra),
+                            )
+                          ]
                       )
                     ]
                 ),
