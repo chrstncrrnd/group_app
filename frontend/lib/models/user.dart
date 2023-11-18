@@ -5,7 +5,6 @@ import 'package:group_app/utils/to_list_string.dart';
 
 import '../ui/widgets/async/shimmer_loading_indicator.dart';
 
-
 class User {
   User(
       {this.name,

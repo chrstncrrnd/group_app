@@ -19,12 +19,14 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final CurrentUser? currentUser =
         Provider.of<CurrentUserProvider>(context).currentUser;
-
     if (currentUser == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
     return Suspense(
+        // Note for future:
+        // if the user is a member of a lot of groups, this might end up taking
+        // a significant amount of time
         future: SharedPreferences.getInstance(),
         builder: (context, prefs) {
           return Scaffold(

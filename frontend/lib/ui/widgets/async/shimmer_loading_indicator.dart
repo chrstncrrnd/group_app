@@ -22,7 +22,7 @@ class ShimmerLoadingIndicator extends StatelessWidget {
             borderRadius: borderRadius ?? BorderRadius.circular(10),
             color: Colors.black,
           ),
-          child: child,
+          child: Opacity(opacity: 0, child: child),
         ));
   }
 }

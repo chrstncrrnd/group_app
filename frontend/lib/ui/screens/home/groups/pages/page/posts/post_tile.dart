@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/models/user.dart';
+import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,41 @@ class PostTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    Widget placeholder(BuildContext context) {
+      return Stack(
+        alignment: Alignment.bottomLeft,
+        children: [
+          SizedBox(
+              width: Max.width(context),
+              height: Max.height(context),
+              child: ShimmerLoadingIndicator(child: Container())),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (showUsername)
+                  const ShimmerLoadingIndicator(
+                    child: Text(
+                      "username",
+                    ),
+                  ),
+                if (showGroupName)
+                  const ShimmerLoadingIndicator(child: Text("group.name"))
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     var group = Provider.of<Group>(context);
     return Suspense<User>(
         future: User.fromId(id: post.creatorId),
+
+        placeholder: placeholder(context),
         builder: (context, user) {
           if (user == null) {
             return const Center(child: Text("Something went wrong"));

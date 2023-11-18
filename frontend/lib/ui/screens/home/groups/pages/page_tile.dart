@@ -8,6 +8,7 @@ import 'package:group_app/models/page.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page_tile_wrapper.dart';
+import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,8 @@ class PageTile extends StatelessWidget {
   final GroupPage page;
 
   Future<List<Widget>> getRecents() async {
+    await Future.delayed(const Duration(seconds: 1));
+
     var postsRef = FirebaseFirestore.instance
         .collection("groups")
         .doc(page.groupId)
@@ -39,6 +42,26 @@ class PageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget placeholder(BuildContext context) {
+      return GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1,
+            mainAxisSpacing: 6,
+            crossAxisSpacing: 6),
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          return ShimmerLoadingIndicator(
+            child: Container(
+              color: Colors.grey.shade900,
+            ),
+          );
+        },
+      );
+    }
+
     return PageTileWrapper(
       onPressed: () => context.push("/group/page",
           extra: GroupPageExtra(
@@ -51,6 +74,7 @@ class PageTile extends StatelessWidget {
       child: Center(
         child: Suspense(
           future: getRecents(),
+          placeholder: placeholder(context),
           builder: (context, data) {
             if (data == null) {
               return const Text("Something went wrong");

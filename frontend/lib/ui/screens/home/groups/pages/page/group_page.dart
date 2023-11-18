@@ -13,6 +13,7 @@ import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/posts/grid_post_view.dart';
+import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
@@ -75,7 +76,7 @@ class GroupPageScreen extends StatelessWidget {
                   height: 2,
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +113,38 @@ class GroupPageScreen extends StatelessWidget {
   }
 
   Widget contributors(BuildContext context) {
+  
     const TextStyle textStyle = TextStyle(color: Colors.grey);
+    Widget placeholder(BuildContext context) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "By",
+            style: textStyle,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          ...List.generate(
+              3,
+              (index) => BasicCircleAvatar(
+                    radius: 10,
+                    child: ShimmerLoadingIndicator(
+                      child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          )),
+                    ),
+                  )),
+        ],
+      );
+    }
+
+
+
     List<String> contributorIds = extra.page.contributors;
     void navigateToContributors() {
       context.push("/group/page/contributors",
@@ -126,8 +158,11 @@ class GroupPageScreen extends StatelessWidget {
     Future<List<User>> contributorsFuture = Future.wait(contributorIds
         .sublist(0, min(contributorIds.length, 4))
         .map((id) => User.fromId(id: id)));
+
+
     return Suspense(
         future: contributorsFuture,
+        placeholder: placeholder(context),
         builder: (context, contributors) {
           if (contributors == null) {
             return const Text(
