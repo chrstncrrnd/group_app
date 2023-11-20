@@ -37,7 +37,7 @@ Future<String?> createPost(
 
   params.addAll({"dlUrl": dlUrl, "location": postLoc});
   try {
-    FirebaseFunctions.instance.httpsCallable("createPost").call({
+    await FirebaseFunctions.instance.httpsCallable("createPost").call({
       "dlUrl": dlUrl,
       "location": postLoc,
       "id": id,
@@ -54,7 +54,7 @@ Future<String?> createPost(
 
 Future<String?> deletePost(String groupId, String pageId, String postId) async {
   try {
-    FirebaseFunctions.instance.httpsCallable("deletePost").call({
+    await FirebaseFunctions.instance.httpsCallable("deletePost").call({
       "groupId": groupId,
       "pageId": pageId,
       "postId": postId,
@@ -64,5 +64,21 @@ Future<String?> deletePost(String groupId, String pageId, String postId) async {
     return e.message;
   }
 
+  return null;
+}
+
+Future<String?> reactToPost(
+    String groupId, String pageId, String postId, String reaction) async {
+  try {
+    await FirebaseFunctions.instance.httpsCallable("reactToPost").call({
+      "groupId": groupId,
+      "pageId": pageId,
+      "postId": postId,
+      "reaction": reaction
+    });
+  } on FirebaseFunctionsException catch (e) {
+    log("An error occurred while reacting to a post", error: e);
+    return e.message;
+  }
   return null;
 }

@@ -19,7 +19,11 @@ class GroupsScreen extends StatelessWidget {
         Provider.of<CurrentUserProvider>(context, listen: true);
     var currentUser = currentUserProvider.currentUser!;
     var privateData = currentUserProvider.privateData!;
-    
+
+    Widget placeholder(BuildContext context) {
+      return const GroupListTileLoading();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -41,6 +45,7 @@ class GroupsScreen extends StatelessWidget {
         ],
       ),
       body: PaginatedListView(
+        loaderBuilder: placeholder,
         shrinkWrap: false,
         pullToRefresh: true,
         ifEmpty: const Center(
@@ -53,7 +58,6 @@ class GroupsScreen extends StatelessWidget {
             .collection("groups")
             .where("members", arrayContains: currentUser.id)
             .orderBy("lastChange", descending: true),
-
         itemBuilder: (context, item) {
           if (privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(

@@ -82,12 +82,12 @@ class GroupListTileLoading extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              BasicCircleAvatar(
-                radius: 20,
-                child: ShimmerLoadingIndicator(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
+              ShimmerLoadingIndicator(
+                  child: Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+              )),
               const SizedBox(
                 width: 10,
               ),
@@ -97,8 +97,7 @@ class GroupListTileLoading extends StatelessWidget {
                     "-----------",
                     style: TextStyle(
                         fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.transparent),
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
@@ -106,9 +105,6 @@ class GroupListTileLoading extends StatelessWidget {
                     child: const ShimmerLoadingIndicator(
                         child: Text(
                       "--------------------",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.transparent),
                     ))),
               ]),
             ]));
