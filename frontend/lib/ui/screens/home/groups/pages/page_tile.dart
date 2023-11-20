@@ -18,7 +18,6 @@ class PageTile extends StatelessWidget {
   final GroupPage page;
 
   Future<List<Widget>> getRecents() async {
-    await Future.delayed(const Duration(seconds: 1));
 
     var postsRef = FirebaseFirestore.instance
         .collection("groups")

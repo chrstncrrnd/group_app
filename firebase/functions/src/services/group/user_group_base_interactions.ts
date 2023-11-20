@@ -5,6 +5,8 @@ import { groupModel } from '../../models/group';
 import { FieldValue } from 'firebase-admin/firestore';
 import {
   admin_cannot_leave_group_msg,
+  group_is_full_msg,
+  max_users_per_group,
   missing_auth_msg,
   request_does_not_exists_msg,
   user_already_follower_msg,
@@ -26,7 +28,9 @@ const createRequest = async (data: {
 
   const groupRef = fs.collection('groups').doc(data.groupId);
 
+  // initial checks
   const groupData = groupModel.parse((await groupRef.get()).data());
+
   if (data.type === 'follow' && groupData.followers.includes(data.userId)) {
     throw new functions.https.HttpsError(
       'already-exists',
@@ -37,6 +41,23 @@ const createRequest = async (data: {
     throw new functions.https.HttpsError(
       'already-exists',
       user_already_member_msg
+    );
+  }
+
+  if (
+    data.type == 'follow' &&
+    groupData.followers.length >= max_users_per_group
+  ) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      group_is_full_msg
+    );
+  }
+
+  if (data.type == 'join' && groupData.members.length >= max_users_per_group) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      group_is_full_msg
     );
   }
 
