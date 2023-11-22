@@ -9,17 +9,23 @@ class CurrentUserProvider extends ChangeNotifier {
   CurrentUser? currentUser;
   CurrentUserPrivateData? privateData;
 
+  void handleError(err) async {
+    log("Error with current_user_provider: $err");
+    // determine if the user has been deleted:
+    FirebaseAuth.instance.currentUser?.reload();
+  }
+
   CurrentUserProvider() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
         CurrentUser.asStream(id: user.uid).listen((event) {
           currentUser = event;
           notifyListeners();
-        });
+        }).onError(handleError);
         CurrentUserPrivateData.asStream(userId: user.uid).listen((event) {
           privateData = event;
           notifyListeners();
-        });
+        }).onError(handleError);
       } else {
         log("User signed out");
         currentUser = null;

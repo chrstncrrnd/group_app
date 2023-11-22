@@ -44,7 +44,10 @@ class FeedScreen extends StatelessWidget {
               ),
               body: PaginatedListView(
                 ifEmpty: const Center(
-                  child: Text("Follow a group to see their posts here..."),
+                  child: Text(
+                    "Follow a group to see their posts here",
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 shrinkWrap: false,
                 pullToRefresh: true,
@@ -61,6 +64,8 @@ class FeedScreen extends StatelessWidget {
                     children: [
                       GroupListTile(
                         group: group,
+                        showArrow: false,
+                        showDescription: false,
                       ),
                       Provider.value(
                         value: group,

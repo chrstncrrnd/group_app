@@ -5,7 +5,7 @@ import "package:group_app/models/user.dart";
 import "package:group_app/ui/screens/home/search/search_result_tile.dart";
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();

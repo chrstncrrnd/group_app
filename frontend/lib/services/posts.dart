@@ -67,14 +67,12 @@ Future<String?> deletePost(String groupId, String pageId, String postId) async {
   return null;
 }
 
-Future<String?> reactToPost(
-    String groupId, String pageId, String postId, String reaction) async {
+Future<String?> likePost(String groupId, String pageId, String postId) async {
   try {
-    await FirebaseFunctions.instance.httpsCallable("reactToPost").call({
+    await FirebaseFunctions.instance.httpsCallable("likePost").call({
       "groupId": groupId,
       "pageId": pageId,
       "postId": postId,
-      "reaction": reaction
     });
   } on FirebaseFunctionsException catch (e) {
     log("An error occurred while reacting to a post", error: e);

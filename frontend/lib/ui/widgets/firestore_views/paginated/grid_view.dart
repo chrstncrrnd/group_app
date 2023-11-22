@@ -12,7 +12,8 @@ class PaginatedGridView extends StatefulWidget {
       this.ifEmpty,
       this.before,
       this.pullToRefresh = false,
-      this.physics});
+      this.physics,
+      this.shrinkwrap = true});
 
   final Query query;
   // page size should be a multiple of gridDelegate.crossAxisCount
@@ -22,6 +23,7 @@ class PaginatedGridView extends StatefulWidget {
   final Function(BuildContext context)? loaderBuilder;
   final ScrollPhysics? physics;
   final bool pullToRefresh;
+  final bool shrinkwrap;
 
   final Widget? ifEmpty;
   final List<Widget>? before;
@@ -84,7 +86,7 @@ class _PaginatedGridViewState extends State<PaginatedGridView> {
 
     var child = GridView.builder(
         physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
+        shrinkWrap: widget.shrinkwrap,
         gridDelegate: widget.gridDelegate,
         itemCount: totalCount,
         itemBuilder: (BuildContext context, int index) {

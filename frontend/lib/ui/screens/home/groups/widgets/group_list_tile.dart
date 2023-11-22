@@ -6,14 +6,20 @@ import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 
 class GroupListTile extends StatelessWidget {
-  const GroupListTile({super.key, required this.group});
+  const GroupListTile(
+      {super.key,
+      required this.group,
+      this.showArrow = true,
+      this.showDescription = true});
 
   final Group group;
+  final bool showArrow;
+  final bool showDescription;
 
   @override
   Widget build(BuildContext context) {
     const iconDiameter = 40.0;
-    
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => context.push("/group", extra: group),
@@ -46,7 +52,7 @@ class GroupListTile extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              if (group.description != null)
+                              if (group.description != null && showDescription)
                                 Container(
                                     margin: const EdgeInsets.only(top: 5),
                                     child: Text(
@@ -60,10 +66,11 @@ class GroupListTile extends StatelessWidget {
                       ),
                     ]),
               ),
-              const Icon(
+              if (showArrow)
+                const Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: iconDiameter / 2,
-                    color: Colors.grey,
+                  color: Colors.grey,
               )
             ],
           )),
@@ -95,9 +102,7 @@ class GroupListTileLoading extends StatelessWidget {
                 const ShimmerLoadingIndicator(
                   child: Text(
                     "-----------",
-                    style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(

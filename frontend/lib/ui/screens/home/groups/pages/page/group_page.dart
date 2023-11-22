@@ -7,12 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
+import 'package:group_app/models/post.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/pages/page/edit_page_sheet.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/posts/grid_post_view.dart';
 import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
@@ -20,8 +20,11 @@ import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'posts/post_tile.dart';
 
 class GroupPageExtra {
   GroupPage page;
@@ -99,12 +102,39 @@ class GroupPageScreen extends StatelessWidget {
                 const SizedBox(
                   height: 30,
                 ),
-                Provider.value(
-                  value: extra.group,
-                  child: GridPostView(
-                    page: page,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: PaginatedGridView(
+                      pullToRefresh: true,
+                      shrinkwrap: false,
+                      ifEmpty: const Center(
+                        child: Text("No posts yet"),
+                      ),
+                      query: FirebaseFirestore.instance
+                          .collection("groups")
+                          .doc(page.groupId)
+                          .collection("pages")
+                          .doc(page.id)
+                          .collection("posts")
+                          .orderBy("createdAt", descending: true),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 1 / 1.4,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10),
+                      itemBuilder: (context, item) {
+                        return PostTile(
+                          group: extra.group,
+                          post: Post.fromJson(
+                              json: item.data() as Map<String, dynamic>,
+                              id: item.id),
+                        );
+                      },
+                    ),
                   ),
-                ),
+                )
               ],
             ),
             floatingActionButton: _newPostButton(context, page),

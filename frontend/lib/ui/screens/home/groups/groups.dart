@@ -17,6 +17,14 @@ class GroupsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var currentUserProvider =
         Provider.of<CurrentUserProvider>(context, listen: true);
+
+    if (currentUserProvider.currentUser == null ||
+        currentUserProvider.privateData == null) {
+      return const Center(
+        child: Text("Something went wrong"),
+      );
+    }
+
     var currentUser = currentUserProvider.currentUser!;
     var privateData = currentUserProvider.privateData!;
 

@@ -159,8 +159,8 @@ class _EditGroupScreenState extends State<EditGroupScreen> {
                           context: context,
                           aspectRatio:
                               const CropAspectRatio(ratioX: 4, ratioY: 3),
-                          maxHeight: bannerHeight,
-                          maxWidth: bannerWidth);
+                          maxHeight: (bannerHeight * 1.5).toInt(),
+                          maxWidth: (bannerWidth * 1.5).toInt());
 
                       if (newBanner != null) {
                         setState(() {

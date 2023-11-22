@@ -1,3 +1,4 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,14 +7,14 @@ import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/utils/to_list_string.dart';
 
 class CurrentUser extends ChangeNotifier {
-  CurrentUser(
-      {this.name,
-      required this.id,
-      required this.username,
-      required this.createdAt,
-      required this.memberOf,
-      required this.following,
-      required this.adminOf,
+  CurrentUser({
+    this.name,
+    required this.id,
+    required this.username,
+    required this.createdAt,
+    required this.memberOf,
+    required this.following,
+    required this.adminOf,
     this.pfpDlUrl,
   });
 

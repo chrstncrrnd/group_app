@@ -6,7 +6,6 @@ import 'package:group_app/models/user.dart';
 import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/utils/max.dart';
-import 'package:provider/provider.dart';
 
 import 'post_modal.dart';
 
@@ -15,16 +14,17 @@ class PostTile extends StatelessWidget {
       {super.key,
       required this.post,
       this.showGroupName = true,
-      this.showUsername = true})
+      this.showUsername = true,
+      required this.group})
       : assert(showGroupName || showUsername);
 
   final Post post;
   final bool showUsername;
   final bool showGroupName;
+  final Group group;
 
   @override
   Widget build(BuildContext context) {
-
     Widget placeholder(BuildContext context) {
       return Stack(
         alignment: Alignment.bottomLeft,
@@ -54,16 +54,13 @@ class PostTile extends StatelessWidget {
       );
     }
 
-    var group = Provider.of<Group>(context);
     return Suspense<User>(
         future: User.fromId(id: post.creatorId),
-
         placeholder: placeholder(context),
         builder: (context, user) {
           if (user == null) {
             return const Center(child: Text("Something went wrong"));
           }
-
 
           return Stack(
             alignment: Alignment.bottomLeft,
@@ -121,4 +118,3 @@ class PostTile extends StatelessWidget {
         });
   }
 }
-

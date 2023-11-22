@@ -125,7 +125,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
       floatingActionButton: nextButton(context),
       body: PaginatedListView(
         ifEmpty: const Center(
-          child: Text("Join a group to post"),
+          child: Text(
+            "Join a group to post",
+            style: TextStyle(color: Colors.grey),
+          ),
         ),
         shrinkWrap: false,
         pullToRefresh: true,

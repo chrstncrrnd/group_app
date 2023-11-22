@@ -51,11 +51,10 @@ class PostModalScreen extends StatelessWidget {
     );
   }
 
-  Widget react(BuildContext context) {
+  Widget like(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        reactToPost(
-            extra.group.id, extra.post.pageId, extra.post.id, "Reaction");
+        likePost(extra.group.id, extra.post.pageId, extra.post.id);
       },
       child: Container(color: Colors.red, child: const Text("react with me")),
     );
@@ -148,7 +147,7 @@ class PostModalScreen extends StatelessWidget {
                     icon: const Icon(Icons.delete_outline),
                   ),
                 ),
-              Positioned(top: 50, child: react(context)),
+              Positioned(top: 50, child: like(context)),
 
             ],
           ),

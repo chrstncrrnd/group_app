@@ -6,21 +6,20 @@ import {
 } from '../../utils/constants';
 import * as admin from 'firebase-admin';
 import { groupModel } from '../../models/group';
+import { FieldValue } from 'firebase-admin/firestore';
 
 const params = z.object({
   groupId: z.string(),
   pageId: z.string(),
   postId: z.string(),
-  reaction: z.string(),
 });
 
-export const reactToPost = functions.https.onCall(
+export const likePost = functions.https.onCall(
   async (
     data: {
       groupId: string;
       pageId: string;
       postId: string;
-      reaction: string;
     },
     ctx
   ) => {
@@ -63,13 +62,8 @@ export const reactToPost = functions.https.onCall(
       .collection('posts')
       .doc(info.postId);
 
-    await postDocRef.set(
-      {
-        reactions: {
-          [reactorId]: [info.reaction],
-        },
-      },
-      { merge: true }
-    );
+    await postDocRef.update({
+      likes: FieldValue.arrayUnion(reactorId),
+    });
   }
 );

@@ -51,6 +51,7 @@ class GroupScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
+                _description(context, group.description),
                 _affiliatedUsersCount(context, group, currentUser),
                 const SizedBox(
                   height: 10,
@@ -58,7 +59,6 @@ class GroupScreen extends StatelessWidget {
                 StatefulBuilder(
                     builder: (ctx, stateSetter) =>
                         _followJoinButtons(ctx, group, stateSetter)),
-                _description(context, group.description),
                 if (!_userHasAccess(group, currentUser))
                   _noAccess(context)
                 else
