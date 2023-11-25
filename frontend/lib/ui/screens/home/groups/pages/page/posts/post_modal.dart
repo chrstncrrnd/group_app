@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart' hide showAdaptiveDialog;
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/models/user.dart';
@@ -9,6 +12,7 @@ import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
 
 class PostModalScreenExtra {
@@ -31,7 +35,196 @@ class PostModalScreen extends StatelessWidget {
 
   final PostModalScreenExtra extra;
 
-  Widget _icons(double iconSize) {
+  final defaultShadow =
+      const Shadow(color: Colors.black, blurRadius: 7, offset: Offset(1, 1));
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
+
+    return Material(
+      surfaceTintColor: Colors.black,
+      color: Colors.black,
+      child: GestureDetector(
+        onVerticalDragUpdate: (details) {
+          if (details.delta.dy.abs() > 3) {
+            context.pop();
+          }
+        },
+        child: SafeArea(
+          child: Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              postPicture(context),
+              topRow(context, currentUser),
+              Align(alignment: Alignment.bottomLeft, child: bottomRow(context))
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget topRow(BuildContext context, CurrentUser currentUser) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+            onPressed: () => context.pop(),
+            icon: Icon(
+              Icons.close_rounded,
+              shadows: [defaultShadow],
+            )),
+        if (extra.post.creatorId == currentUser.id ||
+            extra.group.admins.contains(currentUser.id))
+          deletePostButton(context),
+      ],
+    );
+  }
+
+  void handleDeletePost(BuildContext context) {
+    showAdaptiveDialog(
+      context,
+      title: const Text("Delete post?"),
+      content: const Text(
+          "This action cannot be undone. Are you sure you want to delete this post?"),
+      actions: [
+        TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text("Cancel")),
+        ProgressIndicatorButton(
+            onPressed: () async {
+              return await deletePost(
+                  extra.post.groupId, extra.post.pageId, extra.post.id);
+            },
+            afterPressed: (value) {
+              if (value == null) {
+                context.pop();
+                context.pop();
+              } else {
+                context.pop();
+                showAlert(context,
+                    title: "Something went wrong", content: value);
+              }
+            },
+            child: const Text("Delete")),
+      ],
+    );
+  }
+
+  Widget deletePostButton(BuildContext context) {
+    return IconButton(
+      onPressed: () => handleDeletePost(context),
+      icon: Icon(
+        Icons.delete_outline,
+        shadows: [defaultShadow],
+      ),
+    );
+  }
+
+  Widget postPicture(BuildContext context) {
+    return Center(
+        child:
+            Hero(tag: extra.post.id, child: Image.network(extra.post.dlUrl)));
+  }
+
+  Widget likeButton(BuildContext context) {
+    bool liked = true;
+    int likeCount = 130;
+
+    return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+      return Column(
+        children: [
+          IconButton(
+            onPressed: () => setState(() {
+              liked = !liked;
+            }),
+            icon: Icon(
+              Icons.favorite,
+              shadows: [defaultShadow],
+              size: 40,
+              // TODO: animate this color change
+              color:
+                  liked ? const Color.fromARGB(255, 255, 5, 88) : Colors.white,
+            ),
+          ),
+          Text(
+            "$likeCount",
+            style: TextStyle(
+                shadows: [defaultShadow],
+                fontSize: 15,
+                fontWeight: FontWeight.bold),
+          )
+        ],
+      );
+    });
+  }
+
+  Widget caption(BuildContext context) {
+    const text =
+        "et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis in eu mi bibendum";
+
+    bool expanded = false;
+
+    return StatefulBuilder(builder: (context, setState) {
+      return GestureDetector(
+        onTap: () => setState(() => expanded = !expanded),
+        child: Align(
+          child: Text(
+            text,
+            style: TextStyle(
+                shadows: [defaultShadow], overflow: TextOverflow.ellipsis),
+            maxLines: expanded ? 100 : 1,
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget commentsBar(BuildContext context) {
+    var borderRadius = BorderRadius.circular(100);
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: Max.width(context),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.1),
+            border: Border.all(color: Colors.white),
+            borderRadius: borderRadius,
+          ),
+          child: Text(
+            "Add comment",
+            style: TextStyle(shadows: [defaultShadow]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget bottomRow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [creatorAndLocation(context), likeButton(context)],
+          ),
+          caption(context),
+          commentsBar(context)
+        ],
+      ),
+    );
+  }
+
+  Widget profilePictures(double iconSize) {
     return Row(
       children: [
         Stack(
@@ -51,108 +244,31 @@ class PostModalScreen extends StatelessWidget {
     );
   }
 
-  Widget like(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        likePost(extra.group.id, extra.post.pageId, extra.post.id);
-      },
-      child: Container(color: Colors.red, child: const Text("react with me")),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final currentUser = Provider.of<CurrentUserProvider>(context).currentUser!;
-
-    return Material(
-      surfaceTintColor: Colors.black,
-      color: Colors.black,
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          if (details.delta.dy.abs() > 3) {
-            context.pop();
-          }
-        },
-        child: SafeArea(
-          child: Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              Center(
-                  child: Hero(
-                      tag: extra.post.id,
-                      child: Image.network(extra.post.dlUrl))),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: context.pop, icon: const Icon(Icons.close)),
-                  _icons(30),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            context.pop();
-                            context.push("/user", extra: extra.creator);
-                          },
-                          child: Text("@${extra.creator.username}")),
-                      GestureDetector(
-                          onTap: () {
-                            context.pop();
-                            context.push("/group", extra: extra.group);
-                          },
-                          child: Text("in ${extra.group.name}")),
-                    ],
-                  ),
-                ],
-              ),
-              if (extra.post.creatorId == currentUser.id ||
-                  extra.group.admins.contains(currentUser.id))
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    onPressed: () {
-                      showAdaptiveDialog(
-                        context,
-                        title: const Text("Delete post?"),
-                        content: const Text(
-                            "This action cannot be undone. Are you sure you want to delete this post?"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                context.pop();
-                              },
-                              child: const Text("Cancel")),
-                          ProgressIndicatorButton(
-                              onPressed: () async {
-                                return await deletePost(extra.post.groupId,
-                                    extra.post.pageId, extra.post.id);
-                              },
-                              afterPressed: (value) {
-                                if (value == null) {
-                                  context.pop();
-                                  context.pop();
-                                } else {
-                                  context.pop();
-                                  showAlert(context,
-                                      title: "Something went wrong",
-                                      content: value);
-                                }
-                              },
-                              child: const Text("Delete")),
-                        ],
-                      );
-                    },
-                    icon: const Icon(Icons.delete_outline),
-                  ),
-                ),
-              Positioned(top: 50, child: like(context)),
-
-            ],
-          ),
+  Widget creatorAndLocation(BuildContext context) {
+    return Row(
+      children: [
+        profilePictures(30),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  context.replace("/user", extra: extra.creator);
+                },
+                child: Text(
+                  "@${extra.creator.username}",
+                  style: TextStyle(shadows: [defaultShadow]),
+                )),
+            GestureDetector(
+                onTap: () {
+                  context.replace("/group", extra: extra.group);
+                },
+                child: Text("in ${extra.group.name}",
+                    style: TextStyle(shadows: [defaultShadow]))),
+          ],
         ),
-      ),
+      ],
     );
   }
 }
