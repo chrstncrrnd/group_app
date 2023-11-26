@@ -9,7 +9,6 @@ import 'package:group_app/ui/screens/auth/intro.dart';
 import 'package:group_app/ui/screens/auth/login.dart';
 import 'package:group_app/ui/screens/auth/create_profile.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
-import 'package:group_app/ui/screens/home/groups/archived_groups.dart';
 import 'package:group_app/ui/screens/home/groups/edit_group.dart';
 import 'package:group_app/ui/screens/home/groups/group_profile.dart';
 import 'package:group_app/ui/screens/home/groups/new_group.dart';
@@ -122,10 +121,6 @@ class Routes extends ChangeNotifier {
                             const ProfileSettingsScreen(),
                       )
                     ]),
-                GoRoute(
-                  path: "/archived_groups",
-                  builder: (context, state) => const ArchivedGroupsScreen(),
-                ),
                 GoRoute(
                   path: "/group",
                   builder: (context, state) =>

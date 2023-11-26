@@ -18,15 +18,13 @@ class GroupsScreen extends StatelessWidget {
     var currentUserProvider =
         Provider.of<CurrentUserProvider>(context, listen: true);
 
-    if (currentUserProvider.currentUser == null ||
-        currentUserProvider.privateData == null) {
+    if (currentUserProvider.currentUser == null) {
       return const Center(
         child: Text("Something went wrong"),
       );
     }
 
     var currentUser = currentUserProvider.currentUser!;
-    var privateData = currentUserProvider.privateData!;
 
     Widget placeholder(BuildContext context) {
       return const GroupListTileLoading();
@@ -39,9 +37,6 @@ class GroupsScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
         ),
         actions: [
-          IconButton(
-              onPressed: () => context.push("/archived_groups"),
-              icon: const Icon(Icons.archive_outlined)),
           IconButton(
               onPressed: () => context.push(
                     "/new_group",
@@ -67,7 +62,6 @@ class GroupsScreen extends StatelessWidget {
             .where("members", arrayContains: currentUser.id)
             .orderBy("lastChange", descending: true),
         itemBuilder: (context, item) {
-          if (privateData.archivedGroups.contains(item.id)) return Container();
           var group = Group.fromJson(
               json: item.data() as Map<String, dynamic>, id: item.id);
           return Dismissible(
