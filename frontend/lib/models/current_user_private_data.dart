@@ -4,14 +4,13 @@ import 'package:group_app/utils/to_list_string.dart';
 class CurrentUserPrivateData {
   String id;
 
-  List<String> archivedGroups;
 
   List<String> followRequests;
   List<String> joinRequests;
 
   CurrentUserPrivateData.fromJson(
       {required Map<String, dynamic> json, required this.id})
-      : archivedGroups = toListString(json["archivedGroups"]),
+      : 
         followRequests = toListString(json["followRequests"]),
         joinRequests = toListString(json["joinRequests"]);
 

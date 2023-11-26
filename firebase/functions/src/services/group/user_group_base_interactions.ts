@@ -265,7 +265,6 @@ export const leaveGroup = functions.https.onCall(
     const userId = ctx.auth.uid;
 
     const userDoc = admin.firestore().collection('users').doc(userId);
-    const userPrivDoc = userDoc.collection('private_data').doc('private_data');
 
     const groupDoc = admin.firestore().collection('groups').doc(d.groupId);
     const groupData = groupModel.parse((await groupDoc.get()).data());
@@ -286,9 +285,6 @@ export const leaveGroup = functions.https.onCall(
       });
       await userDoc.update({
         memberOf: FieldValue.arrayRemove(d.groupId),
-      });
-      await userPrivDoc.update({
-        archivedGroups: FieldValue.arrayRemove(d.groupId),
       });
     }
 

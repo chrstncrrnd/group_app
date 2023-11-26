@@ -44,7 +44,8 @@ export const createAccount = functions.https.onCall(
 
     // initialize private data
     await doc.collection('private_data').doc('private_data').create({
-      archivedGroups: null,
+      followRequests: [],
+      joinRequests: [],
     });
   }
 );
