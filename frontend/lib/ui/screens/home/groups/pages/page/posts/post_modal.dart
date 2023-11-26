@@ -147,7 +147,7 @@ class PostModalScreen extends StatelessWidget {
     bool liked = post.likes.contains(currentUser.id);
     int likeCount = post.likes.length;
 
-    void onInteractWithLike(StateSetter setState) async {
+    void onInteractWithLike() async {
       if (!liked) {
         await likePost(extra.group.id, post.pageId, post.id);
       } else {
@@ -155,31 +155,27 @@ class PostModalScreen extends StatelessWidget {
       }
     }
 
-    return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-      return Column(
-        children: [
-          IconButton(
-            onPressed: () => onInteractWithLike(setState),
-            icon: Icon(
-              Icons.favorite,
-              shadows: [defaultShadow],
-              size: 40,
-              // TODO: animate this color change
-              color:
-                  liked ? const Color.fromARGB(255, 255, 5, 88) : Colors.white,
-            ),
+    return Column(
+      children: [
+        IconButton(
+          onPressed: () => onInteractWithLike(),
+          icon: Icon(
+            Icons.favorite,
+            shadows: [defaultShadow],
+            size: 40,
+            // TODO: animate this color change
+            color: liked ? const Color.fromARGB(255, 255, 5, 88) : Colors.white,
           ),
-          Text(
-            "$likeCount",
-            style: TextStyle(
-                shadows: [defaultShadow],
-                fontSize: 15,
-                fontWeight: FontWeight.bold),
-          )
-        ],
-      );
-    });
+        ),
+        Text(
+          "$likeCount",
+          style: TextStyle(
+              shadows: [defaultShadow],
+              fontSize: 15,
+              fontWeight: FontWeight.bold),
+        )
+      ],
+    );
   }
 
   Widget caption(BuildContext context) {
