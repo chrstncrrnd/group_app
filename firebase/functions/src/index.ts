@@ -8,7 +8,7 @@ export * from './services/group/user_group_base_interactions';
 export * from './services/group/update_group';
 export * from './services/group/delete_group';
 export * from './services/posts/post';
-export * from './services/posts/post_react';
+export * from './services/posts/post_like';
 
 admin.initializeApp();
 admin.firestore().settings({ ignoreUndefinedProperties: true });

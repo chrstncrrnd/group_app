@@ -51,21 +51,37 @@ class PostModalScreen extends StatelessWidget {
             context.pop();
           }
         },
-        child: SafeArea(
-          child: Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              postPicture(context),
-              topRow(context, currentUser),
-              Align(alignment: Alignment.bottomLeft, child: bottomRow(context))
-            ],
-          ),
-        ),
+        child: StreamBuilder(
+            stream: Post.asStream(
+                groupId: extra.group.id,
+                pageId: extra.post.pageId,
+                id: extra.post.id),
+            initialData: extra.post,
+            builder: (context, state) {
+              if (state.hasError || !state.hasData || state.data == null) {
+                return const Center(
+                  child: Text("Something went wrong"),
+                );
+              }
+              Post post = state.data!;
+              return SafeArea(
+                child: Stack(
+                  alignment: Alignment.topLeft,
+                  children: [
+                    postPicture(context, post),
+                    topRow(context, currentUser, post),
+                    Align(
+                        alignment: Alignment.bottomLeft,
+                        child: bottomRow(context, currentUser, post))
+                  ],
+                ),
+              );
+            }),
       ),
     );
   }
 
-  Widget topRow(BuildContext context, CurrentUser currentUser) {
+  Widget topRow(BuildContext context, CurrentUser currentUser, Post post) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -75,14 +91,14 @@ class PostModalScreen extends StatelessWidget {
               Icons.close_rounded,
               shadows: [defaultShadow],
             )),
-        if (extra.post.creatorId == currentUser.id ||
+        if (post.creatorId == currentUser.id ||
             extra.group.admins.contains(currentUser.id))
-          deletePostButton(context),
+          deletePostButton(context, post),
       ],
     );
   }
 
-  void handleDeletePost(BuildContext context) {
+  void handleDeletePost(BuildContext context, Post post) {
     showAdaptiveDialog(
       context,
       title: const Text("Delete post?"),
@@ -96,8 +112,7 @@ class PostModalScreen extends StatelessWidget {
             child: const Text("Cancel")),
         ProgressIndicatorButton(
             onPressed: () async {
-              return await deletePost(
-                  extra.post.groupId, extra.post.pageId, extra.post.id);
+              return await deletePost(post.groupId, post.pageId, post.id);
             },
             afterPressed: (value) {
               if (value == null) {
@@ -114,9 +129,9 @@ class PostModalScreen extends StatelessWidget {
     );
   }
 
-  Widget deletePostButton(BuildContext context) {
+  Widget deletePostButton(BuildContext context, Post post) {
     return IconButton(
-      onPressed: () => handleDeletePost(context),
+      onPressed: () => handleDeletePost(context, post),
       icon: Icon(
         Icons.delete_outline,
         shadows: [defaultShadow],
@@ -124,24 +139,28 @@ class PostModalScreen extends StatelessWidget {
     );
   }
 
-  Widget postPicture(BuildContext context) {
-    return Center(
-        child:
-            Hero(tag: extra.post.id, child: Image.network(extra.post.dlUrl)));
+  Widget postPicture(BuildContext context, Post post) {
+    return Center(child: Hero(tag: post.id, child: Image.network(post.dlUrl)));
   }
 
-  Widget likeButton(BuildContext context) {
-    bool liked = true;
-    int likeCount = 130;
+  Widget likeButton(BuildContext context, CurrentUser currentUser, Post post) {
+    bool liked = post.likes.contains(currentUser.id);
+    int likeCount = post.likes.length;
+
+    void onInteractWithLike(StateSetter setState) async {
+      if (!liked) {
+        await likePost(extra.group.id, post.pageId, post.id);
+      } else {
+        await unlikePost(extra.group.id, post.pageId, post.id);
+      }
+    }
 
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
       return Column(
         children: [
           IconButton(
-            onPressed: () => setState(() {
-              liked = !liked;
-            }),
+            onPressed: () => onInteractWithLike(setState),
             icon: Icon(
               Icons.favorite,
               shadows: [defaultShadow],
@@ -207,7 +226,7 @@ class PostModalScreen extends StatelessWidget {
     );
   }
 
-  Widget bottomRow(BuildContext context) {
+  Widget bottomRow(BuildContext context, CurrentUser currentUser, Post post) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -215,7 +234,10 @@ class PostModalScreen extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [creatorAndLocation(context), likeButton(context)],
+            children: [
+              creatorAndLocation(context),
+              likeButton(context, currentUser, post)
+            ],
           ),
           caption(context),
           commentsBar(context)

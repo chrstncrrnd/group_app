@@ -75,7 +75,21 @@ Future<String?> likePost(String groupId, String pageId, String postId) async {
       "postId": postId,
     });
   } on FirebaseFunctionsException catch (e) {
-    log("An error occurred while reacting to a post", error: e);
+    log("An error occurred while liking to a post", error: e);
+    return e.message;
+  }
+  return null;
+}
+
+Future<String?> unlikePost(String groupId, String pageId, String postId) async {
+  try {
+    await FirebaseFunctions.instance.httpsCallable("unlikePost").call({
+      "groupId": groupId,
+      "pageId": pageId,
+      "postId": postId,
+    });
+  } on FirebaseFunctionsException catch (e) {
+    log("An error occurred while un-liking to a post", error: e);
     return e.message;
   }
   return null;

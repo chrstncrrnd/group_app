@@ -14,6 +14,40 @@ const params = z.object({
   postId: z.string(),
 });
 
+export const unlikePost = functions.https.onCall(
+  async (
+    data: {
+      groupId: string;
+      pageId: string;
+      postId: string;
+    },
+    ctx
+  ) => {
+    if (ctx.auth == null) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        missing_auth_msg
+      );
+    }
+    const info = params.parse(data);
+
+    const reactorId = ctx.auth.uid;
+
+    const postDocRef = admin
+      .firestore()
+      .collection('groups')
+      .doc(info.groupId)
+      .collection('pages')
+      .doc(info.pageId)
+      .collection('posts')
+      .doc(info.postId);
+
+    await postDocRef.update({
+      likes: FieldValue.arrayRemove(reactorId),
+    });
+  }
+);
+
 export const likePost = functions.https.onCall(
   async (
     data: {
