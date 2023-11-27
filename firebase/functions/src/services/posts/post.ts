@@ -17,6 +17,7 @@ const createPostParams = z.object({
   id: z.string().length(20),
   groupId: z.string(),
   pageId: z.string(),
+  caption: z.string().max(500),
 });
 
 export const createPost = functions.https.onCall(
@@ -27,6 +28,7 @@ export const createPost = functions.https.onCall(
       id: string;
       groupId: string;
       pageId: string;
+      caption: string;
     },
     ctx
   ) => {
@@ -60,6 +62,8 @@ export const createPost = functions.https.onCall(
     const postRef = pageRef.collection('posts').doc(d.id);
     const now = new Date().toISOString();
 
+    const caption = d.caption.trim();
+
     await postRef.create({
       groupId: d.groupId,
       creatorId: userId,
@@ -67,6 +71,7 @@ export const createPost = functions.https.onCall(
       dlUrl: d.dlUrl,
       storageLocation: d.location,
       createdAt: now,
+      caption: caption.length == 0 ? null : caption,
     });
 
     await groupRef.update({

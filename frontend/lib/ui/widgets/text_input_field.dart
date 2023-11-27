@@ -12,6 +12,7 @@ class TextInputField extends StatelessWidget {
       this.minLines,
       this.initialValue,
       this.obscureText = false,
+      this.autofocus = false,
       this.textCapitalization = TextCapitalization.none});
 
   final String label;
@@ -22,18 +23,20 @@ class TextInputField extends StatelessWidget {
   final String? initialValue;
   final bool obscureText;
   final TextCapitalization textCapitalization;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        initialValue: initialValue,
-        decoration: InputDecoration(
-          label: Text(label),
-        ),
+      autofocus: autofocus,
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        label: Text(label),
+      ),
       obscureText: obscureText,
-        maxLines: maxLines,
-        minLines: minLines,
-        onChanged: onChanged,
+      maxLines: maxLines,
+      minLines: minLines,
+      onChanged: onChanged,
       validator: validator,
       textCapitalization: textCapitalization,
     );

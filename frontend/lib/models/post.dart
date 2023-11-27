@@ -8,7 +8,8 @@ class Post {
         dlUrl = json["dlUrl"],
         groupId = json["groupId"],
         pageId = json["pageId"],
-        likes = toListString(json["likes"]);
+        likes = toListString(json["likes"]),
+        caption = json["caption"];
 
   static Stream<Post> asStream(
           {required String groupId,
@@ -24,12 +25,12 @@ class Post {
           .snapshots()
           .map((event) => Post.fromJson(json: event.data()!, id: id));
 
-
   DateTime createdAt;
   String creatorId;
   String dlUrl;
   String groupId;
   String pageId;
   String id;
+  String? caption;
   List<String> likes;
 }

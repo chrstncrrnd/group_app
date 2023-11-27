@@ -8,4 +8,5 @@ export const postModel = z.object({
   groupId: z.string(),
   pageId: z.string(),
   storageLocation: z.string().regex(storagePathRegExp),
+  caption: z.string().nullable(),
 });

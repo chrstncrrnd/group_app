@@ -8,7 +8,9 @@ import 'package:group_app/utils/rand_str.dart';
 import 'package:image/image.dart';
 
 Future<String?> createPost(
-    {required GroupPage page, required File file}) async {
+    {required GroupPage page,
+    required File file,
+    required String caption}) async {
   var params = {};
 
   Image? image = await decodeImageFile(file.path);
@@ -42,7 +44,8 @@ Future<String?> createPost(
       "location": postLoc,
       "id": id,
       "groupId": page.groupId,
-      "pageId": page.id
+      "pageId": page.id,
+      "caption": caption
     });
   } on FirebaseFunctionsException catch (e) {
     log("An error occurred while creating post", error: e);

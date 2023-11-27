@@ -36,7 +36,7 @@ class PostModalScreen extends StatelessWidget {
   final PostModalScreenExtra extra;
 
   final defaultShadow =
-      const Shadow(color: Colors.black, blurRadius: 7, offset: Offset(1, 1));
+      const Shadow(color: Colors.black, blurRadius: 10, offset: Offset(1, 1));
 
   @override
   Widget build(BuildContext context) {
@@ -179,17 +179,18 @@ class PostModalScreen extends StatelessWidget {
   }
 
   Widget caption(BuildContext context) {
-    const text =
-        "et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis in eu mi bibendum";
-
+    String? caption = extra.post.caption;
+    if (caption == null) {
+      return Container();
+    }
     bool expanded = false;
-
     return StatefulBuilder(builder: (context, setState) {
       return GestureDetector(
         onTap: () => setState(() => expanded = !expanded),
         child: Align(
+          alignment: Alignment.topLeft,
           child: Text(
-            text,
+            caption,
             style: TextStyle(
                 shadows: [defaultShadow], overflow: TextOverflow.ellipsis),
             maxLines: expanded ? 100 : 1,

@@ -15,6 +15,13 @@ String? validateEmail(String? value) {
   return null;
 }
 
+String? validatePostCaption(String value) {
+  if (value.length > 500) {
+    return "Caption is too long";
+  }
+  return null;
+}
+
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {
     return "Please enter your password";
