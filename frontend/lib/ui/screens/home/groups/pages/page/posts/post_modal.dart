@@ -12,6 +12,7 @@ import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
 
@@ -200,7 +201,58 @@ class PostModalScreen extends StatelessWidget {
     });
   }
 
+  Widget commentsSheet(
+    BuildContext context,
+  ) {
+    Widget comment(BuildContext context, int _) {
+      var text = "abcdef";
+      return ListTile(
+        title: const Text(
+          "username",
+          style: TextStyle(fontSize: 13),
+        ),
+        iconColor: Colors.red,
+        leading: const Icon(Icons.person),
+        subtitle: Text(text),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Comments",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: 1,
+              itemBuilder: comment,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget commentsBar(BuildContext context) {
+    void openComments() {
+      showModalBottomSheet(
+          backgroundColor: Colors.black,
+          showDragHandle: true,
+          isScrollControlled: true,
+          useRootNavigator: true,
+          useSafeArea: true,
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: commentsSheet);
+    }
+
     var borderRadius = BorderRadius.circular(100);
     return ClipRRect(
       borderRadius: borderRadius,
@@ -214,9 +266,12 @@ class PostModalScreen extends StatelessWidget {
             border: Border.all(color: Colors.white),
             borderRadius: borderRadius,
           ),
-          child: Text(
-            "Add comment",
-            style: TextStyle(shadows: [defaultShadow]),
+          child: GestureDetector(
+            onTap: openComments,
+            child: Text(
+              "Add comment",
+              style: TextStyle(shadows: [defaultShadow]),
+            ),
           ),
         ),
       ),

@@ -12,6 +12,7 @@ import 'package:group_app/services/group/group_actions.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
 import 'package:group_app/ui/screens/home/groups/pages/pages_grid.dart';
+import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/interaction_button.dart';
 import 'package:group_app/ui/widgets/dialogs/context_menu.dart';
@@ -57,8 +58,8 @@ class GroupScreen extends StatelessWidget {
                   height: 10,
                 ),
                 StatefulBuilder(
-                    builder: (ctx, stateSetter) =>
-                        _followJoinButtons(ctx, group, stateSetter)),
+                    builder: (ctx, stateSetter) => _followJoinButtons(
+                        ctx, group, stateSetter, currentUser)),
                 if (!_userHasAccess(group, currentUser))
                   _noAccess(context)
                 else
@@ -149,11 +150,8 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget _followJoinButtons(
-      BuildContext context, Group group, StateSetter setState) {
-    CurrentUserPrivateData privateData =
-        Provider.of<CurrentUserProvider>(context).privateData!;
-
+  Widget _followJoinButtons(BuildContext context, Group group,
+      StateSetter setState, CurrentUser currentUser) {
     Widget wrapper({required Widget child}) {
       return Flexible(
         flex: 1,
@@ -164,102 +162,110 @@ class GroupScreen extends StatelessWidget {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        wrapper(
-          child: InteractionButton(
-            activeTitle: group.private ? "Request follow" : "Follow",
-            inactiveTitle: privateData.followRequests.contains(group.id)
-                ? "Requested"
-                : "Unfollow",
-            errorTitle: "An error occurred",
-            initState: () async {
-              if (group.followers.contains(privateData.id) ||
-                  privateData.followRequests.contains(group.id)) {
-                return InteractionButtonState.inactive;
-              } else {
-                return InteractionButtonState.active;
-              }
-            },
-            onTap: (state) async {
-              if (state == InteractionButtonState.active) {
-                try {
-                  await followGroup(group.id);
-                  if (group.private) {
-                    // we only need to update this because currentUser.following
-                    // will will be updated server side causing a rerender
-                    privateData.followRequests.add(group.id);
-                    setState(() {});
-                  }
+    return Suspense<CurrentUserPrivateData>(
+        future: CurrentUserPrivateData.getData(userId: currentUser.id),
+        builder: (context, privateData) {
+          if (privateData == null) {
+            return Container();
+          }
+          // this is really messy, but it works, DO NOT TOUCH!!!!!
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              wrapper(
+                child: InteractionButton(
+                  activeTitle: group.private ? "Request follow" : "Follow",
+                  inactiveTitle: privateData.followRequests.contains(group.id)
+                      ? "Requested"
+                      : "Unfollow",
+                  errorTitle: "An error occurred",
+                  initState: () async {
+                    if (group.followers.contains(privateData.id) ||
+                        privateData.followRequests.contains(group.id)) {
+                      return InteractionButtonState.inactive;
+                    } else {
+                      return InteractionButtonState.active;
+                    }
+                  },
+                  onTap: (state) async {
+                    if (state == InteractionButtonState.active) {
+                      try {
+                        await followGroup(group.id);
+                        if (group.private) {
+                          // we only need to update this because currentUser.following
+                          // will will be updated server side causing a rerender
+                          privateData.followRequests.add(group.id);
+                          setState(() {});
+                        }
 
-                  return InteractionButtonState.inactive;
-                } catch (error) {
-                  log(error.toString());
-                  return InteractionButtonState.error;
-                }
-              } else {
-                try {
-                  await unFollowGroup(group.id);
-                  privateData.followRequests.remove(group.id);
-                  setState(() {});
-                  return InteractionButtonState.active;
-                } catch (error) {
-                  log(error.toString());
-                  return InteractionButtonState.error;
-                }
-              }
-            },
-          ),
-        ),
-        wrapper(
-          child: InteractionButton(
-            activeTitle: "Request join",
-            inactiveTitle: privateData.joinRequests.contains(group.id)
-                ? "Requested"
-                : "Leave",
-            errorTitle: "An error occurred",
-            initState: () async {
-              if (group.members.contains(privateData.id) ||
-                  privateData.joinRequests.contains(group.id)) {
-                return InteractionButtonState.inactive;
-              } else {
-                return InteractionButtonState.active;
-              }
-            },
-            onTap: (state) async {
-              if (state == InteractionButtonState.active) {
-                try {
-                  await joinGroup(group.id);
-                  privateData.joinRequests.add(group.id);
+                        return InteractionButtonState.inactive;
+                      } catch (error) {
+                        log(error.toString());
+                        return InteractionButtonState.error;
+                      }
+                    } else {
+                      try {
+                        await unFollowGroup(group.id);
+                        privateData.followRequests.remove(group.id);
+                        setState(() {});
+                        return InteractionButtonState.active;
+                      } catch (error) {
+                        log(error.toString());
+                        return InteractionButtonState.error;
+                      }
+                    }
+                  },
+                ),
+              ),
+              wrapper(
+                child: InteractionButton(
+                  activeTitle: "Request join",
+                  inactiveTitle: privateData.joinRequests.contains(group.id)
+                      ? "Requested"
+                      : "Leave",
+                  errorTitle: "An error occurred",
+                  initState: () async {
+                    if (group.members.contains(privateData.id) ||
+                        privateData.joinRequests.contains(group.id)) {
+                      return InteractionButtonState.inactive;
+                    } else {
+                      return InteractionButtonState.active;
+                    }
+                  },
+                  onTap: (state) async {
+                    if (state == InteractionButtonState.active) {
+                      try {
+                        await joinGroup(group.id);
+                        privateData.joinRequests.add(group.id);
 
-                  setState(() {});
-                  return InteractionButtonState.inactive;
-                } catch (error) {
-                  log(error.toString());
-                  return InteractionButtonState.error;
-                }
-              } else {
-                // you cannot leave a group you are an admin in
-                if (group.admins
-                    .contains(FirebaseAuth.instance.currentUser!.uid)) {
-                  return state;
-                }
-                try {
-                  await leaveGroup(group.id);
-                  privateData.joinRequests.remove(group.id);
-                  setState(() {});
-                  return InteractionButtonState.active;
-                } catch (error) {
-                  log(error.toString());
-                  return InteractionButtonState.error;
-                }
-              }
-            },
-          ),
-        ),
-      ],
-    );
+                        setState(() {});
+                        return InteractionButtonState.inactive;
+                      } catch (error) {
+                        log(error.toString());
+                        return InteractionButtonState.error;
+                      }
+                    } else {
+                      // you cannot leave a group you are an admin in
+                      if (group.admins
+                          .contains(FirebaseAuth.instance.currentUser!.uid)) {
+                        return state;
+                      }
+                      try {
+                        await leaveGroup(group.id);
+                        privateData.joinRequests.remove(group.id);
+                        setState(() {});
+                        return InteractionButtonState.active;
+                      } catch (error) {
+                        log(error.toString());
+                        return InteractionButtonState.error;
+                      }
+                    }
+                  },
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   Widget _header(Group group, BuildContext context, CurrentUser currentUser) {

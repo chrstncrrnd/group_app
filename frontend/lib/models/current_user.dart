@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:group_app/utils/to_list_string.dart';
 
-class CurrentUser extends ChangeNotifier {
+class CurrentUser {
   CurrentUser({
     this.name,
     required this.id,

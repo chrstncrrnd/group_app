@@ -3,11 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/current_user_private_data.dart';
 
 class CurrentUserProvider extends ChangeNotifier {
   CurrentUser? currentUser;
-  CurrentUserPrivateData? privateData;
 
   void handleError(err) async {
     log("Error with current_user_provider: $err");
@@ -22,14 +20,9 @@ class CurrentUserProvider extends ChangeNotifier {
           currentUser = event;
           notifyListeners();
         }).onError(handleError);
-        CurrentUserPrivateData.asStream(userId: user.uid).listen((event) {
-          privateData = event;
-          notifyListeners();
-        }).onError(handleError);
       } else {
         log("User signed out");
         currentUser = null;
-        privateData = null;
       }
     }, onError: (err) async {
       log("Error with firebase auth", error: err);
