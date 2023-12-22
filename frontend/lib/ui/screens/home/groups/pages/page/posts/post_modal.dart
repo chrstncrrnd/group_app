@@ -222,11 +222,17 @@ class PostModalScreen extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
             "Comments",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) => Text("Comment n"),
+              itemCount: 10,
+            ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
@@ -286,6 +292,7 @@ class PostModalScreen extends StatelessWidget {
           useSafeArea: true,
           context: context,
           isDismissible: true,
+          isScrollControlled: true,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),

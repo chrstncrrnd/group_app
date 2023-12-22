@@ -26,7 +26,7 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (kDebugMode) {
-    log("Firebase local emulators to be used");
+    log("Using Firebase Local Emulators");
     await FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
     FirebaseFunctions.instance.useFunctionsEmulator("localhost", 5001);
     FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
