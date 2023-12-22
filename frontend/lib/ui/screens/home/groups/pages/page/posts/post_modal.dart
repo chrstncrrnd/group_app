@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart' hide showAdaptiveDialog;
@@ -12,7 +13,6 @@ import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
 import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
 
@@ -201,39 +201,79 @@ class PostModalScreen extends StatelessWidget {
     });
   }
 
-  Widget commentsSheet(
-    BuildContext context,
-  ) {
-    Widget comment(BuildContext context, int _) {
-      var text = "abcdef";
-      return ListTile(
-        title: const Text(
-          "username",
-          style: TextStyle(fontSize: 13),
-        ),
-        iconColor: Colors.red,
-        leading: const Icon(Icons.person),
-        subtitle: Text(text),
-      );
+  Widget commentsSheet(BuildContext context) {
+    TextEditingController controller = TextEditingController();
+
+    Future<void> submitComment() async {
+      String? comment = controller.value.text.trim();
+
+      if (comment == "") {
+        return;
+      }
+
+      log(comment);
+
+      controller.clear();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Comment added")));
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
             "Comments",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 1,
-              itemBuilder: comment,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: TextField(
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) async => submitComment(),
+                controller: controller,
+                minLines: 1,
+                maxLines: 3,
+                autofocus: true,
+                autocorrect: true,
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                        onPressed: submitComment, icon: const Icon(Icons.send)),
+                    fillColor: Colors.white.withOpacity(0.1),
+                    filled: true,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                    hintText: "Add comment",
+                    border: const UnderlineInputBorder()),
+              ),
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget commentInputWrapper(BuildContext context, Widget child) {
+    var borderRadius = BorderRadius.circular(100);
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+            width: Max.width(context),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.1),
+              border: Border.all(color: Colors.white),
+              borderRadius: borderRadius,
+            ),
+            child: child),
       ),
     );
   }
@@ -243,39 +283,24 @@ class PostModalScreen extends StatelessWidget {
       showModalBottomSheet(
           backgroundColor: Colors.black,
           showDragHandle: true,
-          isScrollControlled: true,
-          useRootNavigator: true,
           useSafeArea: true,
           context: context,
+          isDismissible: true,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           builder: commentsSheet);
     }
 
-    var borderRadius = BorderRadius.circular(100);
-    return ClipRRect(
-      borderRadius: borderRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: Max.width(context),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.1),
-            border: Border.all(color: Colors.white),
-            borderRadius: borderRadius,
+    return commentInputWrapper(
+        context,
+        GestureDetector(
+          onTap: openComments,
+          child: Text(
+            "Add comment",
+            style: TextStyle(shadows: [defaultShadow]),
           ),
-          child: GestureDetector(
-            onTap: openComments,
-            child: Text(
-              "Add comment",
-              style: TextStyle(shadows: [defaultShadow]),
-            ),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget bottomRow(BuildContext context, CurrentUser currentUser, Post post) {
