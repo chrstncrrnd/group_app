@@ -97,3 +97,19 @@ Future<String?> unlikePost(String groupId, String pageId, String postId) async {
   }
   return null;
 }
+
+Future<String?> addComment(
+    String groupId, String pageId, String postId, String comment) async {
+  try {
+    await FirebaseFunctions.instance.httpsCallable("addComment").call({
+      "groupId": groupId,
+      "pageId": pageId,
+      "postId": postId,
+      "comment": comment.trim()
+    });
+  } on FirebaseFunctionsException catch (e) {
+    log("An error occurred while adding a comment", error: e);
+    return e.message;
+  }
+  return null;
+}

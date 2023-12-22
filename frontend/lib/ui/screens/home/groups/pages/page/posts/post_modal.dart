@@ -1,18 +1,22 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' hide showAdaptiveDialog;
 import 'package:go_router/go_router.dart';
+import 'package:group_app/models/comment.dart';
 import 'package:group_app/models/current_user.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/post.dart';
 import 'package:group_app/models/user.dart';
 import 'package:group_app/services/current_user_provider.dart';
 import 'package:group_app/services/posts.dart';
+import 'package:group_app/ui/widgets/async/suspense.dart';
 import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
 import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
 import 'package:group_app/ui/widgets/dialogs/adaptive_dialog.dart';
 import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 import 'package:group_app/utils/max.dart';
 import 'package:provider/provider.dart';
 
@@ -203,19 +207,24 @@ class PostModalScreen extends StatelessWidget {
 
   Widget commentsSheet(BuildContext context) {
     TextEditingController controller = TextEditingController();
+    bool sending = false;
 
     Future<void> submitComment() async {
+      if (sending) {
+        return;
+      }
+      sending = true;
       String? comment = controller.value.text.trim();
 
       if (comment == "") {
         return;
       }
 
-      log(comment);
+      await addComment(
+          extra.group.id, extra.post.pageId, extra.post.id, comment);
 
       controller.clear();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Comment added")));
+      sending = false;
     }
 
     return Padding(
@@ -228,12 +237,56 @@ class PostModalScreen extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemBuilder: (context, index) => Text("Comment n"),
-              itemCount: 10,
-            ),
-          ),
+              child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection("groups")
+                .doc(extra.group.id)
+                .collection("pages")
+                .doc(extra.post.pageId)
+                .collection("posts")
+                .doc(extra.post.id)
+                .collection("comments")
+                .orderBy("createdAt", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                );
+              }
+              if (snapshot.hasError || snapshot.data == null) {
+                return const Center(
+                  child: Text("Something went wrong..."),
+                );
+              }
+              List<Comment> comments = snapshot.data!.docs
+                  .map((e) => Comment.fromJson(json: e.data(), id: e.id))
+                  .toList();
+              return ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: (context, index) {
+                    var comment = comments[index];
+                    return Suspense(
+                        future: User.fromId(id: comment.commenterId),
+                        builder: (context, user) {
+                          if (user == null) {
+                            return const Text("Something went wrong...");
+                          }
+                          const double pfpSize = 17;
+
+                          return ListTile(
+                            title: Text(user.username),
+                            subtitle: Text(
+                              comment.comment,
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            leading: BasicCircleAvatar(
+                                radius: pfpSize, child: user.pfp(pfpSize * 2)),
+                          );
+                        });
+                  });
+            },
+          )),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
             child: Padding(

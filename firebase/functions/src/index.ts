@@ -9,6 +9,7 @@ export * from './services/group/update_group';
 export * from './services/group/delete_group';
 export * from './services/posts/post';
 export * from './services/posts/post_like';
+export * from './services/posts/add_comment';
 
 admin.initializeApp();
 admin.firestore().settings({ ignoreUndefinedProperties: true });
