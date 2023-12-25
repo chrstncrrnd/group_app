@@ -5,7 +5,6 @@ import 'package:group_app/models/group.dart';
 import 'package:group_app/models/request.dart';
 import 'package:group_app/services/notifications.dart';
 import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
   const GroupNotificationScreen({super.key, required this.group});
@@ -21,7 +20,7 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
       {required String groupId,
       required String userId,
       required RequestType requestType}) async {
-      await acceptRequest(
+    await acceptRequest(
         userId: userId, groupId: groupId, requestType: requestType);
   }
 
@@ -29,56 +28,69 @@ class _GroupNotificationScreenState extends State<GroupNotificationScreen> {
       {required String groupId,
       required String userId,
       required RequestType requestType}) async {
-      await denyRequest(
+    await denyRequest(
         userId: userId, groupId: groupId, requestType: requestType);
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  context.push("/group", extra: widget.group);
-                },
-              child: 
-              Text(
-                widget.group.name),
-              ),
-            ],
-          ),
-          centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: () {
+                context.push("/group", extra: widget.group);
+              },
+              child: Text(widget.group.name),
+            ),
+          ],
         ),
-      body: PaginatedListView(
-          pullToRefresh: true,
-          query: FirebaseFirestore.instance
+        centerTitle: true,
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
               .collection("groups")
               .doc(widget.group.id)
               .collection("requests")
-              .orderBy("createdAt", descending: true),
+              .orderBy("createdAt", descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
+              );
+            }
+            if (snapshot.hasError || snapshot.data == null) {
+              return const Center(
+                child: Text("Something went wrong..."),
+              );
+            }
+            if (snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text(
+                    "Follow or join requests for ${widget.group.name} will appear here"),
+              );
+            }
+            return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  var item = snapshot.data!.docs[index];
+                  Request request = Request.fromJson(
+                      json: item.data() as Map<String, dynamic>);
 
-          ifEmpty: Center(
-            child: Text(
-                "Follow or join requests for ${widget.group.name} will appear here"),
-          ),
-          itemBuilder: (context, item) {
-            Request request =
-                Request.fromJson(json: item.data() as Map<String, dynamic>);
-
-            return RequestNotificationTile(
+                  return RequestNotificationTile(
                       onAccept: () => _onAccept(
                           groupId: widget.group.id,
-                    requestType: request.requestType,
-                    userId: request.requester),
+                          requestType: request.requestType,
+                          userId: request.requester),
                       onDeny: () => _onDeny(
                           groupId: widget.group.id,
-                    requestType: request.requestType,
-                    userId: request.requester),
-                request: request);
+                          requestType: request.requestType,
+                          userId: request.requester),
+                      request: request);
+                });
           }),
     );
   }
