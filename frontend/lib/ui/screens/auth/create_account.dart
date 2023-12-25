@@ -41,6 +41,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                   TextInputField(
                     label: "Email",
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (value) {
                       _email = value.trim();
                     },

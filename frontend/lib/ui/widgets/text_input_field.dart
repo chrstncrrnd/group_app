@@ -13,6 +13,7 @@ class TextInputField extends StatelessWidget {
       this.initialValue,
       this.obscureText = false,
       this.autofocus = false,
+      this.keyboardType,
       this.textCapitalization = TextCapitalization.none});
 
   final String label;
@@ -24,10 +25,12 @@ class TextInputField extends StatelessWidget {
   final bool obscureText;
   final TextCapitalization textCapitalization;
   final bool autofocus;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: keyboardType,
       autofocus: autofocus,
       initialValue: initialValue,
       decoration: InputDecoration(

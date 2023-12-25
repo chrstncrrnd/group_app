@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' hide showAdaptiveDialog;
 import 'package:go_router/go_router.dart';
@@ -48,39 +49,32 @@ class PostModalScreen extends StatelessWidget {
     return Material(
       surfaceTintColor: Colors.black,
       color: Colors.black,
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          if (details.delta.dy.abs() > 3) {
-            context.pop();
-          }
-        },
-        child: StreamBuilder(
-            stream: Post.asStream(
-                groupId: extra.group.id,
-                pageId: extra.post.pageId,
-                id: extra.post.id),
-            initialData: extra.post,
-            builder: (context, state) {
-              if (state.hasError || !state.hasData || state.data == null) {
-                return const Center(
-                  child: Text("Something went wrong"),
-                );
-              }
-              Post post = state.data!;
-              return SafeArea(
-                child: Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
-                    postPicture(context, post),
-                    topRow(context, currentUser, post),
-                    Align(
-                        alignment: Alignment.bottomLeft,
-                        child: bottomRow(context, currentUser, post))
-                  ],
-                ),
+      child: StreamBuilder(
+          stream: Post.asStream(
+              groupId: extra.group.id,
+              pageId: extra.post.pageId,
+              id: extra.post.id),
+          initialData: extra.post,
+          builder: (context, state) {
+            if (state.hasError || !state.hasData || state.data == null) {
+              return const Center(
+                child: Text("Something went wrong"),
               );
-            }),
-      ),
+            }
+            Post post = state.data!;
+            return SafeArea(
+              child: Stack(
+                alignment: Alignment.topLeft,
+                children: [
+                  postPicture(context, post),
+                  topRow(context, currentUser, post),
+                  Align(
+                      alignment: Alignment.bottomLeft,
+                      child: bottomRow(context, currentUser, post))
+                ],
+              ),
+            );
+          }),
     );
   }
 
@@ -143,7 +137,11 @@ class PostModalScreen extends StatelessWidget {
   }
 
   Widget postPicture(BuildContext context, Post post) {
-    return Center(child: Hero(tag: post.id, child: Image.network(post.dlUrl)));
+    return Center(
+        child: Hero(
+            tag: post.id,
+            child: InteractiveViewer(
+                child: CachedNetworkImage(imageUrl: post.dlUrl))));
   }
 
   Widget likeButton(BuildContext context, CurrentUser currentUser, Post post) {
@@ -375,6 +373,9 @@ class PostModalScreen extends StatelessWidget {
             ],
           ),
           caption(context),
+          const SizedBox(
+            height: 10,
+          ),
           commentsBar(context)
         ],
       ),
