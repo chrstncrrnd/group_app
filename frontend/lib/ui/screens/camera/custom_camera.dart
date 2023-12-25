@@ -88,6 +88,12 @@ class _CustomCameraState extends State<CustomCamera>
     _cameraController!.getMaxZoomLevel().then((value) => _maxZoom = value);
     _cameraController!.getMinZoomLevel().then((value) => _minZoom = value);
 
+    const double width = 100 * 3;
+    const double height = 100 * 4;
+
+    _cameraController!.value = _cameraController!.value
+        .copyWith(previewSize: const Size(width, height));
+
     if (mounted) {
       setState(() {
         _cameraInitialized = _cameraController!.value.isInitialized;
