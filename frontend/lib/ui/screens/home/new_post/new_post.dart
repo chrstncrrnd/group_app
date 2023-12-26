@@ -169,6 +169,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         .collection("groups")
                         .doc(group.id)
                         .collection("pages"),
+                    ifEmpty: const Text(
+                      "No pages in this group",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                     itemBuilder: pageTile,
                   ),
                 )

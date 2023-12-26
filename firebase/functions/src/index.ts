@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
 
 export * from './services/account/create_account';
 export * from './services/group/group_creation';
@@ -13,3 +14,9 @@ export * from './services/posts/add_comment';
 
 admin.initializeApp();
 admin.firestore().settings({ ignoreUndefinedProperties: true });
+
+
+export const ping = functions.https.onCall(async () => {
+  return 'Pong!';
+});
+  

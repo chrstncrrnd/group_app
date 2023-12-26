@@ -57,6 +57,7 @@ class _NewPageSheetState extends State<NewPageSheet> {
             height: 20,
           ),
           TextInputField(
+            autofocus: true,
             label: "Page name",
             onChanged: _onChange,
             maxLines: 1,

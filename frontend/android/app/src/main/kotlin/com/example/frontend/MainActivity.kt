@@ -1,4 +1,4 @@
-package io.github.chrstncrrnd.group_app
+package com.example.frontend
 
 import io.flutter.embedding.android.FlutterActivity
 
