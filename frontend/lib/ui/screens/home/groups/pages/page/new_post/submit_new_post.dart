@@ -138,52 +138,6 @@ class SubmitNewPostScreen extends StatelessWidget {
     );
   }
 
-  Widget addCaptionButton(BuildContext context) {
-    String caption = "";
-
-    return StatefulBuilder(builder: (context, setState) {
-      return Container(
-        width: Max.width(context),
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Caption",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-                onTap: () async {
-                  String c = await showModalBottomSheet(
-                      backgroundColor: Colors.black,
-                      showDragHandle: true,
-                      useSafeArea: true,
-                      isScrollControlled: true,
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      builder: editCaptionModalSheetBuilder);
-                  setState(
-                    () => caption = c,
-                  );
-                },
-                child: caption.isEmpty
-                    ? const Text(
-                        "Add...",
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    : Text(caption))
-          ],
-        ),
-      );
-    });
-  }
 
   Widget editCaptionModalSheetBuilder(BuildContext context) {
     String caption = "";

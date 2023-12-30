@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/models/page.dart';
 import 'package:group_app/services/group/group_update.dart';
@@ -46,7 +45,7 @@ class _EditPageSheetState extends State<EditPageSheet> {
     if (res != null) {
       showAlert(context, title: "Couldn't update page", content: res);
     } else {
-      context.pop();
+      Navigator.pop(context);
     }
   }
 

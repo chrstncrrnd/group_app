@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:group_app/models/group.dart';
 import 'package:group_app/services/group/group_update.dart';
 import 'package:group_app/ui/widgets/buttons/next_button.dart';
@@ -35,7 +34,7 @@ class _NewPageSheetState extends State<NewPageSheet> {
       await showAlert(context,
           title: "An error occurred while creating page", content: error);
     } else {
-      context.pop();
+      Navigator.pop(context);
     }
   }
 
