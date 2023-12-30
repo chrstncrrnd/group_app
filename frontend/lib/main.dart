@@ -26,7 +26,7 @@ void main() async {
     await FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
     FirebaseFunctions.instance.useFunctionsEmulator("localhost", 5001);
     FirebaseFirestore.instance.useFirestoreEmulator("localhost", 8080);
-    FirebaseStorage.instance.useStorageEmulator("localhost", 9199);
+    await FirebaseStorage.instance.useStorageEmulator("localhost", 9199);
   }
   runApp(GroupApp());
 }

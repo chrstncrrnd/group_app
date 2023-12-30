@@ -39,14 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 "Log in",
                 style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
               ),
-              TextButton(
-                  onPressed: () async {
-                    var using = await FirebaseFunctions.instance
-                        .httpsCallable("ping")
-                        .call();
-                    log("a: $using");
-                  },
-                  child: const Text("Ping")),
               TextInputField(
                 label: 'Email',
                 maxLines: 1,
