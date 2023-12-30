@@ -1,5 +1,5 @@
-import 'package:group_app/models/group.dart';
-import 'package:group_app/utils/to_list_string.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/utils/to_list_string.dart';
 
 class GroupPage {
   String id;

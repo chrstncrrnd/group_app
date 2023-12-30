@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/request.dart';
-import 'package:group_app/services/notifications.dart';
-import 'package:group_app/ui/screens/home/notifications/widgets/request_notification_tile.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/request.dart';
+import 'package:groopo/services/notifications.dart';
+import 'package:groopo/ui/screens/home/notifications/widgets/request_notification_tile.dart';
 
 class GroupNotificationScreen extends StatefulWidget {
   const GroupNotificationScreen({super.key, required this.group});

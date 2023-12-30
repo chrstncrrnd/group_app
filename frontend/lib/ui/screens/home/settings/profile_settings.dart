@@ -2,15 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/current_user.dart';
-import 'package:group_app/services/user.dart';
-import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/buttons/next_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/pick_image.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/models/current_user.dart';
+import 'package:groopo/services/user.dart';
+import 'package:groopo/services/current_user_provider.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/buttons/next_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/ui/widgets/pick_image.dart';
+import 'package:groopo/ui/widgets/text_input_field.dart';
+import 'package:groopo/utils/validators.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 

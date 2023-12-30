@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
 
 class GroupNotificationsTile extends StatelessWidget {
   const GroupNotificationsTile(

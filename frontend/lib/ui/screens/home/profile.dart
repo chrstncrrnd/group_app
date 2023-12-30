@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
+import 'package:groopo/models/user.dart';
+import 'package:groopo/services/current_user_provider.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/async/shimmer_loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/stat.dart';

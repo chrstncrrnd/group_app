@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:group_app/models/current_user.dart';
+import 'package:groopo/models/current_user.dart';
 
 class CurrentUserProvider extends ChangeNotifier {
   CurrentUser? currentUser;

@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '391620316084',
     projectId: 'group-app-5b44d',
     storageBucket: 'group-app-5b44d.appspot.com',
-    iosBundleId: 'io.github.chrstncrrnd.frontend',
+    iosBundleId: 'io.github.chrstncrrnd.groopo',
   );
 }

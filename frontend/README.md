@@ -1,4 +1,4 @@
-# group_app
+# groopo
 
 A new Flutter project.
 

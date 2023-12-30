@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:group_app/utils/to_list_string.dart';
+import 'package:groopo/utils/to_list_string.dart';
 
 class CurrentUserPrivateData {
   String id;

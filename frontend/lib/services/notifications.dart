@@ -1,5 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:group_app/models/request.dart';
+import 'package:groopo/models/request.dart';
 
 Future<void> acceptRequest(
     {required String userId,

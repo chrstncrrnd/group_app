@@ -4,12 +4,11 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <application
-        android:label="frontend"
+        android:label="groopo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
-
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -25,8 +24,6 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-
-            
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues

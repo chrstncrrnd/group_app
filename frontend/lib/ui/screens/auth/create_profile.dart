@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/services/auth.dart';
-import 'package:group_app/ui/widgets/buttons/next_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/services/auth.dart';
+import 'package:groopo/ui/widgets/buttons/next_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/ui/widgets/text_input_field.dart';
+import 'package:groopo/utils/validators.dart';
 
 // Initial profile creation steps
 class CreateProfileScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       Column(
         children: [
           const Text(
-            "Welcome to group_app, what's your name?",
+            "Welcome to groopo, what's your name?",
             style: TextStyle(fontSize: 30),
           ),
           const SizedBox(

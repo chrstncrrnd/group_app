@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:group_app/services/auth.dart';
-import 'package:group_app/ui/widgets/buttons/next_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/services/auth.dart';
+import 'package:groopo/ui/widgets/buttons/next_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/ui/widgets/text_input_field.dart';
+import 'package:groopo/utils/validators.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen(

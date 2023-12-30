@@ -1,8 +1,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:flutter/material.dart";
-import "package:group_app/models/group.dart";
-import "package:group_app/models/user.dart";
-import "package:group_app/ui/screens/home/search/search_result_tile.dart";
+import "package:groopo/models/group.dart";
+import "package:groopo/models/user.dart";
+import "package:groopo/ui/screens/home/search/search_result_tile.dart";
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

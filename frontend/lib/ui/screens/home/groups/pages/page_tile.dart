@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/models/post.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page_tile_wrapper.dart';
-import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/models/post.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/group_page.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page_tile_wrapper.dart';
+import 'package:groopo/ui/widgets/async/shimmer_loading_indicator.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
 import 'package:provider/provider.dart';
 
 class PageTile extends StatelessWidget {

@@ -8,10 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:group_app/firebase_options.dart';
-import 'package:group_app/routes.dart';
-import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/utils/theme.dart';
+import 'package:groopo/firebase_options.dart';
+import 'package:groopo/routes.dart';
+import 'package:groopo/services/current_user_provider.dart';
+import 'package:groopo/utils/theme.dart';
 import 'package:provider/provider.dart';
 
 

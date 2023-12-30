@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/services/group/group_update.dart';
-import 'package:group_app/ui/widgets/buttons/next_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/services/group/group_update.dart';
+import 'package:groopo/ui/widgets/buttons/next_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/ui/widgets/text_input_field.dart';
+import 'package:groopo/utils/validators.dart';
 
 class EditPageSheet extends StatefulWidget {
   const EditPageSheet({super.key, required this.group, required this.page});

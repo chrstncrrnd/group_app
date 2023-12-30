@@ -1,34 +1,34 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/ui/animations/route_animations.dart';
-import 'package:group_app/ui/screens/auth/create_account.dart';
-import 'package:group_app/ui/screens/auth/intro.dart';
-import 'package:group_app/ui/screens/auth/login.dart';
-import 'package:group_app/ui/screens/auth/create_profile.dart';
-import 'package:group_app/ui/screens/home/groups/affiliated_users.dart';
-import 'package:group_app/ui/screens/home/groups/edit_group.dart';
-import 'package:group_app/ui/screens/home/groups/group_profile.dart';
-import 'package:group_app/ui/screens/home/groups/new_group.dart';
-import 'package:group_app/ui/screens/home/feed.dart';
-import 'package:group_app/ui/screens/home/groups/groups.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/group_page.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/posts/post_modal.dart';
-import 'package:group_app/ui/screens/home/home.dart';
-import 'package:group_app/ui/screens/home/new_post/new_post.dart';
-import 'package:group_app/ui/screens/home/notifications/group_notifications_screen.dart';
-import 'package:group_app/ui/screens/home/notifications/notifications.dart';
-import 'package:group_app/ui/screens/home/profile.dart';
-import 'package:group_app/ui/screens/home/search/search.dart';
-import 'package:group_app/ui/screens/home/settings/profile_settings.dart';
-import 'package:group_app/ui/screens/home/settings/settings_directory.dart';
-import 'package:group_app/ui/screens/home/user/user_affiliated_groups.dart';
-import 'package:group_app/ui/screens/home/user/user_profile.dart';
-import 'package:group_app/models/user.dart' as group_app_user;
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/ui/animations/route_animations.dart';
+import 'package:groopo/ui/screens/auth/create_account.dart';
+import 'package:groopo/ui/screens/auth/intro.dart';
+import 'package:groopo/ui/screens/auth/login.dart';
+import 'package:groopo/ui/screens/auth/create_profile.dart';
+import 'package:groopo/ui/screens/home/groups/affiliated_users.dart';
+import 'package:groopo/ui/screens/home/groups/edit_group.dart';
+import 'package:groopo/ui/screens/home/groups/group_profile.dart';
+import 'package:groopo/ui/screens/home/groups/new_group.dart';
+import 'package:groopo/ui/screens/home/feed.dart';
+import 'package:groopo/ui/screens/home/groups/groups.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/group_page.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/new_post/take_new_post.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/posts/post_modal.dart';
+import 'package:groopo/ui/screens/home/home.dart';
+import 'package:groopo/ui/screens/home/new_post/new_post.dart';
+import 'package:groopo/ui/screens/home/notifications/group_notifications_screen.dart';
+import 'package:groopo/ui/screens/home/notifications/notifications.dart';
+import 'package:groopo/ui/screens/home/profile.dart';
+import 'package:groopo/ui/screens/home/search/search.dart';
+import 'package:groopo/ui/screens/home/settings/profile_settings.dart';
+import 'package:groopo/ui/screens/home/settings/settings_directory.dart';
+import 'package:groopo/ui/screens/home/user/user_affiliated_groups.dart';
+import 'package:groopo/ui/screens/home/user/user_profile.dart';
+import 'package:groopo/models/user.dart' as groopo_user;
 
 class Routes extends ChangeNotifier {
   Routes({this.signedIn = false}) {
@@ -164,20 +164,20 @@ class Routes extends ChangeNotifier {
                 GoRoute(
                     path: "/user",
                     builder: (context, state) => UserProfileScreen(
-                        initialUserState: state.extra! as group_app_user.User),
+                        initialUserState: state.extra! as groopo_user.User),
                     routes: [
                       GoRoute(
                         path: "following",
                         builder: (context, state) => UserAffiliatedGroups(
                           type: UserAffiliatedGroupsType.following,
-                          user: state.extra! as group_app_user.User,
+                          user: state.extra! as groopo_user.User,
                         ),
                       ),
                       GoRoute(
                           path: "member_of",
                           builder: (context, state) => UserAffiliatedGroups(
                                 type: UserAffiliatedGroupsType.memberOf,
-                                user: state.extra! as group_app_user.User,
+                                user: state.extra! as groopo_user.User,
                               ))
                     ]),
                 GoRoute(

@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/utils/rand_str.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/utils/rand_str.dart';
 import 'package:image/image.dart';
 
 Future<String?> createPost(

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/models/current_user.dart';
+import 'package:groopo/models/user.dart';
+import 'package:groopo/services/current_user_provider.dart';
+import 'package:groopo/ui/widgets/async/shimmer_loading_indicator.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
 import 'package:provider/provider.dart';
 
 class AffiliatedUsersScreenExtra {

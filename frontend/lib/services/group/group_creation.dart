@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:group_app/utils/rand_str.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/utils/rand_str.dart';
+import 'package:groopo/utils/validators.dart';
 
 /// Returns a with an error if something went wrong
 Future<String?> createGroup(

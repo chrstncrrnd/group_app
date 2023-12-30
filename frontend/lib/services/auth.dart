@@ -6,7 +6,7 @@ import 'dart:developer';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:group_app/utils/validators.dart';
+import 'package:groopo/utils/validators.dart';
 
 Future<String?> logUserIn(String email, String password) async {
   var emailValid = validateEmail(email);

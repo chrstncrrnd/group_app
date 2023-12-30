@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/ui/screens/home/groups/pages/new_page/new_page_sheet.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page_tile_wrapper.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/ui/screens/home/groups/pages/new_page/new_page_sheet.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page_tile_wrapper.dart';
 import 'package:provider/provider.dart';
 
 class NewPageTile extends StatelessWidget {

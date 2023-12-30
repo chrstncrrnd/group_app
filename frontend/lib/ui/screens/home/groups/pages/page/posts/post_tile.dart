@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/post.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/utils/max.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/post.dart';
+import 'package:groopo/models/user.dart';
+import 'package:groopo/ui/widgets/async/shimmer_loading_indicator.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
+import 'package:groopo/utils/max.dart';
 
 import 'post_modal.dart';
 

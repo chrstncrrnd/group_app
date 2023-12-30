@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/ui/widgets/buttons/next_button.dart';
+import 'package:groopo/ui/widgets/buttons/next_button.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 class IntroScreen extends StatelessWidget {
@@ -15,8 +15,8 @@ class IntroScreen extends StatelessWidget {
         pages: [
           PageViewModel(
               decoration: pageDecoration,
-              title: "Welcome to group_app",
-              body: "group_app is an app where you can post with friends"),
+              title: "Welcome to groopo",
+              body: "groopo is an app where you can post with friends"),
           PageViewModel(
               decoration: pageDecoration,
               title: "You can create a group with all of your friends",

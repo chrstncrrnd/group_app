@@ -3,16 +3,16 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/services/posts.dart';
-import 'package:group_app/ui/widgets/async/shimmer_loading_indicator.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
-import 'package:group_app/ui/widgets/dialogs/alert.dart';
-import 'package:group_app/ui/widgets/text_input_field.dart';
-import 'package:group_app/utils/max.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/services/posts.dart';
+import 'package:groopo/ui/widgets/async/shimmer_loading_indicator.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:groopo/ui/widgets/dialogs/alert.dart';
+import 'package:groopo/ui/widgets/text_input_field.dart';
+import 'package:groopo/utils/max.dart';
 
 class SubmitNewPostExtra {
   SubmitNewPostExtra({required this.page, required this.post});

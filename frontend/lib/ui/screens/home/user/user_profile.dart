@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/fallback_text.dart';
-import 'package:group_app/ui/widgets/stat.dart';
+import 'package:groopo/models/user.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/fallback_text.dart';
+import 'package:groopo/ui/widgets/stat.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key, required this.initialUserState});

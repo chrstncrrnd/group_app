@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/current_user.dart';
-import 'package:group_app/models/group.dart';
-import 'package:group_app/models/page.dart';
-import 'package:group_app/services/current_user_provider.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page_tile.dart';
-import 'package:group_app/ui/screens/home/groups/widgets/group_list_tile.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/firestore_views/paginated/list_view.dart';
+import 'package:groopo/models/current_user.dart';
+import 'package:groopo/models/group.dart';
+import 'package:groopo/models/page.dart';
+import 'package:groopo/services/current_user_provider.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page_tile.dart';
+import 'package:groopo/ui/screens/home/groups/widgets/group_list_tile.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
+import 'package:groopo/ui/widgets/firestore_views/paginated/list_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/models/request.dart';
-import 'package:group_app/models/user.dart';
-import 'package:group_app/ui/widgets/async/suspense.dart';
-import 'package:group_app/ui/widgets/basic_circle_avatar.dart';
-import 'package:group_app/ui/widgets/buttons/progress_indicator_button.dart';
+import 'package:groopo/models/request.dart';
+import 'package:groopo/models/user.dart';
+import 'package:groopo/ui/widgets/async/suspense.dart';
+import 'package:groopo/ui/widgets/basic_circle_avatar.dart';
+import 'package:groopo/ui/widgets/buttons/progress_indicator_button.dart';
 
 enum NotificationType {
   followRequest,

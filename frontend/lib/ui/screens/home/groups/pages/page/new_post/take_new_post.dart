@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:group_app/models/page.dart';
+import 'package:groopo/models/page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:group_app/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
+import 'package:groopo/ui/screens/home/groups/pages/page/new_post/submit_new_post.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TakeNewPostScreen extends StatelessWidget {
